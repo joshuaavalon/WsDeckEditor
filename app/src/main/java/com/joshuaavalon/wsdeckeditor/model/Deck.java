@@ -53,12 +53,22 @@ public class Deck {
         }));
     }
 
+    public void addIfNotExist(@NonNull final String serial) {
+        if (!serialList.contains(serial))
+            setCount(serial, 1);
+    }
+
+
+    public void addIfNotExist(@NonNull final Card card) {
+        addIfNotExist(card.getSerial());
+    }
+
     public void setCount(@NonNull final String serial, final int count) {
         serialList.setCount(serial, count);
     }
 
     public void setCount(@NonNull final Card card, final int count) {
-        serialList.setCount(card.getSerial(), count);
+        setCount(card.getSerial(), count);
     }
 
     public void remove(@NonNull final String serial) {

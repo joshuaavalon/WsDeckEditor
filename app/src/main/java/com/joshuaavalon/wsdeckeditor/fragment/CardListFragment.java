@@ -28,6 +28,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckSelectDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
@@ -245,7 +246,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.clear_all:
-                    actionMode.finish();
+                    DeckSelectDialogFragment.show(getFragmentManager());
                     return true;
                 default:
                     return false;

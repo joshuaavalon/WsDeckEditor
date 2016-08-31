@@ -10,6 +10,10 @@ public class DeckDao extends SugarRecord {
     @NonNull
     private String name;
 
+    public DeckDao(){
+        name = "";
+    }
+
     public DeckDao(@NonNull final String name) {
         this.name = name;
     }

@@ -39,6 +39,7 @@ public class DeckRepository {
         final List<Deck> decks = new ArrayList<>();
         for (DeckDao deckDao : DeckDao.find(DeckDao.class, null)) {
             final Deck deck = new Deck(deckDao.getId());
+            deck.setName(deckDao.getName());
             final List<DeckRecord> records = deckDao.getRecords();
             for (DeckRecord record : records) {
                 deck.setCount(record.getSerial(), record.getCount());
@@ -46,6 +47,10 @@ public class DeckRepository {
             decks.add(deck);
         }
         return decks;
+    }
+
+    public static void setCurrentDeck(@Nullable final Deck currentDeck) {
+        DeckRepository.currentDeck = currentDeck;
     }
 
     @Nullable
