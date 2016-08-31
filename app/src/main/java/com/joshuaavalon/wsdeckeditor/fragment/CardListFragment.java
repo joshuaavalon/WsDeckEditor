@@ -20,8 +20,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.activity.Transactable;
+import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
@@ -159,10 +162,19 @@ public class CardListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (actionMode == null) {
+/*
                         if (!(getActivity() instanceof Transactable)) return;
                         final Transactable transactable = (Transactable) getActivity();
                         final CardDetailFragment fragment = CardDetailFragment.newInstance(card.getSerial());
                         transactable.transactTo(fragment);
+                        */
+                        CardViewActivity.start(getContext(), Lists.newArrayList(
+                                Iterables.transform(resultCards, new Function<Card, String>() {
+                                    @Override
+                                    public String apply(Card input) {
+                                        return input.getSerial();
+                                    }
+                                })));
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());

@@ -3,6 +3,7 @@ package com.joshuaavalon.wsdeckeditor.view;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public abstract class BaseRecyclerAdapter<T, VH extends BaseRecyclerViewHolder<T
      * @param models New data models to be used by this adapter.
      */
     protected BaseRecyclerAdapter(@NonNull final List<T> models) {
-        this.models = models;
+        this.models = new ArrayList<>(models);
     }
 
     /**

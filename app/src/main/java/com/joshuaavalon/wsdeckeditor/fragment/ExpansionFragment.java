@@ -46,7 +46,7 @@ public class ExpansionFragment extends Fragment implements SearchView.OnQueryTex
         */
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new CardListAdapter(new ArrayList<>(expansions));
+        adapter = new CardListAdapter(expansions);
         recyclerView.setAdapter(adapter);
         setHasOptionsMenu(true);
         return view;
