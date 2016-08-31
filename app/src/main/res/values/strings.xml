@@ -62,4 +62,5 @@
     <string name="card_side_expansion">Side / Expansion</string>
     <string name="card_char">Attribute</string>
     <string name="clear_all">Clear All</string>
+    <string name="normal_only">Normal Only</string>
 </resources>

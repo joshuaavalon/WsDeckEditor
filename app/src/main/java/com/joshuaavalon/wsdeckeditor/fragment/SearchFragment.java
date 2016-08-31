@@ -30,6 +30,7 @@ public class SearchFragment extends Fragment {
     private Switch serialSwitch;
     private Switch charaSwitch;
     private Switch textSwitch;
+    private Switch normalSwitch;
     private Spinner expSpinner;
     private Spinner typeSpinner;
     private Spinner colorSpinner;
@@ -53,6 +54,7 @@ public class SearchFragment extends Fragment {
         serialSwitch = (Switch) linearLayout.findViewById(R.id.search_serial_switch);
         charaSwitch = (Switch) linearLayout.findViewById(R.id.search_char_switch);
         textSwitch = (Switch) linearLayout.findViewById(R.id.search_text_switch);
+        normalSwitch = (Switch) linearLayout.findViewById(R.id.normal_only_switch);
         levelMaxTextView = (EditText) linearLayout.findViewById(R.id.search_level_max_text);
         levelMinTextView = (EditText) linearLayout.findViewById(R.id.search_level_min_text);
         costMaxTextView = (EditText) linearLayout.findViewById(R.id.search_cost_max_text);
@@ -158,6 +160,7 @@ public class SearchFragment extends Fragment {
         filter.setEnableSerial(serialSwitch.isChecked());
         filter.setEnableChara(charaSwitch.isChecked());
         filter.setEnableText(textSwitch.isChecked());
+        filter.setNormalOnly(normalSwitch.isChecked());
 
         switch (expSpinner.getSelectedItemPosition()) {
             case 0:

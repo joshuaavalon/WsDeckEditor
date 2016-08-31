@@ -37,14 +37,7 @@ public class ExpansionFragment extends Fragment implements SearchView.OnQueryTex
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         expansions = CardRepository.getExpansions();
         recyclerView.setHasFixedSize(true);
-        /* TODO
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int dynamicCount = (int) dpWidth / 360;
-        int rowCount = dynamicCount > 1 ? dynamicCount : 1;
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), rowCount);
-        */
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new CardListAdapter(expansions);
         recyclerView.setAdapter(adapter);

@@ -162,19 +162,13 @@ public class CardListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (actionMode == null) {
-/*
-                        if (!(getActivity() instanceof Transactable)) return;
-                        final Transactable transactable = (Transactable) getActivity();
-                        final CardDetailFragment fragment = CardDetailFragment.newInstance(card.getSerial());
-                        transactable.transactTo(fragment);
-                        */
                         CardViewActivity.start(getContext(), Lists.newArrayList(
                                 Iterables.transform(resultCards, new Function<Card, String>() {
                                     @Override
                                     public String apply(Card input) {
                                         return input.getSerial();
                                     }
-                                })));
+                                })), getAdapterPosition());
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());

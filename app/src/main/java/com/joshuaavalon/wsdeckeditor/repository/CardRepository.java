@@ -153,6 +153,12 @@ public class CardRepository {
 
         if (filter.getMinSoul() != -1)
             whereCondition = andConditions(Condition.property(SQL_CARD_SOUL).greaterThanOrEqual(String.valueOf(filter.getMinSoul())), whereCondition);
+        if (filter.isNormalOnly()) {
+            final Condition conditionSR = Condition.property(SQL_CARD_RARITY).equal("SR");
+            final Condition conditionSP = Condition.property(SQL_CARD_RARITY).equal("SP");
+            final Condition conditionRRR = Condition.property(SQL_CARD_RARITY).equal("RRR");
+            whereCondition = andConditions(conditionSR.or(conditionSP.or(conditionRRR)).not(), whereCondition);
+        }
 
         final Query query = Query.select(getCols()).from(SQL_CARD);
         if (whereCondition != null) {
@@ -323,6 +329,7 @@ public class CardRepository {
         private boolean enableSerial;
         private boolean enableChara;
         private boolean enableText;
+        private boolean normalOnly;
 
         public Filter() {
             andList = new ArrayList<>();
@@ -340,6 +347,7 @@ public class CardRepository {
             enableSerial = true;
             enableChara = true;
             enableText = true;
+            normalOnly = false;
             trigger = "";
             side = "";
             color = "";
@@ -364,10 +372,13 @@ public class CardRepository {
             maxSoul = in.readInt();
             minSoul = in.readInt();
             trigger = in.readString();
-            enableName = in.readByte() != 0;
-            enableSerial = in.readByte() != 0;
-            enableChara = in.readByte() != 0;
-            enableText = in.readByte() != 0;
+            final boolean[] booleanArray = new boolean[5];
+            in.readBooleanArray(booleanArray);
+            enableName = booleanArray[0];
+            enableSerial = booleanArray[1];
+            enableChara = booleanArray[2];
+            enableText = booleanArray[3];
+            normalOnly = booleanArray[4];
         }
 
         public String getType() {
@@ -506,6 +517,14 @@ public class CardRepository {
             this.enableText = enableText;
         }
 
+        public boolean isNormalOnly() {
+            return normalOnly;
+        }
+
+        public void setNormalOnly(boolean normalOnly) {
+            this.normalOnly = normalOnly;
+        }
+
         public void addAnd(String str) {
             andList.add(str);
         }
@@ -565,10 +584,11 @@ public class CardRepository {
             parcel.writeInt(maxSoul);
             parcel.writeInt(minSoul);
             parcel.writeString(trigger);
-            parcel.writeByte((byte) (enableName ? 1 : 0));
-            parcel.writeByte((byte) (enableSerial ? 1 : 0));
-            parcel.writeByte((byte) (enableChara ? 1 : 0));
-            parcel.writeByte((byte) (enableText ? 1 : 0));
+            parcel.writeBooleanArray(new boolean[]{enableName,
+                    enableSerial,
+                    enableChara,
+                    enableText,
+                    normalOnly});
         }
     }
 }
