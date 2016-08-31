@@ -63,4 +63,5 @@
     <string name="card_char">Attribute</string>
     <string name="clear_all">Clear All</string>
     <string name="normal_only">Normal Only</string>
+    <string name="filter_cards">Filter cards</string>
 </resources>

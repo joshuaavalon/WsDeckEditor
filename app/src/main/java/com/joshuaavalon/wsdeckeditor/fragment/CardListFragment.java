@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
@@ -34,7 +38,7 @@ import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardListFragment extends Fragment {
+public class CardListFragment extends Fragment implements SearchView.OnQueryTextListener {
     private static final String ARG_FILTER = "filter";
 
     private List<Card> resultCards;
@@ -42,6 +46,7 @@ public class CardListFragment extends Fragment {
     private ActionModeCallback actionModeCallback;
     @Nullable
     private ActionMode actionMode;
+    private RecyclerView recyclerView;
 
     @NonNull
     public static CardListFragment newInstance(@NonNull final CardRepository.Filter filter) {
@@ -69,7 +74,7 @@ public class CardListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_card_list, container, false);
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new CardRecyclerViewAdapter(resultCards, new ActionModeListener() {
             @Override
             public void onItemClicked(final int position) {
@@ -85,6 +90,7 @@ public class CardListFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -105,6 +111,35 @@ public class CardListFragment extends Fragment {
         final Activity parentActivity = getActivity();
         if (!(parentActivity instanceof AppCompatActivity)) return false;
         actionMode = ((AppCompatActivity) parentActivity).startSupportActionMode(actionModeCallback);
+        return true;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_cardlist, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(final String query) {
+        final List<Card> filteredCardList = Lists.newArrayList(Iterables.filter(resultCards, new Predicate<Card>() {
+            @Override
+            public boolean apply(final Card input) {
+                return input.getName().contains(query) ||
+                        input.getSerial().toUpperCase().contains(query.toUpperCase());
+            }
+        }));
+        adapter.setModels(filteredCardList);
+        recyclerView.scrollToPosition(0);
         return true;
     }
 
@@ -168,7 +203,7 @@ public class CardListFragment extends Fragment {
                                     public String apply(Card input) {
                                         return input.getSerial();
                                     }
-                                })), getAdapterPosition());
+                                })), resultCards.indexOf(card));
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());
