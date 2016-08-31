@@ -25,7 +25,7 @@
             android:name="QUERY_LOG"
             android:value="true" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

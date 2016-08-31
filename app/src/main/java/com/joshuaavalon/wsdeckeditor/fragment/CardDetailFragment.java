@@ -3,7 +3,6 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -25,8 +24,9 @@ import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardDetailFragment extends Fragment {
+public class CardDetailFragment extends BaseFragment {
     private static final String CARD_SERIAL = "card_serial";
+    private static final String NOT_AVAILABLE = "-";
     private ImageView imageView;
     private TextView nameTextView;
     private TextView serialTextView;
@@ -94,10 +94,20 @@ public class CardDetailFragment extends Fragment {
         sideTextView.setText(card.getSide().getResId());
         typeTextView.setText(card.getType().getResId());
         colorTextView.setText(card.getColor().getResId());
-        levelTextView.setText(String.valueOf(card.getLevel()));
-        costTextView.setText(String.valueOf(card.getCost()));
-        powerTextView.setText(String.valueOf(card.getPower()));
-        soulTextView.setText(String.valueOf(card.getSoul()));
+        if (card.getType() != Card.Type.Climax) {
+            levelTextView.setText(String.valueOf(card.getLevel()));
+            costTextView.setText(String.valueOf(card.getCost()));
+        } else {
+            levelTextView.setText(NOT_AVAILABLE);
+            costTextView.setText(NOT_AVAILABLE);
+        }
+        if (card.getType() == Card.Type.Character) {
+            powerTextView.setText(String.valueOf(card.getPower()));
+            soulTextView.setText(String.valueOf(card.getSoul()));
+        } else {
+            powerTextView.setText(NOT_AVAILABLE);
+            soulTextView.setText(NOT_AVAILABLE);
+        }
         triggerTextView.setText(card.getTrigger().getResId());
         final String first = card.getAttribute1();
         SpannableString firstSpan = new SpannableString(first);

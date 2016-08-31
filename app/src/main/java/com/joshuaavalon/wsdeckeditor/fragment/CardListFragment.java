@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -33,12 +32,13 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
+import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
 import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardListFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class CardListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
     private static final String ARG_FILTER = "filter";
 
     private List<Card> resultCards;
@@ -97,8 +97,7 @@ public class CardListFragment extends Fragment implements SearchView.OnQueryText
     private void toggleSelection(final int position) {
         if (actionMode == null) return;
         adapter.toggleSelection(position);
-        int count = adapter.getSelectedItemCount();
-
+        final int count = adapter.getSelectedItemCount();
         if (count == 0) {
             actionMode.finish();
         } else {
@@ -109,7 +108,7 @@ public class CardListFragment extends Fragment implements SearchView.OnQueryText
 
     private boolean startActionMode() {
         final Activity parentActivity = getActivity();
-        if (!(parentActivity instanceof AppCompatActivity)) return false;
+        if (!(parentActivity instanceof AppCompatActivity) || actionMode != null) return false;
         actionMode = ((AppCompatActivity) parentActivity).startSupportActionMode(actionModeCallback);
         return true;
     }
@@ -176,9 +175,12 @@ public class CardListFragment extends Fragment implements SearchView.OnQueryText
         private final TextView serialTextView;
         @NonNull
         private final View itemView;
+        @NonNull
         private final LinearLayout linearLayout;
         @Nullable
         private final ActionModeListener actionModeListener;
+        @NonNull
+        private final View colorView;
 
         public CardViewHolder(@NonNull final View itemView, @Nullable final ActionModeListener actionModeListener) {
             super(itemView);
@@ -187,6 +189,7 @@ public class CardListFragment extends Fragment implements SearchView.OnQueryText
             nameTextView = (TextView) itemView.findViewById(R.id.card_name);
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
+            colorView = itemView.findViewById(R.id.color_bar);
             itemView.setOnLongClickListener(this);
             this.actionModeListener = actionModeListener;
         }
@@ -214,6 +217,8 @@ public class CardListFragment extends Fragment implements SearchView.OnQueryText
             imageView.setImageBitmap(bitmap);
             nameTextView.setText(card.getName());
             serialTextView.setText(card.getSerial());
+            colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
+            linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
         }
 
         @Override

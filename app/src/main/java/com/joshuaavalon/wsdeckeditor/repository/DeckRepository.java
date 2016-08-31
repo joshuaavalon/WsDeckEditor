@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.common.collect.Multiset;
 import com.joshuaavalon.wsdeckeditor.database.DeckDao;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeckRepository {
+    @Nullable
+    private static Deck currentDeck;
 
     public static void save(@NonNull final Deck deck) {
         DeckDao deckDao;
@@ -43,5 +46,17 @@ public class DeckRepository {
             decks.add(deck);
         }
         return decks;
+    }
+
+    @Nullable
+    public static Deck getCurrentDeck() {
+        return currentDeck;
+    }
+
+    @NonNull
+    public static Deck getCurrentDeckOrCreateNewDeck() {
+        if (currentDeck == null)
+            currentDeck = new Deck();
+        return currentDeck;
     }
 }

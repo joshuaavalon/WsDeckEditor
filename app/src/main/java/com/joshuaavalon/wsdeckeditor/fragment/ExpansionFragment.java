@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ExpansionFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class ExpansionFragment extends BaseFragment implements SearchView.OnQueryTextListener {
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
     private List<String> expansions;

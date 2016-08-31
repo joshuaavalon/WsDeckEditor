@@ -20,7 +20,7 @@ import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends BaseFragment {
     public static final String FILTER_KEY = "Filter_Key";
     private static final String SPLIT_REGEX = "\\s+";
     private EditText keywordAndTextView;
