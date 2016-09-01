@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.view;
 
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ public class ColorUtils {
                 return R.color.cardYellow;
         }
     }
+
     @DrawableRes
     public static int getBackgroundDrawable(@NonNull final Card.Color color) {
         switch (color) {

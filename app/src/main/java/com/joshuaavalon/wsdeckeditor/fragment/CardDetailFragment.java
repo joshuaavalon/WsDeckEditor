@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
@@ -78,8 +79,13 @@ public class CardDetailFragment extends BaseFragment {
 
         if (getArguments().containsKey(CARD_SERIAL)) {
             final String serial = getArguments().getString(CARD_SERIAL);
-            if (serial != null)
-                card = CardRepository.getCardBySerial(serial);
+            if (serial != null) {
+                final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
+                if (cardOptional.isPresent())
+                    card = cardOptional.get();
+                else
+                    card = new Card.Builder().build();
+            }
         }
         bind(card);
         return rootView;

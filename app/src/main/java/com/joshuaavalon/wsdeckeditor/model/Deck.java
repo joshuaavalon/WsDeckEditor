@@ -3,6 +3,7 @@ package com.joshuaavalon.wsdeckeditor.model;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultiset;
@@ -101,8 +102,11 @@ public class Deck {
     @NonNull
     public Multiset<Card> getList() {
         ImmutableMultiset.Builder<Card> builder = new ImmutableMultiset.Builder<>();
-        for (String serial : serialList.elementSet())
-            builder.setCount(CardRepository.getCardBySerial(serial), serialList.count(serial));
+        for (String serial : serialList.elementSet()) {
+            final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
+            if (cardOptional.isPresent())
+                builder.setCount(cardOptional.get(), serialList.count(serial));
+        }
         return builder.build();
     }
 

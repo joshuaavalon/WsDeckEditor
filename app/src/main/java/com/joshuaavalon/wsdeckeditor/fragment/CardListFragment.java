@@ -246,7 +246,14 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.clear_all:
-                    DeckSelectDialogFragment.show(getFragmentManager());
+                    adapter.clearSelection();
+                    return true;
+                case R.id.add_to_deck:
+                    List<String> cardsToAdd = new ArrayList<>();
+                    for (int index : adapter.getSelectedItems()){
+                        cardsToAdd.add(resultCards.get(index).getSerial());
+                    }
+                    DeckSelectDialogFragment.start(getFragmentManager(), cardsToAdd);
                     return true;
                 default:
                     return false;

@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.google.common.base.Optional;
 import com.joshuaavalon.fluentquery.Condition;
 import com.joshuaavalon.fluentquery.Query;
 import com.joshuaavalon.wsdeckeditor.R;
@@ -208,7 +209,7 @@ public class CardRepository {
     }
 
     @NonNull
-    public static Card getCardBySerial(@NonNull final String serial) {
+    public static Optional<Card> getCardBySerial(@NonNull final String serial) {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
                 .where(Condition.property(SQL_CARD_SERIAL).equal(serial)).commit(db);
@@ -218,7 +219,7 @@ public class CardRepository {
             cursor.close();
         } else
             card = new Card.Builder().build();
-        return card;
+        return Optional.fromNullable(card);
     }
 
     @NonNull

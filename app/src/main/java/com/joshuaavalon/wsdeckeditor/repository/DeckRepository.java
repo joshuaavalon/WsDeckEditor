@@ -1,7 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.repository;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.common.collect.Multiset;
 import com.joshuaavalon.wsdeckeditor.database.DeckDao;
@@ -13,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeckRepository {
-    @Nullable
-    private static Deck currentDeck;
 
     public static void save(@NonNull final Deck deck) {
         DeckDao deckDao;
@@ -34,6 +31,14 @@ public class DeckRepository {
         }
     }
 
+    public static void delete(@NonNull final Deck deck) {
+        if (deck.getId() == Deck.NO_ID) return;
+        final DeckDao deckDao = DeckDao.findById(DeckDao.class, deck.getId());
+        deckDao.delete();
+        DeckRecord.deleteAll(DeckRecord.class, "DECK = ?", String.valueOf(deck.getId()));
+        deck.setId(Deck.NO_ID);
+    }
+
     @NonNull
     public static List<Deck> getDecks() {
         final List<Deck> decks = new ArrayList<>();
@@ -47,21 +52,5 @@ public class DeckRepository {
             decks.add(deck);
         }
         return decks;
-    }
-
-    public static void setCurrentDeck(@Nullable final Deck currentDeck) {
-        DeckRepository.currentDeck = currentDeck;
-    }
-
-    @Nullable
-    public static Deck getCurrentDeck() {
-        return currentDeck;
-    }
-
-    @NonNull
-    public static Deck getCurrentDeckOrCreateNewDeck() {
-        if (currentDeck == null)
-            currentDeck = new Deck();
-        return currentDeck;
     }
 }

@@ -55,7 +55,7 @@ public class DeckCreateDialogFragment extends DialogFragment implements View.OnC
             textInputLayout.setError(getString(R.string.deck_name_error));
             return;
         }
-        final Deck deck = DeckRepository.getCurrentDeckOrCreateNewDeck();
+        final Deck deck = new Deck();
         deck.setName(name);
         DeckRepository.save(deck);
         final Fragment targetFragment = getTargetFragment();
@@ -65,14 +65,16 @@ public class DeckCreateDialogFragment extends DialogFragment implements View.OnC
         dismiss();
     }
 
-    public static void show(@NonNull final FragmentManager fragmentManager) {
-        new DeckCreateDialogFragment().show(fragmentManager, null);
-    }
-
-
-    public static void show(@NonNull final Fragment targetFragment, @NonNull final FragmentManager fragmentManager) {
+    public static void start(@NonNull final FragmentManager fragmentManager,
+                             @NonNull final Fragment targetFragment) {
         final DeckCreateDialogFragment fragment = new DeckCreateDialogFragment();
         fragment.setTargetFragment(targetFragment, 0);
         fragment.show(fragmentManager, null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 }
