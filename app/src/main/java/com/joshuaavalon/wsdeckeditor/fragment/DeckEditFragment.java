@@ -27,7 +27,7 @@ import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
-import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameDialogFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameAltDialogFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.dialog.SortCardDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
@@ -80,8 +80,7 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
                 getFragmentManager().popBackStack();
                 return true;
             case R.id.menu_rename:
-                DeckRenameDialogFragment.start(getFragmentManager(), DeckEditFragment.this,
-                        deck.getId());
+                DeckRenameAltDialogFragment.start(getFragmentManager(), DeckEditFragment.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,12 +124,12 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
     }
 
     private void refresh() {
-        if (deck.getId() != Deck.NO_ID)
-            deck.setName(DeckRepository.getDeckById(deck.getId()).get().getName());
         final Activity activity = getActivity();
         if (activity instanceof MainActivity)
             ((MainActivity) activity).setTitle(deck.getName());
         sort(PreferenceRepository.getSortOrder());
+        if (PreferenceRepository.getAutoSave())
+            DeckRepository.save(deck);
     }
 
     @Override
@@ -165,7 +164,8 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
 
     @Override
     public void handle(Object result) {
-        if (result == null) {
+        if (result instanceof String) {
+            deck.setName((String) result);
             refresh();
             return;
         }
