@@ -182,6 +182,11 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         private final ActionModeListener actionModeListener;
         @NonNull
         private final View colorView;
+        @NonNull
+        private final TextView levelTextView;
+        @NonNull
+        private final TextView typeTextView;
+
 
         public CardViewHolder(@NonNull final View itemView, @Nullable final ActionModeListener actionModeListener) {
             super(itemView);
@@ -191,6 +196,8 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
             colorView = itemView.findViewById(R.id.color_bar);
+            levelTextView = (TextView) itemView.findViewById(R.id.card_level);
+            typeTextView = (TextView) itemView.findViewById(R.id.card_type);
             itemView.setOnLongClickListener(this);
             this.actionModeListener = actionModeListener;
         }
@@ -220,6 +227,11 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             serialTextView.setText(card.getSerial());
             colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
+            if (card.getType() != Card.Type.Climax)
+                levelTextView.setText(getString(R.string.card_level_prefix, String.valueOf(card.getLevel())));
+            else
+                levelTextView.setText(R.string.not_applicable);
+            typeTextView.setText(card.getType().getResId());
         }
 
         @Override

@@ -71,7 +71,7 @@ public class DeckRenameDialogFragment extends DialogFragment implements View.OnC
         dismiss();
     }
 
-    public static <T extends Fragment & Handler<Void>>
+    public static <T extends Fragment & Handler<?>>
     void start(@NonNull final FragmentManager fragmentManager,
                @NonNull final T targetFragment,
                final long deckId) {

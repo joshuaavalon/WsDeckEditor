@@ -176,6 +176,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                 DeckCreateDialogFragment.start(getFragmentManager(), DeckListFragment.this);
             }
         });
+        fab.setImageResource(R.drawable.ic_add_white_24dp);
     }
 
     @Override

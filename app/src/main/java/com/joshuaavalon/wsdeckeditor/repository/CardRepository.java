@@ -182,7 +182,7 @@ public class CardRepository {
 
     @NonNull
     public static List<String> getAllImages() {
-        SQLiteDatabase db = getReadableDatabase();
+        final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = Query.select(SQL_CARD_IMAGE).from(SQL_CARD).commit(db);
         List<String> images = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -191,6 +191,7 @@ public class CardRepository {
             } while (cursor.moveToNext());
             cursor.close();
         }
+        db.close();
         return images;
     }
 
@@ -205,6 +206,7 @@ public class CardRepository {
             } while (cursor.moveToNext());
             cursor.close();
         }
+        db.close();
         return expansions;
     }
 
@@ -219,6 +221,7 @@ public class CardRepository {
             cursor.close();
         } else
             card = new Card.Builder().build();
+        db.close();
         return Optional.fromNullable(card);
     }
 

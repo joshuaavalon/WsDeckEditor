@@ -7,6 +7,9 @@ import android.support.annotation.StringRes;
 import com.google.common.collect.ComparisonChain;
 import com.joshuaavalon.wsdeckeditor.R;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class Card implements Comparable<Card> {
     @NonNull
     private final String name;
@@ -187,17 +190,25 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Type {
-        Character(R.string.type_chara), Event(R.string.type_event), Climax(R.string.type_climax);
+        Character(R.string.type_chara, 1),
+        Event(R.string.type_event, 2),
+        Climax(R.string.type_climax, 3);
         @StringRes
         private final int resId;
+        private final int order;
 
-        Type(@StringRes final int resId) {
+        Type(@StringRes final int resId, final int order) {
             this.resId = resId;
+            this.order = order;
         }
 
         @StringRes
         public int getResId() {
             return resId;
+        }
+
+        public int getOrder() {
+            return order;
         }
     }
 
@@ -241,20 +252,26 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Color {
-        Yellow(R.string.color_yellow),
-        Green(R.string.color_green),
-        Red(R.string.color_red),
-        Blue(R.string.color_blue);
+        Yellow(R.string.color_yellow, 1),
+        Green(R.string.color_green, 2),
+        Red(R.string.color_red, 3),
+        Blue(R.string.color_blue, 4);
         @StringRes
         private final int resId;
+        private final int order;
 
-        Color(@StringRes final int resId) {
+        Color(@StringRes final int resId, final int order) {
             this.resId = resId;
+            this.order = order;
         }
 
         @StringRes
         public int getResId() {
             return resId;
+        }
+
+        public int getOrder() {
+            return order;
         }
     }
 
@@ -421,5 +438,64 @@ public class Card implements Comparable<Card> {
             return new Card(name, serial, rarity, expansion, side, type, color, level, cost,
                     power, soul, trigger, attribute1, attribute2, text, flavor, image);
         }
+    }
+
+
+    private static final class SerialComparator implements Comparator<Card> {
+        @Override
+        public int compare(final Card left, final Card right) {
+            return ComparisonChain.start()
+                    .compare(left.serial, right.serial)
+                    .result();
+        }
+    }
+
+    private static final class LevelComparator implements Comparator<Card> {
+        @Override
+        public int compare(final Card left, final Card right) {
+            return ComparisonChain.start()
+                    .compare(left.level, right.level)
+                    .compare(left.serial, right.serial)
+                    .result();
+        }
+    }
+
+    private static final class DetailComparator implements Comparator<Card> {
+        @Override
+        public int compare(final Card left, final Card right) {
+            return ComparisonChain.start()
+                    .compare(left.color.getOrder(), right.color.getOrder())
+                    .compare(left.type.getOrder(), right.type.getOrder())
+                    .compare(left.level, right.level)
+                    .compare(left.serial, right.serial)
+                    .result();
+        }
+    }
+
+    public enum SortOrder {
+        Serial, Level, Detail;
+        private static final SortOrder[] values = SortOrder.values();
+
+        public static SortOrder fromInt(int value) {
+            return values[value];
+        }
+
+        public int toInt(){
+            return Arrays.asList(values).indexOf(this);
+        }
+    }
+
+    public static Comparator<Card> Comparator(@NonNull final SortOrder order) {
+        switch (order) {
+            case Serial:
+                return new SerialComparator();
+            case Level:
+                return new LevelComparator();
+            case Detail:
+                return new DetailComparator();
+            default:
+                return new DetailComparator();
+        }
+
     }
 }

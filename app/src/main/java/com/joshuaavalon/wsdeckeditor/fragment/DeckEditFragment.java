@@ -1,8 +1,10 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -21,19 +23,26 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
+import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
+import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameDialogFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.SortCardDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
 import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class DeckEditFragment extends BaseFragment {
+public class DeckEditFragment extends BaseFragment implements Handler<Object> {
     private static final String ARG_DECK_ID = "deckId";
     private CardRecyclerViewAdapter adapter;
     private Deck deck;
@@ -63,9 +72,16 @@ public class DeckEditFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.deck_save:
-                DeckRepository.save(deck);
-                showMessage(R.string.deck_saved);
+            case R.id.menu_sort:
+                SortCardDialogFragment.start(getFragmentManager(), DeckEditFragment.this);
+                return true;
+            case R.id.menu_delete:
+                DeckRepository.delete(deck);
+                getFragmentManager().popBackStack();
+                return true;
+            case R.id.menu_rename:
+                DeckRenameDialogFragment.start(getFragmentManager(), DeckEditFragment.this,
+                        deck.getId());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -81,7 +97,7 @@ public class DeckEditFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_card_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new CardRecyclerViewAdapter(deck.getList());
         recyclerView.setAdapter(adapter);
@@ -109,24 +125,71 @@ public class DeckEditFragment extends BaseFragment {
     }
 
     private void refresh() {
-        adapter.setModels(Lists.newArrayList(deck.getList().elementSet()));
+        if (deck.getId() != Deck.NO_ID)
+            deck.setName(DeckRepository.getDeckById(deck.getId()).get().getName());
+        final Activity activity = getActivity();
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).setTitle(deck.getName());
+        sort(PreferenceRepository.getSortOrder());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         refresh();
+        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab == null) return;
+        fab.show();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DeckRepository.save(deck);
+                showMessage(R.string.deck_saved);
+            }
+        });
+        fab.setImageResource(R.drawable.ic_save_white_24dp);
     }
 
-    private class CardRecyclerViewAdapter extends SelectableAdapter<Card, CardViewHolder> {
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab != null)
+            fab.hide();
+
+        final Activity activity = getActivity();
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).removeTitle();
+    }
+
+    @Override
+    public void handle(Object result) {
+        if (result == null) {
+            refresh();
+            return;
+        }
+        if (result instanceof Card.SortOrder) {
+            final Card.SortOrder order = (Card.SortOrder) result;
+            PreferenceRepository.setSortOrder(order);
+            sort(order);
+        }
+    }
+
+    private void sort(Card.SortOrder order) {
+        final List<Multiset.Entry<Card>> lists = Lists.newArrayList(deck.getList().entrySet());
+        Collections.sort(lists, transformComparator(Card.Comparator(order)));
+        adapter.setModels(lists);
+    }
+
+    private class CardRecyclerViewAdapter extends SelectableAdapter<Multiset.Entry<Card>, CardViewHolder> {
         public CardRecyclerViewAdapter(@NonNull final Multiset<Card> items) {
-            super(Lists.newArrayList(items.elementSet()));
+            super(Lists.newArrayList(items.entrySet()));
         }
 
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
+            final View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_card, parent, false);
             return new CardViewHolder(view);
         }
@@ -139,11 +202,26 @@ public class DeckEditFragment extends BaseFragment {
 
         @NonNull
         public List<Card> getCards() {
-            return models;
+            return Lists.newArrayList(Iterables.transform(models, new Function<Multiset.Entry<Card>, Card>() {
+                @Override
+                public Card apply(Multiset.Entry<Card> input) {
+                    return input.getElement();
+                }
+            }));
         }
     }
 
-    private class CardViewHolder extends BaseRecyclerViewHolder<Card> {
+    private static Comparator<Multiset.Entry<Card>> transformComparator(
+            @NonNull final Comparator<Card> comparator) {
+        return new Comparator<Multiset.Entry<Card>>() {
+            @Override
+            public int compare(Multiset.Entry<Card> left, Multiset.Entry<Card> right1) {
+                return comparator.compare(left.getElement(), right1.getElement());
+            }
+        };
+    }
+
+    private class CardViewHolder extends BaseRecyclerViewHolder<Multiset.Entry<Card>> {
         @NonNull
         private final ImageView imageView;
         @NonNull
@@ -156,6 +234,10 @@ public class DeckEditFragment extends BaseFragment {
         private final LinearLayout linearLayout;
         @NonNull
         private final View colorView;
+        @NonNull
+        private final TextView countTextView;
+        @NonNull
+        private final TextView typeTextView;
 
         public CardViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -165,10 +247,13 @@ public class DeckEditFragment extends BaseFragment {
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
             colorView = itemView.findViewById(R.id.color_bar);
+            countTextView = (TextView) itemView.findViewById(R.id.card_level);
+            typeTextView = (TextView) itemView.findViewById(R.id.card_type);
         }
 
         @Override
-        public void bind(final Card card) {
+        public void bind(final Multiset.Entry<Card> entry) {
+            final Card card = entry.getElement();
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -188,6 +273,8 @@ public class DeckEditFragment extends BaseFragment {
             serialTextView.setText(card.getSerial());
             colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
+            countTextView.setText(String.valueOf(entry.getCount()));
+            typeTextView.setText(card.getType().getResId());
         }
     }
 }

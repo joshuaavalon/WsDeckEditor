@@ -14,7 +14,7 @@
         <View
             android:id="@+id/color_bar"
             android:layout_width="10dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/card_image"
@@ -45,6 +45,33 @@
                 android:padding="5dp"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/highlight_text_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/card_level"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/highlight_subtext_color" />
+
+            <TextView
+                android:id="@+id/card_type"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/highlight_subtext_color"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

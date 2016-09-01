@@ -93,6 +93,18 @@ public class MainActivity extends BaseActivity implements Transactable,
                     .commit();
     }
 
+    public void setTitle(@NonNull final String title){
+        final ActionBar actionBar = getSupportActionBar();
+        if(actionBar == null ) return;
+        actionBar.setTitle(title);
+        actionBar.setDisplayShowTitleEnabled(true);
+    }
+
+    public void removeTitle(){
+        final ActionBar actionBar = getSupportActionBar();
+        if(actionBar == null ) return;
+        actionBar.setDisplayShowTitleEnabled(false);
+    }
 
     @Override
     public void onBackPressed() {
