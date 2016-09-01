@@ -8,8 +8,12 @@ public class DeckRecord extends SugarRecord {
     @NonNull
     private String serial;
     private int count;
-    @NonNull
     private DeckDao deck;
+
+    public DeckRecord() {
+        serial = "";
+        count = 0;
+    }
 
     public DeckRecord(@NonNull final String serial, final int count, @NonNull final DeckDao deck) {
         this.serial = serial;

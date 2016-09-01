@@ -102,7 +102,6 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         if (count == 0) {
             actionMode.finish();
         } else {
-            actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
     }
@@ -167,7 +166,8 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         }
     }
 
-    private class CardViewHolder extends BaseRecyclerViewHolder<Card> implements View.OnLongClickListener {
+    private class CardViewHolder extends BaseRecyclerViewHolder<Card>
+            implements View.OnLongClickListener {
         @NonNull
         private final ImageView imageView;
         @NonNull
@@ -250,7 +250,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                     return true;
                 case R.id.add_to_deck:
                     final List<String> cardsToAdd = new ArrayList<>();
-                    for (int index : adapter.getSelectedItems()){
+                    for (int index : adapter.getSelectedItems()) {
                         cardsToAdd.add(resultCards.get(index).getSerial());
                     }
                     DeckSelectDialogFragment.start(getFragmentManager(), cardsToAdd);

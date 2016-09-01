@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joshuaavalon.wsdeckeditor.Handler;
@@ -134,32 +133,32 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     private class DeckListViewHolder extends BaseRecyclerViewHolder<Deck> {
         private final TextView textView;
         private final View itemView;
-        private final ImageView renameImageView;
 
         public DeckListViewHolder(final View itemView) {
             super(itemView);
             this.itemView = itemView;
             textView = (TextView) itemView.findViewById(R.id.text_view);
-            renameImageView = (ImageView) itemView.findViewById(R.id.rename_button);
         }
 
         @Override
         public void bind(final Deck deck) {
-            textView.setText(deck.getName());
+            textView.setText(
+                    deck.getName());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (!(getActivity() instanceof Transactable)) return;
                     final Transactable transactable = (Transactable) getActivity();
-                    //TODO
+                    transactable.transactTo(DeckEditFragment.newInstance(deck.getId()));
                 }
             });
-            renameImageView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View view) {
+                public boolean onLongClick(View view) {
                     DeckRenameDialogFragment.start(getFragmentManager(),
                             DeckListFragment.this,
                             deck.getId());
+                    return true;
                 }
             });
         }

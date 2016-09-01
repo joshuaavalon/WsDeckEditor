@@ -43,8 +43,8 @@ public class MainActivity extends BaseActivity implements Transactable,
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
         actionBar.setDisplayShowTitleEnabled(false);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -72,11 +72,11 @@ public class MainActivity extends BaseActivity implements Transactable,
         return true;
     }
 
+    @Override
     public void transactTo(@NonNull final Fragment fragment) {
         transactTo(fragment, true);
     }
 
-    @Override
     public void transactTo(@NonNull Fragment fragment, boolean addToBackStack) {
         if (addToBackStack)
             getSupportFragmentManager().beginTransaction()

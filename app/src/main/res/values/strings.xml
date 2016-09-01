@@ -78,4 +78,6 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="rename_deck">Rename the deck</string>
     <string name="rename_button">Rename</string>
+    <string name="save_deck">Save Deck</string>
+    <string name="deck_saved">Deck saved!</string>
 </resources>
