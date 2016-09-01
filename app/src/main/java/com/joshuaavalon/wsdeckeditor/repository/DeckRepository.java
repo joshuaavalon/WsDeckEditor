@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.repository;
 
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Multiset;
 import com.joshuaavalon.wsdeckeditor.database.DeckDao;
 import com.joshuaavalon.wsdeckeditor.database.DeckRecord;
@@ -43,14 +44,27 @@ public class DeckRepository {
     public static List<Deck> getDecks() {
         final List<Deck> decks = new ArrayList<>();
         for (DeckDao deckDao : DeckDao.find(DeckDao.class, null)) {
-            final Deck deck = new Deck(deckDao.getId());
-            deck.setName(deckDao.getName());
-            final List<DeckRecord> records = deckDao.getRecords();
-            for (DeckRecord record : records) {
-                deck.setCount(record.getSerial(), record.getCount());
-            }
-            decks.add(deck);
+            decks.add(toDeck(deckDao));
         }
         return decks;
+    }
+
+    private static Deck toDeck(@NonNull DeckDao deckDao) {
+        final Deck deck = new Deck(deckDao.getId());
+        deck.setName(deckDao.getName());
+        final List<DeckRecord> records = deckDao.getRecords();
+        for (DeckRecord record : records) {
+            deck.setCount(record.getSerial(), record.getCount());
+        }
+        return deck;
+    }
+
+    @NonNull
+    public static Optional<Deck> getDeckById(final long id) {
+        final DeckDao deckDao = DeckDao.findById(DeckDao.class, id);
+        if (deckDao == null)
+            return Optional.absent();
+        else
+            return Optional.of(toDeck(deckDao));
     }
 }

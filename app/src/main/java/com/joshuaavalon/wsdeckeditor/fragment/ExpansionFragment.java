@@ -2,7 +2,6 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -132,7 +131,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
         public CardListViewHolder(final View itemView) {
             super(itemView);
             this.itemView = itemView;
-            textView = (TextView) itemView.findViewById(R.id.card_text);
+            textView = (TextView) itemView.findViewById(R.id.text_view);
         }
 
         @Override

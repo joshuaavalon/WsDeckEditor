@@ -126,4 +126,9 @@ public class Deck {
     public void setId(final long id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Deck && ((Deck) obj).id == id && ((Deck) obj).name.equals(name);
+    }
 }

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.CardDetailFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
 
@@ -59,6 +60,9 @@ public class MainActivity extends BaseActivity implements Transactable,
                 break;
             case R.id.nav_search:
                 fragment = new SearchFragment();
+                break;
+            case R.id.nav_deckedit:
+                fragment = new DeckListFragment();
                 break;
         }
         if (fragment != null)

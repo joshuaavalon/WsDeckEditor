@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -12,22 +13,32 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 
-public class DeckCreateDialogFragment extends DialogFragment implements View.OnClickListener {
+public class DeckRenameDialogFragment extends DialogFragment implements View.OnClickListener {
+    private static final String ARG_DECK_ID = "deckId";
     private TextInputLayout textInputLayout;
+    private long deckId;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Bundle args = getArguments();
+        deckId = args.getLong(ARG_DECK_ID, Deck.NO_ID);
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setView(R.layout.dialog_deck_create)
-                .setTitle(R.string.create_a_new_deck)
-                .setPositiveButton(R.string.create_deck_create, null)
+                .setView(R.layout.dialog_deck_rename)
+                .setTitle(R.string.rename_deck)
+                .setPositiveButton(R.string.rename_button, null)
                 .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -50,7 +61,9 @@ public class DeckCreateDialogFragment extends DialogFragment implements View.OnC
             textInputLayout.setError(getString(R.string.deck_name_error));
             return;
         }
-        final Deck deck = new Deck();
+        final Optional<Deck> deckOptional = DeckRepository.getDeckById(deckId);
+        if (!deckOptional.isPresent()) return;
+        final Deck deck = deckOptional.get();
         deck.setName(name);
         DeckRepository.save(deck);
         final Fragment targetFragment = getTargetFragment();
@@ -59,9 +72,14 @@ public class DeckCreateDialogFragment extends DialogFragment implements View.OnC
     }
 
     public static <T extends Fragment & Handler<Void>>
-    void start(@NonNull final FragmentManager fragmentManager, @NonNull final T targetFragment) {
-        final DeckCreateDialogFragment fragment = new DeckCreateDialogFragment();
+    void start(@NonNull final FragmentManager fragmentManager,
+               @NonNull final T targetFragment,
+               final long deckId) {
+        final DeckRenameDialogFragment fragment = new DeckRenameDialogFragment();
         fragment.setTargetFragment(targetFragment, 0);
+        final Bundle args = new Bundle();
+        args.putLong(ARG_DECK_ID, deckId);
+        fragment.setArguments(args);
         fragment.show(fragmentManager, null);
     }
 }

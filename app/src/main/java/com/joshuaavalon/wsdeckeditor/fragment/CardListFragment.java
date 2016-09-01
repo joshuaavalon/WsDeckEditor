@@ -249,7 +249,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                     adapter.clearSelection();
                     return true;
                 case R.id.add_to_deck:
-                    List<String> cardsToAdd = new ArrayList<>();
+                    final List<String> cardsToAdd = new ArrayList<>();
                     for (int index : adapter.getSelectedItems()){
                         cardsToAdd.add(resultCards.get(index).getSerial());
                     }

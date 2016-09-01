@@ -70,7 +70,12 @@
     <string name="cancel_create_deck_button">Cancel</string>
     <string name="enter_deck_name">Enter Deck Name</string>
     <string name="deck_name">Deck Name</string>
-    <string name="create_deck_cancel">Cancel</string>
+    <string name="cancel_button">Cancel</string>
     <string name="create_deck_create">Create</string>
     <string name="deck_name_error">Deck name cannot be empty</string>
+    <string name="filter_decks">Filter Decks</string>
+    <string name="deck_edit">Deck Edit</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="rename_deck">Rename the deck</string>
+    <string name="rename_button">Rename</string>
 </resources>
