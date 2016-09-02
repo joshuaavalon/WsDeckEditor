@@ -215,12 +215,11 @@ public class CardRepository {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
                 .where(Condition.property(SQL_CARD_SERIAL).equal(serial)).commit(db);
-        Card card;
+        Card card = null;
         if (cursor.moveToFirst()) {
             card = buildCard(cursor);
             cursor.close();
-        } else
-            card = new Card.Builder().build();
+        }
         db.close();
         return Optional.fromNullable(card);
     }
