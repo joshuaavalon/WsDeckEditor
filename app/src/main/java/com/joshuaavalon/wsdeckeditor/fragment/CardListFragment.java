@@ -169,40 +169,21 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                                 return input.getName();
                             }
                         })))
-                .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder().toInt(),
-                        new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog,
-                                                       View itemView,
-                                                       int which,
-                                                       CharSequence text) {
-                                final Deck currentDeck = decks.get(which);
-                                for (String serial : cardsToAdd)
-                                    currentDeck.addIfNotExist(serial);
-                                DeckRepository.save(currentDeck);
-                                return true;
-                            }
-                        })
-                .positiveText(R.string.add)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        final Deck currentDeck = decks.get(which);
+                        for (String serial : cardsToAdd)
+                            currentDeck.addIfNotExist(serial);
+                        DeckRepository.save(currentDeck);
+                        dialog.dismiss();
+                    }
+                })
+                .positiveText(R.string.new_deck)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                        showMessage(R.string.add_to_deck);
-                    }
-                })
-                .neutralText(R.string.new_deck)
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         showCreateDeckDialog(dialog, cardsToAdd);
-                    }
-                })
-                .negativeText(R.string.cancel_button)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
                     }
                 })
                 .autoDismiss(false)

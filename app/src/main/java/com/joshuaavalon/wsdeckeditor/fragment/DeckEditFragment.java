@@ -347,6 +347,12 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             else
                 typeTextView.setText(getString(R.string.card_detail_prefix_climax,
                         getString(card.getType().getResId())));
+            typeTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showChangeCardCountDialog(entry);
+                }
+            });
         }
     }
 }

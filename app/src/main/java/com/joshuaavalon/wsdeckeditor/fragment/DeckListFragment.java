@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
+import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
@@ -121,6 +122,28 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                 .show();
     }
 
+    private void showDeckOptionDialog(@NonNull final Deck deck) {
+        new MaterialDialog.Builder(getContext())
+                .title(deck.getName())
+                .items(R.array.deck_option)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        switch (which) {
+                            case 0: //Rename
+                                showRenameDialog(deck);
+                                break;
+                            case 1: //Duplicate
+                                deck.setId(Deck.NO_ID);
+                                DeckRepository.save(deck);
+                                refresh();
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+
     private void showCreateDeckDialog() {
         new MaterialDialog.Builder(getContext())
                 .title(R.string.create_a_new_deck)
@@ -163,12 +186,14 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
     private class DeckListViewHolder extends BaseRecyclerViewHolder<Deck> {
         private final TextView textView;
+        private final TextView statusTextView;
         private final View itemView;
 
         public DeckListViewHolder(final View itemView) {
             super(itemView);
             this.itemView = itemView;
             textView = (TextView) itemView.findViewById(R.id.text_view);
+            statusTextView= (TextView) itemView.findViewById(R.id.status_text_view);
         }
 
         @Override
@@ -186,10 +211,11 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    showRenameDialog(deck);
+                    showDeckOptionDialog(deck);
                     return true;
                 }
             });
+            statusTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
         }
     }
 

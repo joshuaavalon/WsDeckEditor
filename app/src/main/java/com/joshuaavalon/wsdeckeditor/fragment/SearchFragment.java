@@ -2,7 +2,6 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,13 +250,13 @@ public class SearchFragment extends BaseFragment {
             filter.setMaxPower(Integer.valueOf(powerMaxTextView.getText().toString()));
         }
         if (!powerMinTextView.getText().toString().equals("")) {
-            filter.setMinPower(Integer.valueOf(levelMaxTextView.getText().toString()));
+            filter.setMinPower(Integer.valueOf(powerMinTextView.getText().toString()));
         }
         if (!soulMaxTextView.getText().toString().equals("")) {
-            filter.setMaxSoul(Integer.valueOf(levelMaxTextView.getText().toString()));
+            filter.setMaxSoul(Integer.valueOf(soulMaxTextView.getText().toString()));
         }
         if (!soulMinTextView.getText().toString().equals("")) {
-            filter.setMinSoul(Integer.valueOf(levelMaxTextView.getText().toString()));
+            filter.setMinSoul(Integer.valueOf(soulMinTextView.getText().toString()));
         }
 
         final CardListFragment fragment = CardListFragment.newInstance(filter);
