@@ -8,23 +8,4 @@
         android:title="@string/menu_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/sort_asc"
-        android:icon="@drawable/ic_sort_by_asc"
-        android:orderInCategory="20"
-        android:title="@string/sort_ascending"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/sort_desc"
-        android:icon="@drawable/ic_sort_by_desc"
-        android:orderInCategory="20"
-        android:title="@string/sort_descending"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/sort_restore"
-        android:icon="@drawable/ic_restore_white_24dp"
-        android:orderInCategory="30"
-        android:title="@string/restore_order"
-        app:showAsAction="ifRoom" />
 </menu>

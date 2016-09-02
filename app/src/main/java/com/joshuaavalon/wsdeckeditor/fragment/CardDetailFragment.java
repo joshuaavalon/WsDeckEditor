@@ -32,7 +32,7 @@ public class CardDetailFragment extends BaseFragment {
     private TextView serialTextView;
     private TextView expansionTextView;
     private TextView rarityTextView;
-    private TextView sideTextView;
+    private ImageView sideImageView;
     private TextView typeTextView;
     private TextView colorTextView;
     private TextView levelTextView;
@@ -64,7 +64,7 @@ public class CardDetailFragment extends BaseFragment {
         serialTextView = (TextView) rootView.findViewById(R.id.card_detail_serial);
         expansionTextView = (TextView) rootView.findViewById(R.id.card_detail_expansion);
         rarityTextView = (TextView) rootView.findViewById(R.id.card_detail_rarity);
-        sideTextView = (TextView) rootView.findViewById(R.id.card_detail_side);
+        sideImageView = (ImageView) rootView.findViewById(R.id.card_detail_side);
         typeTextView = (TextView) rootView.findViewById(R.id.card_detail_type);
         colorTextView = (TextView) rootView.findViewById(R.id.card_detail_color);
         levelTextView = (TextView) rootView.findViewById(R.id.card_detail_level);
@@ -96,7 +96,7 @@ public class CardDetailFragment extends BaseFragment {
         serialTextView.setText(card.getSerial());
         expansionTextView.setText(card.getExpansion());
         rarityTextView.setText(card.getRarity());
-        sideTextView.setText(card.getSide().getResId());
+        sideImageView.setImageResource(card.getSide().getResId());
         typeTextView.setText(card.getType().getResId());
         colorTextView.setText(card.getColor().getResId());
         if (card.getType() != Card.Type.Climax) {

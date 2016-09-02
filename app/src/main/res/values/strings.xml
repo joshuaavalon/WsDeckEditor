@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">WS Deck Editor</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="card_name">Name</string>
     <string name="card_serial">Serial</string>
     <string name="card_expansion">Expansion</string>
@@ -57,40 +56,39 @@
     <string name="soul">Soul</string>
     <string name="search">Search</string>
     <string name="trigger">Trigger</string>
-    <string name="search_result">Search Result</string>
     <string name="reset">Reset</string>
     <string name="card_side_expansion">Side / Expansion</string>
     <string name="card_char">Attribute</string>
-    <string name="clear_all">Clear All</string>
+    <string name="select_all">Select All</string>
     <string name="normal_only">Normal Only</string>
     <string name="filter_cards">Filter cards</string>
     <string name="select_your_deck">Select Your Deck</string>
     <string name="create_a_new_deck">Create a new deck</string>
-    <string name="confirm_create_deck_button">Create</string>
-    <string name="cancel_create_deck_button">Cancel</string>
-    <string name="enter_deck_name">Enter Deck Name</string>
     <string name="deck_name">Deck Name</string>
     <string name="cancel_button">Cancel</string>
     <string name="create_deck_create">Create</string>
     <string name="deck_name_error">Deck name cannot be empty</string>
     <string name="filter_decks">Filter Decks</string>
     <string name="deck_edit">Deck Edit</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="rename_deck">Rename the deck</string>
     <string name="rename_button">Rename</string>
-    <string name="save_deck">Save Deck</string>
     <string name="deck_saved">Deck saved!</string>
-    <string name="sort_button">SORT</string>
     <string name="sort">Sort</string>
     <string name="menu_sorting">Sorting</string>
     <string name="card_level_prefix">Lv.%s</string>
     <string name="not_applicable">-</string>
     <string name="menu_delete_deck">Delete deck</string>
     <string name="menu_rename_deck">Rename deck</string>
-    <string name="card_count">Card Count</string>
     <string name="count">Count</string>
     <string name="change_button">Change</string>
     <string name="card_count_error">Card count cannot be empty</string>
+    <string name="select_button">Select</string>
+    <string name="rename_deck">Rename Deck</string>
+    <string name="change_card_count">Change Card Count</string>
+    <string name="add_to_deck">Added to deck</string>
+    <string name="add">Add</string>
+    <string name="new_deck">New</string>
+    <string name="card_detail_prefix">Lv.%1$s\n%2$s</string>
+    <string name="card_detail_prefix_climax">-\n%s</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

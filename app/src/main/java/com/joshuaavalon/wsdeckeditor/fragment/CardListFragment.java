@@ -12,6 +12,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,15 +23,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
-import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckSelectDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Card;
+import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
@@ -113,6 +118,17 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case R.id.add_to_deck:
+                startActionMode();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -140,6 +156,79 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         adapter.setModels(filteredCardList);
         recyclerView.scrollToPosition(0);
         return true;
+    }
+
+    private void showDeckSelectDialog(@NonNull final List<String> cardsToAdd) {
+        final List<Deck> decks = DeckRepository.getDecks();
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.select_your_deck)
+                .items(Lists.newArrayList(Iterables.transform(decks,
+                        new Function<Deck, String>() {
+                            @Override
+                            public String apply(Deck input) {
+                                return input.getName();
+                            }
+                        })))
+                .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder().toInt(),
+                        new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog,
+                                                       View itemView,
+                                                       int which,
+                                                       CharSequence text) {
+                                final Deck currentDeck = decks.get(which);
+                                for (String serial : cardsToAdd)
+                                    currentDeck.addIfNotExist(serial);
+                                DeckRepository.save(currentDeck);
+                                return true;
+                            }
+                        })
+                .positiveText(R.string.add)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        showMessage(R.string.add_to_deck);
+                    }
+                })
+                .neutralText(R.string.new_deck)
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        showCreateDeckDialog(dialog, cardsToAdd);
+                    }
+                })
+                .negativeText(R.string.cancel_button)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .autoDismiss(false)
+                .show();
+    }
+
+    private void showCreateDeckDialog(@NonNull final MaterialDialog parent,
+                                      @NonNull final List<String> cardsToAdd) {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.create_a_new_deck)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .positiveText(R.string.create_deck_create)
+                .negativeText(R.string.cancel_button)
+                .input(R.string.deck_name, 0, false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        final Deck deck = new Deck();
+                        deck.setName(input.toString());
+                        for (String serial : cardsToAdd)
+                            deck.addIfNotExist(serial);
+                        DeckRepository.save(deck);
+                        parent.dismiss();
+                        showMessage(R.string.add_to_deck);
+                    }
+                })
+                .show();
     }
 
     private class CardRecyclerViewAdapter extends SelectableAdapter<Card, CardViewHolder> {
@@ -257,15 +346,15 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         @Override
         public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.clear_all:
-                    adapter.clearSelection();
+                case R.id.select_all:
+                    adapter.selecAll();
                     return true;
                 case R.id.add_to_deck:
                     final List<String> cardsToAdd = new ArrayList<>();
                     for (int index : adapter.getSelectedItems()) {
                         cardsToAdd.add(resultCards.get(index).getSerial());
                     }
-                    DeckSelectDialogFragment.start(getFragmentManager(), cardsToAdd);
+                    showDeckSelectDialog(cardsToAdd);
                     return true;
                 default:
                     return false;

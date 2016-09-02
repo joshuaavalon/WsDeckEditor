@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,12 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.common.base.Optional;
-import com.joshuaavalon.wsdeckeditor.Handler;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
-import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckCreateDialogFragment;
-import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
@@ -30,8 +28,7 @@ import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener,
-        Handler<Void>, DeckRenameDialogFragment.Callback {
+public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
     private RecyclerView recyclerView;
     private DeckListAdapter adapter;
     private List<Deck> decks;
@@ -39,8 +36,9 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_deck_list, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         decks = DeckRepository.getDecks();
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -104,24 +102,46 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         return filteredModelList;
     }
 
-    @Override
-    public void handle(Void object) {
-        refresh();
+    private void showRenameDialog(@NonNull final Deck deck) {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.rename_deck)
+                .content(deck.getName())
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .positiveText(R.string.rename_button)
+                .negativeText(R.string.cancel_button)
+                .input(getString(R.string.deck_name), deck.getName(), false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        final Deck renameDeck = DeckRepository.getDeckById(deck.getId()).get();
+                        renameDeck.setName(input.toString());
+                        DeckRepository.save(renameDeck);
+                        refresh();
+                    }
+                })
+                .show();
+    }
+
+    private void showCreateDeckDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.create_a_new_deck)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .positiveText(R.string.create_deck_create)
+                .negativeText(R.string.cancel_button)
+                .input(R.string.deck_name, 0, false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        final Deck deck = new Deck();
+                        deck.setName(input.toString());
+                        DeckRepository.save(deck);
+                        refresh();
+                    }
+                })
+                .show();
     }
 
     private void refresh() {
         decks = DeckRepository.getDecks();
         adapter.setModels(decks);
-    }
-
-    @Override
-    public void changeDeckName(long deckId, @NonNull String title) {
-        final Optional<Deck> deckOptional = DeckRepository.getDeckById(deckId);
-        if (!deckOptional.isPresent()) return;
-        final Deck deck = deckOptional.get();
-        deck.setName(title);
-        DeckRepository.save(deck);
-        refresh();
     }
 
     private class DeckListAdapter extends AnimatedRecyclerAdapter<Deck, DeckListViewHolder> {
@@ -166,7 +186,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    DeckRenameDialogFragment.start(getFragmentManager(), DeckListFragment.this, deck);
+                    showRenameDialog(deck);
                     return true;
                 }
             });
@@ -182,7 +202,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DeckCreateDialogFragment.start(getFragmentManager(), DeckListFragment.this);
+                showCreateDeckDialog();
             }
         });
         fab.setImageResource(R.drawable.ic_add_white_24dp);

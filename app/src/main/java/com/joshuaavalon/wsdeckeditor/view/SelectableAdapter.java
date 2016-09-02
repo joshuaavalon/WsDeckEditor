@@ -11,7 +11,7 @@ public abstract class SelectableAdapter<T, VH extends BaseRecyclerViewHolder<T>>
     @NonNull
     private final SparseBooleanArray selectedItems;
 
-    protected SelectableAdapter(@NonNull List<T> models) {
+    protected SelectableAdapter(@NonNull final List<T> models) {
         super(models);
         selectedItems = new SparseBooleanArray();
     }
@@ -48,5 +48,12 @@ public abstract class SelectableAdapter<T, VH extends BaseRecyclerViewHolder<T>>
             items.add(selectedItems.keyAt(i));
         }
         return items;
+    }
+
+    public void selecAll() {
+        for (int i = 0; i < models.size(); i++) {
+            selectedItems.put(i, true);
+            notifyItemChanged(i);
+        }
     }
 }

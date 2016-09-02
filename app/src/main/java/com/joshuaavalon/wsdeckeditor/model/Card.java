@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.model;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -237,15 +238,15 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Side {
-        W(R.string.side_w), S(R.string.side_s);
-        @StringRes
+        W(R.drawable.side_w), S(R.drawable.side_s);
+        @DrawableRes
         private final int resId;
 
-        Side(@StringRes final int resId) {
+        Side(@DrawableRes final int resId) {
             this.resId = resId;
         }
 
-        @StringRes
+        @DrawableRes
         public int getResId() {
             return resId;
         }

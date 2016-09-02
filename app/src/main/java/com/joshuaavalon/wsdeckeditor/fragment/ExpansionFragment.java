@@ -54,40 +54,6 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        List<String> newList = new ArrayList<>(expansions);
-        switch (id) {
-            case R.id.sort_asc:
-                Collections.sort(newList, new Comparator<String>() {
-                    @Override
-                    public int compare(String s, String t) {
-                        return s.compareTo(t);
-                    }
-                });
-                adapter.setModels(newList);
-                recyclerView.scrollToPosition(0);
-                return true;
-            case R.id.sort_desc:
-                Collections.sort(newList, new Comparator<String>() {
-                    @Override
-                    public int compare(String s, String t) {
-                        return t.compareTo(s);
-                    }
-                });
-                adapter.setModels(newList);
-                recyclerView.scrollToPosition(0);
-                return true;
-            case R.id.sort_restore:
-                adapter.setModels(expansions);
-                recyclerView.scrollToPosition(0);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
