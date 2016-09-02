@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#00796B</color>
     <color name="colorPrimaryDark">#00463D</color>
-    <color name="colorPrimaryLLight">#B2DFDB</color>
+    <color name="colorPrimaryLight">#B2DFDB</color>
     <color name="colorAccent">#FF9800</color>
     <color name="colorError">#F44336</color>
     <color name="cardYellow">#F9A825</color>
