@@ -9,13 +9,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.CardDetailFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
+import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
 
 public class MainActivity extends BaseActivity implements Transactable,
         NavigationView.OnNavigationItemSelectedListener {
@@ -64,6 +72,9 @@ public class MainActivity extends BaseActivity implements Transactable,
             case R.id.nav_deckedit:
                 fragment = new DeckListFragment();
                 break;
+            case R.id.nav_update:
+                showUpdateDialog();
+                break;
         }
         if (fragment != null)
             transactTo(fragment);
@@ -93,16 +104,16 @@ public class MainActivity extends BaseActivity implements Transactable,
                     .commit();
     }
 
-    public void setTitle(@NonNull final String title){
+    public void setTitle(@NonNull final String title) {
         final ActionBar actionBar = getSupportActionBar();
-        if(actionBar == null ) return;
+        if (actionBar == null) return;
         actionBar.setTitle(title);
         actionBar.setDisplayShowTitleEnabled(true);
     }
 
-    public void removeTitle(){
+    public void removeTitle() {
         final ActionBar actionBar = getSupportActionBar();
-        if(actionBar == null ) return;
+        if (actionBar == null) return;
         actionBar.setDisplayShowTitleEnabled(false);
     }
 
@@ -114,6 +125,72 @@ public class MainActivity extends BaseActivity implements Transactable,
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void showUpdateDialog() {
+        final MaterialDialog progressDialog = new MaterialDialog.Builder(this)
+                .title(R.string.load_version)
+                .content(R.string.wait_message)
+                .progress(true, 0)
+                .show();
+        NetworkRepository.downloadVersion(
+                new Handler<Integer>() {
+                    @Override
+                    public void handle(Integer version) {
+                        progressDialog.dismiss();
+                        showDownloadDialog(version);
+                    }
+                },
+                new Handler<String>() {
+                    @Override
+                    public void handle(String object) {
+                        Log.e("Error", object);
+                        progressDialog.dismiss();
+                        showMessage(object);
+                    }
+                });
+    }
+
+    private void showDownloadDialog(final int version) {
+        final MaterialDialog updateDialog = new MaterialDialog.Builder(this)
+                .title(R.string.download_dialog_title)
+                .customView(R.layout.dialog_update, false)
+                .show();
+        final View view = updateDialog.getCustomView();
+        if (view == null) return;
+        final TextView textView = (TextView) view.findViewById(R.id.text_view);
+        textView.setText(getString(
+                R.string.latest_version,
+                String.valueOf(version),
+                String.valueOf(CardRepository.getVersion()
+                )));
+        final Button updateDatabaseButton = (Button) view.findViewById(R.id.update_database_button);
+        updateDatabaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkRepository.downloadDatabase();
+                showMessage(R.string.update_started);
+                updateDialog.dismiss();
+            }
+        });
+        final Button updateImageButton = (Button) view.findViewById(R.id.update_images_button);
+        updateImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkRepository.downloadImages(CardRepository.getAllImages(), false);
+                showMessage(R.string.update_started);
+                updateDialog.dismiss();
+            }
+        });
+        final Button downloadAllImagesButton = (Button) view.findViewById(R.id.download_all_images_button);
+        downloadAllImagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkRepository.downloadImages(CardRepository.getAllImages(), true);
+                showMessage(R.string.update_started);
+                updateDialog.dismiss();
+            }
+        });
     }
 }
 

@@ -8,7 +8,8 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 
 public class PreferenceRepository {
     private static final String SORT_ORDER_KEY = "sortOrder";
-    private static final String SORT_AUTO_SAVE = "autoSave";
+    private static final String AUTO_SAVE_KEY = "autoSave";
+    private static final String HIDE_NORMAL_KEY = "hideNormal";
 
     public static Card.SortOrder getSortOrder() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
@@ -25,13 +26,25 @@ public class PreferenceRepository {
 
     public static boolean getAutoSave() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        return preferences.getBoolean(SORT_AUTO_SAVE, false);
+        return preferences.getBoolean(AUTO_SAVE_KEY, false);
     }
 
     public static void setAutoSave(boolean autoSave) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         final SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(SORT_AUTO_SAVE, autoSave);
+        editor.putBoolean(AUTO_SAVE_KEY, autoSave);
+        editor.apply();
+    }
+
+    public static boolean getHideNormal(){
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
+        return preferences.getBoolean(HIDE_NORMAL_KEY, false);
+    }
+
+    public static void setHideNormal(boolean autoSave) {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
+        final SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(HIDE_NORMAL_KEY, autoSave);
         editor.apply();
     }
 }

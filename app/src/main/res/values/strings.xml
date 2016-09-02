@@ -89,6 +89,16 @@
     <string name="new_deck">New</string>
     <string name="card_detail_prefix">Lv.%1$s\n%2$s</string>
     <string name="card_detail_prefix_climax">-\n%s</string>
+    <string name="load_version">Loading latest version</string>
+    <string name="wait_message">Please wait</string>
+    <string name="network_error">Network error. Please check your network and try again.</string>
+    <string name="download_dialog_title">Download Resources</string>
+    <string name="latest_version">Latest Version: %1$s\nYour Version: %2$s</string>
+    <string name="update_database">Update Database</string>
+    <string name="update_images">Update Images</string>
+    <string name="download_all_images">Download All Images</string>
+    <string name="update_started">Update started</string>
+    <string name="system">System</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

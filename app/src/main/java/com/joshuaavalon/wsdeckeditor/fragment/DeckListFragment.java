@@ -15,14 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.common.collect.Multiset;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
-import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
@@ -192,20 +189,12 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         private final TextView textView;
         private final TextView statusTextView;
         private final View itemView;
-        private final View yellowView;
-        private final View greenView;
-        private final View redView;
-        private final View blueView;
 
         public DeckListViewHolder(final View itemView) {
             super(itemView);
             this.itemView = itemView;
             textView = (TextView) itemView.findViewById(R.id.text_view);
             statusTextView = (TextView) itemView.findViewById(R.id.status_text_view);
-            yellowView = itemView.findViewById(R.id.yellow_bar);
-            greenView = itemView.findViewById(R.id.green_bar);
-            redView = itemView.findViewById(R.id.red_bar);
-            blueView = itemView.findViewById(R.id.blue_bar);
         }
 
         @Override
@@ -228,31 +217,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                 }
             });
             statusTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
-
-            final Multiset<Card.Color> colorCount = DeckUtils.getColorCount(deck);
-            for (Card.Color color : Card.Color.values()) {
-                final View colorView = getColorView(color);
-                final LinearLayout.LayoutParams params =
-                        new LinearLayout.LayoutParams(colorView.getLayoutParams());
-                params.weight = colorCount.count(color);
-                colorView.setLayoutParams(params);
-                colorView.setBackgroundResource(ColorUtils.getColor(color));
-            }
-        }
-
-        private View getColorView(@NonNull final Card.Color color) {
-            switch (color) {
-                case Yellow:
-                    return yellowView;
-                case Green:
-                    return greenView;
-                case Red:
-                    return redView;
-                case Blue:
-                    return blueView;
-                default:
-                    return yellowView;
-            }
+            ColorUtils.setColorView(deck, itemView);
         }
     }
 

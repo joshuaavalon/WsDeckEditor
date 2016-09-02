@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -16,5 +17,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_LONG).show();
         else
             Toast.makeText(this, resId, Toast.LENGTH_LONG).show();
+    }
+
+
+    public void showMessage(@NonNull final String message) {
+        final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        if (coordinatorLayout != null)
+            Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

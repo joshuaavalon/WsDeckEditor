@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 
@@ -110,6 +111,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
                     final Transactable transactable = (Transactable) getActivity();
                     final CardRepository.Filter filter = new CardRepository.Filter();
                     filter.setExpansion(title);
+                    filter.setNormalOnly(PreferenceRepository.getHideNormal());
                     final CardListFragment fragment = CardListFragment.newInstance(filter);
                     transactable.transactTo(fragment);
                 }

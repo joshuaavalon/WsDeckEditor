@@ -14,19 +14,19 @@
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/nav_search" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/system">
         <menu>
             <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_update"
                 android:icon="@drawable/ic_autorenew_black_24dp"
                 android:title="@string/nav_update" />
+                <item
+                    android:id="@+id/nav_setting"
+                    android:icon="@drawable/ic_settings_black_24dp"
+                    android:title="Tools" />
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_info_outline_black_24dp"

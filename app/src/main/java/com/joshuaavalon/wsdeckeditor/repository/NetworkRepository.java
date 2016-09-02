@@ -18,6 +18,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.joshuaavalon.wsdeckeditor.Handler;
@@ -68,7 +69,7 @@ public class NetworkRepository {
                 } catch (FileNotFoundException ignored) {
                 }
                 if (!dbFile.delete())
-                    Log.e("NetworkRepository", "Clear db cache");
+                    Log.e("NetworkRepository", "Failed to clear db cache");
             }
         }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
@@ -99,34 +100,24 @@ public class NetworkRepository {
         thread.start();
     }
 
-    public static Bitmap getCardImage(String imageName, Card.Type type) {
-        final Context context = WsApplication.getContext();
-        final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
-                type != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
-        return getImage(imageName, bitmap);
-    }
-
-    public static Bitmap getImage(@NonNull final String imageName,
-                                  @NonNull final Bitmap defaultBitmap) {
-        final Context context = WsApplication.getContext();
-        Bitmap bitmap = defaultBitmap;
-        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                imageName);
-        if (image.exists()) {
-            BitmapFactory.Options option = new BitmapFactory.Options();
-            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
-            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
-        }
-        return bitmap;
-    }
-
-    public void downloadversionz(@NonNull final Handler<Integer> handler) {
-        final StringRequest request = new StringRequest(Request.Method.GET, DB_VERSION_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                handler.handle(Integer.valueOf(response));
-            }
-        }, null);
+    public static void downloadVersion(@Nullable final Handler<Integer> successHandler,
+                                       @Nullable final Handler<String> failHandler) {
+        final StringRequest request = new StringRequest(Request.Method.GET, DB_VERSION_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (successHandler != null)
+                            successHandler.handle(Integer.valueOf(response));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (failHandler != null)
+                            failHandler.handle(WsApplication.getContext()
+                                    .getString(R.string.network_error));
+                    }
+                });
         if (requestQueue == null) {
             final Context context = WsApplication.getContext();
             requestQueue = Volley.newRequestQueue(context);

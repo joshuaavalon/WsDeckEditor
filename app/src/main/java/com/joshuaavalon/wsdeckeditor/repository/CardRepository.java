@@ -11,7 +11,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.google.common.base.Optional;
 import com.joshuaavalon.fluentquery.Condition;
@@ -25,7 +24,9 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CardRepository {
     private static final String SQL_CARD = "card";
@@ -158,14 +159,14 @@ public class CardRepository {
             final Condition conditionSR = Condition.property(SQL_CARD_RARITY).equal("SR");
             final Condition conditionSP = Condition.property(SQL_CARD_RARITY).equal("SP");
             final Condition conditionRRR = Condition.property(SQL_CARD_RARITY).equal("RRR");
-            whereCondition = andConditions(conditionSR.or(conditionSP.or(conditionRRR)).not(), whereCondition);
+            final Condition conditionXR = Condition.property(SQL_CARD_RARITY).equal("XR");
+            whereCondition = andConditions(conditionSR.or(conditionSP.or(conditionRRR.or(conditionXR))).not(),
+                    whereCondition);
         }
 
         final Query query = Query.select(getCols()).from(SQL_CARD);
-        if (whereCondition != null) {
+        if (whereCondition != null)
             query.where(whereCondition);
-            Log.e("Condition", whereCondition.toString());
-        }
 
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = query.commit(db);
@@ -222,6 +223,31 @@ public class CardRepository {
         }
         db.close();
         return Optional.fromNullable(card);
+    }
+
+    @NonNull
+    public static Map<String, Card> getCardsBySerial(@NonNull final Collection<String> serials) {
+        final Map<String, Card> cards = new HashMap<>();
+        final SQLiteDatabase db = getReadableDatabase();
+        Condition condition = null;
+        for (String serial : serials) {
+            if (condition == null)
+                condition = Condition.property(SQL_CARD_SERIAL).equal(serial);
+            else
+                condition = condition.or(Condition.property(SQL_CARD_SERIAL).equal(serial));
+        }
+        if(condition == null) return cards;
+        final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
+                .where(condition).commit(db);
+        if (cursor.moveToFirst()) {
+            do {
+                final Card card = buildCard(cursor);
+                cards.put(card.getSerial(), card);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+        return cards;
     }
 
     @NonNull

@@ -47,6 +47,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private CardRecyclerViewAdapter adapter;
     private Deck deck;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View view;
 
     public static DeckEditFragment newInstance(final long deckId) {
         final DeckEditFragment fragment = new DeckEditFragment();
@@ -157,7 +158,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
+        view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new CardRecyclerViewAdapter(deck.getList());
         recyclerView.setAdapter(adapter);
@@ -180,7 +181,6 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                     }
                 });
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
         setHasOptionsMenu(true);
@@ -194,6 +194,8 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         sort(PreferenceRepository.getSortOrder());
         if (PreferenceRepository.getAutoSave())
             DeckRepository.save(deck);
+
+        ColorUtils.setColorView(deck, view);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Deck {
@@ -101,11 +102,11 @@ public class Deck {
 
     @NonNull
     public Multiset<Card> getList() {
-        ImmutableMultiset.Builder<Card> builder = new ImmutableMultiset.Builder<>();
+        final ImmutableMultiset.Builder<Card> builder = new ImmutableMultiset.Builder<>();
+        final Map<String,Card> cards = CardRepository.getCardsBySerial(serialList.elementSet());
         for (String serial : serialList.elementSet()) {
-            final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
-            if (cardOptional.isPresent())
-                builder.setCount(cardOptional.get(), serialList.count(serial));
+            if (cards.containsKey(serial))
+                builder.setCount(cards.get(serial), serialList.count(serial));
         }
         return builder.build();
     }

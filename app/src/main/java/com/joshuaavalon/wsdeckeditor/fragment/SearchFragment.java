@@ -16,6 +16,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 
 import java.util.ArrayList;
 
@@ -54,6 +55,7 @@ public class SearchFragment extends BaseFragment {
         charaSwitch = (Switch) linearLayout.findViewById(R.id.search_char_switch);
         textSwitch = (Switch) linearLayout.findViewById(R.id.search_text_switch);
         normalSwitch = (Switch) linearLayout.findViewById(R.id.normal_only_switch);
+        normalSwitch.setChecked(PreferenceRepository.getHideNormal());
         levelMaxTextView = (EditText) linearLayout.findViewById(R.id.search_level_max_text);
         levelMinTextView = (EditText) linearLayout.findViewById(R.id.search_level_min_text);
         costMaxTextView = (EditText) linearLayout.findViewById(R.id.search_cost_max_text);
@@ -107,7 +109,7 @@ public class SearchFragment extends BaseFragment {
         ArrayAdapter<String> triggerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, triggerSpinnerItems);
         triggerSpinner.setAdapter(triggerAdapter);
 
-        Button searchButton = (Button) linearLayout.findViewById(R.id.search_button);
+        final Button searchButton = (Button) linearLayout.findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,7 +118,7 @@ public class SearchFragment extends BaseFragment {
         });
 
 
-        Button resetButton = (Button) linearLayout.findViewById(R.id.reset_button);
+        final Button resetButton = (Button) linearLayout.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
