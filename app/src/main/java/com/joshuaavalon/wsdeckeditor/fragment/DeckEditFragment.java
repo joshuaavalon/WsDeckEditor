@@ -27,7 +27,8 @@ import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
-import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameAltDialogFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.ChangeCardCountDialogFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.dialog.DeckRenameDialogFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.dialog.SortCardDialogFragment;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
@@ -42,7 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class DeckEditFragment extends BaseFragment implements Handler<Object> {
+public class DeckEditFragment extends BaseFragment implements Handler<Object>, ChangeCardCountDialogFragment.Callback, DeckRenameDialogFragment.Callback {
     private static final String ARG_DECK_ID = "deckId";
     private CardRecyclerViewAdapter adapter;
     private Deck deck;
@@ -80,7 +81,9 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
                 getFragmentManager().popBackStack();
                 return true;
             case R.id.menu_rename:
-                DeckRenameAltDialogFragment.start(getFragmentManager(), DeckEditFragment.this);
+                DeckRenameDialogFragment.start(getFragmentManager(),
+                        DeckEditFragment.this,
+                        deck);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -164,11 +167,6 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
 
     @Override
     public void handle(Object result) {
-        if (result instanceof String) {
-            deck.setName((String) result);
-            refresh();
-            return;
-        }
         if (result instanceof Card.SortOrder) {
             final Card.SortOrder order = (Card.SortOrder) result;
             PreferenceRepository.setSortOrder(order);
@@ -180,6 +178,18 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
         final List<Multiset.Entry<Card>> lists = Lists.newArrayList(deck.getList().entrySet());
         Collections.sort(lists, transformComparator(Card.Comparator(order)));
         adapter.setModels(lists);
+    }
+
+    @Override
+    public void changeCardCount(@NonNull String serial, int count) {
+        deck.setCount(serial, count);
+        refresh();
+    }
+
+    @Override
+    public void changeDeckName(long deckId, @NonNull String title) {
+        deck.setName(title);
+        refresh();
     }
 
     private class CardRecyclerViewAdapter extends SelectableAdapter<Multiset.Entry<Card>, CardViewHolder> {
@@ -202,12 +212,13 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
 
         @NonNull
         public List<Card> getCards() {
-            return Lists.newArrayList(Iterables.transform(models, new Function<Multiset.Entry<Card>, Card>() {
-                @Override
-                public Card apply(Multiset.Entry<Card> input) {
-                    return input.getElement();
-                }
-            }));
+            return Lists.newArrayList(
+                    Iterables.transform(models, new Function<Multiset.Entry<Card>, Card>() {
+                        @Override
+                        public Card apply(Multiset.Entry<Card> input) {
+                            return input.getElement();
+                        }
+                    }));
         }
     }
 
@@ -274,6 +285,14 @@ public class DeckEditFragment extends BaseFragment implements Handler<Object> {
             colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
             countTextView.setText(String.valueOf(entry.getCount()));
+            countTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ChangeCardCountDialogFragment.start(getFragmentManager(),
+                            DeckEditFragment.this,
+                            card.getSerial());
+                }
+            });
             typeTextView.setText(card.getType().getResId());
         }
     }

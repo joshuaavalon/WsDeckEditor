@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.common.base.Optional;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener,
-        Handler<Void> {
+        Handler<Void>, DeckRenameDialogFragment.Callback {
     private RecyclerView recyclerView;
     private DeckListAdapter adapter;
     private List<Deck> decks;
@@ -113,6 +114,16 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         adapter.setModels(decks);
     }
 
+    @Override
+    public void changeDeckName(long deckId, @NonNull String title) {
+        final Optional<Deck> deckOptional = DeckRepository.getDeckById(deckId);
+        if (!deckOptional.isPresent()) return;
+        final Deck deck = deckOptional.get();
+        deck.setName(title);
+        DeckRepository.save(deck);
+        refresh();
+    }
+
     private class DeckListAdapter extends AnimatedRecyclerAdapter<Deck, DeckListViewHolder> {
         public DeckListAdapter(List<Deck> models) {
             super(models);
@@ -155,9 +166,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    DeckRenameDialogFragment.start(getFragmentManager(),
-                            DeckListFragment.this,
-                            deck.getId());
+                    DeckRenameDialogFragment.start(getFragmentManager(), DeckListFragment.this, deck);
                     return true;
                 }
             });

@@ -87,6 +87,10 @@
     <string name="not_applicable">-</string>
     <string name="menu_delete_deck">Delete deck</string>
     <string name="menu_rename_deck">Rename deck</string>
+    <string name="card_count">Card Count</string>
+    <string name="count">Count</string>
+    <string name="change_button">Change</string>
+    <string name="card_count_error">Card count cannot be empty</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
