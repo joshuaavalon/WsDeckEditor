@@ -314,6 +314,7 @@ public class SearchFragment extends BaseFragment {
     private void showSearchAreaDialog() {
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
                 .title(R.string.search_area)
+                .iconRes(R.drawable.ic_search_black_24dp)
                 .items(R.array.search_area)
                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
@@ -322,6 +323,7 @@ public class SearchFragment extends BaseFragment {
                             searchAreaChecked[i] = false;
                         for (int position : which)
                             searchAreaChecked[position] = true;
+                        setSearchAreaTextView();
                         return true;
                     }
                 })
