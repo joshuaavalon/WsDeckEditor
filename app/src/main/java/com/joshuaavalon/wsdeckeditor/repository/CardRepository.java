@@ -25,26 +25,26 @@ import java.util.List;
 import java.util.Map;
 
 public class CardRepository {
-    private static final String SQL_CARD = "card";
-    private static final String SQL_CARD_NAME = "Name";
-    private static final String SQL_CARD_SERIAL = "Serial";
-    private static final String SQL_CARD_RARITY = "Rarity";
-    private static final String SQL_CARD_EXP = "Expansion";
-    private static final String SQL_CARD_SIDE = "Side";
-    private static final String SQL_CARD_COLOR = "Color";
-    private static final String SQL_CARD_LEVEL = "Level";
-    private static final String SQL_CARD_POWER = "Power";
-    private static final String SQL_CARD_COST = "Cost";
-    private static final String SQL_CARD_SOUL = "Soul";
-    private static final String SQL_CARD_TYPE = "Type";
-    private static final String SQL_CARD_FIRST_CHR = "FirstChara";
-    private static final String SQL_CARD_SECOND_CHR = "SecondChara";
-    private static final String SQL_CARD_TXT = "Text";
-    private static final String SQL_CARD_FLAVOR = "Flavor";
-    private static final String SQL_CARD_TRIGGER = "Trigger";
-    private static final String SQL_CARD_IMAGE = "Image";
-    private static final String SQL_VERSION = "version";
-    private static final String SQL_VERSION_FIELD = "Version";
+    public static final String SQL_CARD = "card";
+    public static final String SQL_CARD_NAME = "Name";
+    public static final String SQL_CARD_SERIAL = "Serial";
+    public static final String SQL_CARD_RARITY = "Rarity";
+    public static final String SQL_CARD_EXP = "Expansion";
+    public static final String SQL_CARD_SIDE = "Side";
+    public static final String SQL_CARD_COLOR = "Color";
+    public static final String SQL_CARD_LEVEL = "Level";
+    public static final String SQL_CARD_POWER = "Power";
+    public static final String SQL_CARD_COST = "Cost";
+    public static final String SQL_CARD_SOUL = "Soul";
+    public static final String SQL_CARD_TYPE = "Type";
+    public static final String SQL_CARD_FIRST_CHR = "FirstChara";
+    public static final String SQL_CARD_SECOND_CHR = "SecondChara";
+    public static final String SQL_CARD_TXT = "Text";
+    public static final String SQL_CARD_FLAVOR = "Flavor";
+    public static final String SQL_CARD_TRIGGER = "Trigger";
+    public static final String SQL_CARD_IMAGE = "Image";
+    public static final String SQL_VERSION = "version";
+    public static final String SQL_VERSION_FIELD = "Version";
 
     @Nullable
     private static Condition getCondition(@NonNull final Collection<String> phases,

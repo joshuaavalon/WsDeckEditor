@@ -127,4 +127,9 @@
         <item>@string/card_char</item>
         <item>@string/card_text</item>
     </string-array>
+
+    <string-array name="card_side">
+        <item>@string/side_w</item>
+        <item>@string/side_s</item>
+    </string-array>
 </resources>
