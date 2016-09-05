@@ -109,6 +109,11 @@
     <string name="max_power">Max Power</string>
     <string name="min_soul">Min Soul</string>
     <string name="max_soul">Max Soul</string>
+    <string name="op_lesser">&lt;</string>
+    <string name="op_lesser_eq">&lt;=</string>
+    <string name="op_greater">&gt;</string>
+    <string name="op_greater_eq">&gt;=</string>
+    <string name="op_eq">=</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
@@ -132,4 +137,31 @@
         <item>@string/side_w</item>
         <item>@string/side_s</item>
     </string-array>
+
+    <string-array name="card_color">
+        <item>@string/color_yellow</item>
+        <item>@string/color_green</item>
+        <item>@string/color_red</item>
+        <item>@string/color_blue</item>
+    </string-array>
+    <string-array name="card_type">
+        <item>@string/type_chara</item>
+        <item>@string/type_event</item>
+        <item>@string/type_climax</item>
+    </string-array>
+    <string-array name="card_trigger">
+        <item>@string/trigger_none</item>
+        <item>@string/trigger_1s</item>
+        <item>@string/trigger_2s</item>
+        <item>@string/trigger_wind</item>
+        <item>@string/trigger_fire</item>
+        <item>@string/trigger_bag</item>
+        <item>@string/trigger_gold</item>
+        <item>@string/trigger_door</item>
+        <item>@string/trigger_book</item>
+        <item>@string/trigger_gate</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

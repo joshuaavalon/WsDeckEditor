@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +34,9 @@ public class KeywordCardFilterItem extends CardFilterItem {
     private final Set<String> phases;
     private final boolean isNot;
     private TextView searchAreaTextView;
+    private TextInputEditText editText;
     private final boolean[] searchAreaChecked;
+    private String phaseString = null;
 
     public KeywordCardFilterItem(final boolean isNot) {
         this.isNot = isNot;
@@ -61,7 +64,8 @@ public class KeywordCardFilterItem extends CardFilterItem {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        setPhases(searchAreaTextView.getText().toString());
+                        phaseString = editText.getText().toString();
+                        setPhases(phaseString);
                         callback.handle(null);
                     }
                 })
@@ -76,9 +80,13 @@ public class KeywordCardFilterItem extends CardFilterItem {
                     showSearchAreaDialog(context);
                 }
             });
-            final TextInputEditText editText = (TextInputEditText) view.findViewById(R.id.edit_text);
-            editText.setHint(getTitle());
+            final TextInputLayout textInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_layout);
+            textInputLayout.setHint(context.getString(getTitle()));
+            editText = (TextInputEditText) view.findViewById(R.id.edit_text);
+            if (phaseString != null)
+                editText.setText(phaseString);
             searchAreaTextView = (TextView) view.findViewById(R.id.search_area_text_view);
+            setSearchAreaTextView(context);
         }
         return dialog;
     }

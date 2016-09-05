@@ -9,36 +9,36 @@ import com.google.common.base.Optional;
 import com.joshuaavalon.fluentquery.Condition;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.StringUtils;
-import com.joshuaavalon.wsdeckeditor.WsApplication;
-import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
-public class SideCardFilterItem extends CardFilterItem {
-    private Card.Side side = null;
+import java.util.List;
+
+public class ExpansionCardFilterItem extends CardFilterItem{
+    private String expansion;
 
     @NonNull
     @Override
     public Optional<Condition> toCondition() {
-        if (side == null) return Optional.absent();
-        return Optional.of(Condition.property(CardRepository.SQL_CARD_SIDE).equal(side.toString()));
+        if(expansion == null) return  Optional.absent();
+        return Optional.of(Condition.property(CardRepository.SQL_CARD_EXP).equal(expansion));
     }
 
     @NonNull
     @Override
-    public MaterialDialog getDialog(@NonNull final Context context,
-                                    @NonNull final Handler<Void> callback) {
+    public MaterialDialog getDialog(Context context, final Handler<Void> callback) {
+        final List<String> expansions = CardRepository.getExpansions();
         return new MaterialDialog.Builder(context)
-                .title(R.string.card_side)
-                .items(StringUtils.getStringResourceList(Card.Side.class))
+                .title(getTitle())
+                .items(expansions)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog dialog,
                                             View itemView,
                                             int position,
                                             CharSequence text) {
-                        side = Card.Side.values()[position];
+                        expansion = expansions.get(position);
                         callback.handle(null);
+
                     }
                 })
                 .show();
@@ -46,12 +46,12 @@ public class SideCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_side;
+        return R.string.card_expansion;
     }
 
     @NonNull
     @Override
     public String getContent() {
-        return WsApplication.getContext().getString(side.getResId());
+        return expansion;
     }
 }

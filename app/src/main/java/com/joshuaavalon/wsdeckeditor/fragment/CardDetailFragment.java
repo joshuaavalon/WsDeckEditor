@@ -96,7 +96,7 @@ public class CardDetailFragment extends BaseFragment {
         serialTextView.setText(card.getSerial());
         expansionTextView.setText(card.getExpansion());
         rarityTextView.setText(card.getRarity());
-        sideImageView.setImageResource(card.getSide().getResId());
+        sideImageView.setImageResource(card.getSide().getDrawable());
         typeTextView.setText(card.getType().getResId());
         colorTextView.setText(card.getColor().getResId());
         if (card.getType() != Card.Type.Climax) {
@@ -148,7 +148,7 @@ public class CardDetailFragment extends BaseFragment {
     }
 
     private void startSearch(CardRepository.Filter filter) {
-        final SearchFragment fragment = SearchFragment.newInstance(filter);
+        final SearchFragment2 fragment = SearchFragment2.newInstance(filter);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, fragment)
                 .addToBackStack(null)

@@ -7,6 +7,7 @@ import android.support.annotation.StringRes;
 
 import com.google.common.collect.ComparisonChain;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.StringResource;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -190,7 +191,7 @@ public class Card implements Comparable<Card> {
                 .result();
     }
 
-    public enum Type {
+    public enum Type implements StringResource {
         Character(R.string.type_chara, 1),
         Event(R.string.type_event, 2),
         Climax(R.string.type_climax, 3);
@@ -203,6 +204,7 @@ public class Card implements Comparable<Card> {
             this.order = order;
         }
 
+        @Override
         @StringRes
         public int getResId() {
             return resId;
@@ -213,7 +215,7 @@ public class Card implements Comparable<Card> {
         }
     }
 
-    public enum Trigger {
+    public enum Trigger implements StringResource {
         None(R.string.trigger_none),
         OneSoul(R.string.trigger_1s),
         TwoSoul(R.string.trigger_2s),
@@ -231,28 +233,38 @@ public class Card implements Comparable<Card> {
             this.resId = resId;
         }
 
+        @Override
         @StringRes
         public int getResId() {
             return resId;
         }
     }
 
-    public enum Side {
-        W(R.drawable.side_w), S(R.drawable.side_s);
-        @DrawableRes
+    public enum Side implements StringResource {
+        W(R.drawable.side_w, R.string.side_w), S(R.drawable.side_s, R.string.side_s);
+        @StringRes
         private final int resId;
+        @DrawableRes
+        private final int drawable;
 
-        Side(@DrawableRes final int resId) {
+        Side(@DrawableRes final int drawable, @StringRes final int resId) {
+            this.drawable = drawable;
             this.resId = resId;
         }
 
         @DrawableRes
+        public int getDrawable() {
+            return drawable;
+        }
+
+        @Override
+        @StringRes
         public int getResId() {
             return resId;
         }
     }
 
-    public enum Color {
+    public enum Color  implements StringResource{
         Yellow(R.string.color_yellow, 1),
         Green(R.string.color_green, 2),
         Red(R.string.color_red, 3),
@@ -266,6 +278,7 @@ public class Card implements Comparable<Card> {
             this.order = order;
         }
 
+        @Override
         @StringRes
         public int getResId() {
             return resId;
@@ -481,7 +494,7 @@ public class Card implements Comparable<Card> {
             return values[value];
         }
 
-        public int toInt(){
+        public int toInt() {
             return Arrays.asList(values).indexOf(this);
         }
     }

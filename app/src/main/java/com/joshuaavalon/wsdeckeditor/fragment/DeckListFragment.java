@@ -42,8 +42,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager( new LinearLayoutManager(getContext()));
         adapter = new DeckListAdapter(decks);
         recyclerView.setAdapter(adapter);
 

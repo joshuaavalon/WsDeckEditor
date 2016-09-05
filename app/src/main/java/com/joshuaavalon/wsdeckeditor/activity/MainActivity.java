@@ -22,6 +22,7 @@ import com.joshuaavalon.wsdeckeditor.fragment.CardDetailFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment2;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
 
@@ -67,7 +68,7 @@ public class MainActivity extends BaseActivity implements Transactable,
                 fragment = new ExpansionFragment();
                 break;
             case R.id.nav_search:
-                fragment = SearchFragment.newInstance(null);
+                fragment = new SearchFragment();
                 break;
             case R.id.nav_deckedit:
                 fragment = new DeckListFragment();

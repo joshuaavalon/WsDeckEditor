@@ -14,7 +14,7 @@
         <View
             android:id="@+id/color_bar"
             android:layout_width="10dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <ImageView
             android:id="@+id/card_image"
@@ -32,20 +32,23 @@
 
             <TextView
                 android:id="@+id/card_serial"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/highlight_text_color" />
 
             <TextView
                 android:id="@+id/card_name"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:padding="5dp"
-                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/highlight_text_color" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="70dp"
             android:layout_height="match_parent"
@@ -53,26 +56,25 @@
 
             <TextView
                 android:id="@+id/card_level"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:paddingTop="5dp"
                 android:gravity="center"
-                style="@style/TextAppearance.AppCompat.Medium"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
                 android:textColor="@color/highlight_subtext_color" />
 
             <TextView
                 android:id="@+id/card_type"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
                 android:gravity="center"
-                android:text="Lv\nCharacter"
-                style="@style/TextAppearance.AppCompat.Small"
+                android:paddingBottom="5dp"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
                 android:textColor="@color/highlight_subtext_color" />
         </LinearLayout>
     </LinearLayout>
