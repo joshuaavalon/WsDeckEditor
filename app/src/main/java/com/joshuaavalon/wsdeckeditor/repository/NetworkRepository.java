@@ -21,12 +21,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.common.base.Optional;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.database.WsDatabaseHelper;
-import com.joshuaavalon.wsdeckeditor.model.Card;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,7 +77,7 @@ public class NetworkRepository {
     public static void downloadImages(@NonNull final List<String> urls, final boolean forced) {
         final Context context = WsApplication.getContext();
         final DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Thread thread = new Thread(new Runnable() {
+        final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for (String url : urls) {
@@ -98,6 +98,18 @@ public class NetworkRepository {
             }
         });
         thread.start();
+    }
+
+    public static Optional<Bitmap> getImage(@NonNull final String imageName) {
+        Bitmap bitmap = null;
+        final Context context = WsApplication.getContext();
+        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageName);
+        if (image.exists()) {
+            final BitmapFactory.Options option = new BitmapFactory.Options();
+            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
+            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
+        }
+        return Optional.fromNullable(bitmap);
     }
 
     public static void downloadVersion(@Nullable final Handler<Integer> successHandler,

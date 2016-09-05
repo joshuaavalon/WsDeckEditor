@@ -99,6 +99,16 @@
     <string name="download_all_images">Download All Images</string>
     <string name="update_started">Update started</string>
     <string name="system">System</string>
+    <string name="search_area">Search Area</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="min_level">Min Level</string>
+    <string name="max_level">Max Level</string>
+    <string name="min_cost">Min Cost</string>
+    <string name="max_cost">Max Cost</string>
+    <string name="min_power">Min Power</string>
+    <string name="max_power">Max Power</string>
+    <string name="min_soul">Min Soul</string>
+    <string name="max_soul">Max Soul</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
@@ -109,5 +119,12 @@
     <string-array name="deck_option">
         <item>Rename</item>
         <item>Duplicate</item>
+    </string-array>
+
+    <string-array name="search_area">
+        <item>@string/card_name</item>
+        <item>@string/card_serial</item>
+        <item>@string/card_char</item>
+        <item>@string/card_text</item>
     </string-array>
 </resources>

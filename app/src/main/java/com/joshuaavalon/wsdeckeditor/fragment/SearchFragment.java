@@ -2,6 +2,8 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.common.base.Joiner;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.model.Card;
@@ -19,81 +24,100 @@ import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchFragment extends BaseFragment {
-    public static final String FILTER_KEY = "Filter_Key";
+    private static final String FILTER_KEY = "Filter_Key";
     private static final String SPLIT_REGEX = "\\s+";
-    private EditText keywordAndTextView;
-    private EditText keywordOrTextView;
-    private EditText keywordNotTextView;
-    private Switch nameSwitch;
-    private Switch serialSwitch;
-    private Switch charaSwitch;
-    private Switch textSwitch;
+    private static final int SEARCH_AREA_NAME = 0;
+    private static final int SEARCH_AREA_SERIAL = 1;
+    private static final int SEARCH_AREA_CHAR = 2;
+    private static final int SEARCH_AREA_TEXT = 3;
+    private TextInputEditText keywordAndTextView;
+    private TextInputEditText keywordOrTextView;
+    private TextInputEditText keywordNotTextView;
     private Switch normalSwitch;
     private Spinner expSpinner;
     private Spinner typeSpinner;
     private Spinner colorSpinner;
     private Spinner triggerSpinner;
-    private EditText levelMaxTextView;
-    private EditText levelMinTextView;
-    private EditText costMaxTextView;
-    private EditText costMinTextView;
-    private EditText powerMaxTextView;
-    private EditText powerMinTextView;
-    private EditText soulMaxTextView;
-    private EditText soulMinTextView;
+    private TextInputEditText levelMaxTextView;
+    private TextInputEditText levelMinTextView;
+    private TextInputEditText costMaxTextView;
+    private TextInputEditText costMinTextView;
+    private TextInputEditText powerMaxTextView;
+    private TextInputEditText powerMinTextView;
+    private TextInputEditText soulMaxTextView;
+    private TextInputEditText soulMinTextView;
+    private TextView searchAreaTextView;
+    private boolean[] searchAreaChecked;
+
+    @Nullable
+    public static SearchFragment newInstance(@Nullable final CardRepository.Filter filter) {
+        final SearchFragment fragment = new SearchFragment();
+        if (filter != null) {
+            final Bundle args = new Bundle();
+            args.putParcelable(SearchFragment.FILTER_KEY, filter);
+            fragment.setArguments(args);
+        }
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.fragment_search, container, false);
-        keywordAndTextView = (EditText) linearLayout.findViewById(R.id.search_and_text);
-        keywordOrTextView = (EditText) linearLayout.findViewById(R.id.search_or_text);
-        keywordNotTextView = (EditText) linearLayout.findViewById(R.id.search_not_text);
-        nameSwitch = (Switch) linearLayout.findViewById(R.id.search_name_switch);
-        serialSwitch = (Switch) linearLayout.findViewById(R.id.search_serial_switch);
-        charaSwitch = (Switch) linearLayout.findViewById(R.id.search_char_switch);
-        textSwitch = (Switch) linearLayout.findViewById(R.id.search_text_switch);
-        normalSwitch = (Switch) linearLayout.findViewById(R.id.normal_only_switch);
+        final View rootView = inflater.inflate(R.layout.fragment_search, container, false);
+        keywordAndTextView = (TextInputEditText) rootView.findViewById(R.id.search_and_text);
+        keywordOrTextView = (TextInputEditText) rootView.findViewById(R.id.search_or_text);
+        keywordNotTextView = (TextInputEditText) rootView.findViewById(R.id.search_not_text);
+        normalSwitch = (Switch) rootView.findViewById(R.id.normal_only_switch);
         normalSwitch.setChecked(PreferenceRepository.getHideNormal());
-        levelMaxTextView = (EditText) linearLayout.findViewById(R.id.search_level_max_text);
-        levelMinTextView = (EditText) linearLayout.findViewById(R.id.search_level_min_text);
-        costMaxTextView = (EditText) linearLayout.findViewById(R.id.search_cost_max_text);
-        costMinTextView = (EditText) linearLayout.findViewById(R.id.search_cost_min_text);
-        powerMaxTextView = (EditText) linearLayout.findViewById(R.id.search_power_max_text);
-        powerMinTextView = (EditText) linearLayout.findViewById(R.id.search_power_min_text);
-        soulMaxTextView = (EditText) linearLayout.findViewById(R.id.search_soul_max_text);
-        soulMinTextView = (EditText) linearLayout.findViewById(R.id.search_soul_min_text);
+        levelMaxTextView = (TextInputEditText) rootView.findViewById(R.id.search_level_max_text);
+        levelMinTextView = (TextInputEditText) rootView.findViewById(R.id.search_level_min_text);
+        costMaxTextView = (TextInputEditText) rootView.findViewById(R.id.search_cost_max_text);
+        costMinTextView = (TextInputEditText) rootView.findViewById(R.id.search_cost_min_text);
+        powerMaxTextView = (TextInputEditText) rootView.findViewById(R.id.search_power_max_text);
+        powerMinTextView = (TextInputEditText) rootView.findViewById(R.id.search_power_min_text);
+        soulMaxTextView = (TextInputEditText) rootView.findViewById(R.id.search_soul_max_text);
+        soulMinTextView = (TextInputEditText) rootView.findViewById(R.id.search_soul_min_text);
+        final LinearLayout searchAreaLinearLayout = (LinearLayout) rootView.findViewById(R.id.search_area_linear_layout);
+        searchAreaLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSearchAreaDialog();
+            }
+        });
+        searchAreaTextView = (TextView) rootView.findViewById(R.id.search_area_text_view);
+        resetSearchArea();
 
-        expSpinner = (Spinner) linearLayout.findViewById(R.id.search_side_spinner);
+        expSpinner = (Spinner) rootView.findViewById(R.id.search_side_spinner);
         ArrayList<String> expSpinnerItems = new ArrayList<>();
         expSpinnerItems.add("");
         expSpinnerItems.add(getString(R.string.side_w));
-        expSpinnerItems.add(getString(R.string.side_w));
+        expSpinnerItems.add(getString(R.string.side_s));
         expSpinnerItems.addAll(CardRepository.getExpansions());
-        ArrayAdapter<String> expAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, expSpinnerItems);
+        ArrayAdapter<String> expAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, expSpinnerItems);
         expSpinner.setAdapter(expAdapter);
 
-        typeSpinner = (Spinner) linearLayout.findViewById(R.id.search_type_spinner);
+        typeSpinner = (Spinner) rootView.findViewById(R.id.search_type_spinner);
         ArrayList<String> typeSpinnerItems = new ArrayList<>();
         typeSpinnerItems.add("");
         typeSpinnerItems.add(getString(R.string.type_chara));
         typeSpinnerItems.add(getString(R.string.type_event));
         typeSpinnerItems.add(getString(R.string.type_climax));
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, typeSpinnerItems);
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, typeSpinnerItems);
         typeSpinner.setAdapter(typeAdapter);
 
-        colorSpinner = (Spinner) linearLayout.findViewById(R.id.search_color_spinner);
+        colorSpinner = (Spinner) rootView.findViewById(R.id.search_color_spinner);
         ArrayList<String> colorSpinnerItems = new ArrayList<>();
         colorSpinnerItems.add("");
         colorSpinnerItems.add(getString(R.string.color_yellow));
         colorSpinnerItems.add(getString(R.string.color_green));
         colorSpinnerItems.add(getString(R.string.color_red));
         colorSpinnerItems.add(getString(R.string.color_blue));
-        ArrayAdapter<String> colorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, colorSpinnerItems);
+        ArrayAdapter<String> colorAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, colorSpinnerItems);
         colorSpinner.setAdapter(colorAdapter);
 
-        triggerSpinner = (Spinner) linearLayout.findViewById(R.id.search_trigger_spinner);
+        triggerSpinner = (Spinner) rootView.findViewById(R.id.search_trigger_spinner);
         ArrayList<String> triggerSpinnerItems = new ArrayList<>();
         triggerSpinnerItems.add("");
         triggerSpinnerItems.add(getString(R.string.trigger_none));
@@ -106,10 +130,10 @@ public class SearchFragment extends BaseFragment {
         triggerSpinnerItems.add(getString(R.string.trigger_door));
         triggerSpinnerItems.add(getString(R.string.trigger_book));
         triggerSpinnerItems.add(getString(R.string.trigger_gate));
-        ArrayAdapter<String> triggerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, triggerSpinnerItems);
+        ArrayAdapter<String> triggerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, triggerSpinnerItems);
         triggerSpinner.setAdapter(triggerAdapter);
 
-        final Button searchButton = (Button) linearLayout.findViewById(R.id.search_button);
+        final Button searchButton = (Button) rootView.findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,7 +142,7 @@ public class SearchFragment extends BaseFragment {
         });
 
 
-        final Button resetButton = (Button) linearLayout.findViewById(R.id.reset_button);
+        final Button resetButton = (Button) rootView.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,18 +150,18 @@ public class SearchFragment extends BaseFragment {
             }
         });
 
-        if (getArguments() == null || !getArguments().containsKey(FILTER_KEY)) return linearLayout;
-        CardRepository.Filter filter = getArguments().getParcelable(FILTER_KEY);
+        if (getArguments() == null || !getArguments().containsKey(FILTER_KEY)) return rootView;
+        final CardRepository.Filter filter = getArguments().getParcelable(FILTER_KEY);
         if (filter != null) {
             keywordAndTextView.setText(Utility.toString(filter.getAndList(), " "));
             keywordOrTextView.setText(Utility.toString(filter.getOrList(), " "));
             keywordNotTextView.setText(Utility.toString(filter.getNotList(), " "));
-            nameSwitch.setChecked(filter.isEnableName());
-            serialSwitch.setChecked(filter.isEnableSerial());
-            charaSwitch.setChecked(filter.isEnableChara());
-            textSwitch.setChecked(filter.isEnableText());
+            resetSearchArea(filter.isEnableName(),
+                    filter.isEnableSerial(),
+                    filter.isEnableChara(),
+                    filter.isEnableText());
         }
-        return linearLayout;
+        return rootView;
     }
 
     private void submit() {
@@ -147,20 +171,20 @@ public class SearchFragment extends BaseFragment {
             for (String keyword : andKeywords.split(SPLIT_REGEX))
                 filter.addAnd(keyword);
 
-        String orKeywords = keywordOrTextView.getText().toString();
+        final String orKeywords = keywordOrTextView.getText().toString();
         if (!orKeywords.isEmpty())
             for (String keyword : orKeywords.split(SPLIT_REGEX))
                 filter.addOr(keyword);
 
-        String notKeywords = keywordNotTextView.getText().toString();
+        final String notKeywords = keywordNotTextView.getText().toString();
         if (!notKeywords.isEmpty())
             for (String keyword : notKeywords.split(SPLIT_REGEX))
                 filter.addNot(keyword);
 
-        filter.setEnableName(nameSwitch.isChecked());
-        filter.setEnableSerial(serialSwitch.isChecked());
-        filter.setEnableChara(charaSwitch.isChecked());
-        filter.setEnableText(textSwitch.isChecked());
+        filter.setEnableName(searchAreaChecked[SEARCH_AREA_NAME]);
+        filter.setEnableSerial(searchAreaChecked[SEARCH_AREA_SERIAL]);
+        filter.setEnableChara(searchAreaChecked[SEARCH_AREA_CHAR]);
+        filter.setEnableText(searchAreaChecked[SEARCH_AREA_TEXT]);
         filter.setNormalOnly(normalSwitch.isChecked());
 
         switch (expSpinner.getSelectedItemPosition()) {
@@ -272,10 +296,6 @@ public class SearchFragment extends BaseFragment {
         keywordAndTextView.setText("");
         keywordOrTextView.setText("");
         keywordNotTextView.setText("");
-        nameSwitch.setChecked(true);
-        serialSwitch.setChecked(true);
-        charaSwitch.setChecked(true);
-        textSwitch.setChecked(true);
         levelMaxTextView.setText("");
         levelMinTextView.setText("");
         costMaxTextView.setText("");
@@ -288,5 +308,47 @@ public class SearchFragment extends BaseFragment {
         typeSpinner.setSelection(0);
         colorSpinner.setSelection(0);
         triggerSpinner.setSelection(0);
+        resetSearchArea();
+    }
+
+    private void showSearchAreaDialog() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.search_area)
+                .items(R.array.search_area)
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        for (int i = 0; i < searchAreaChecked.length; i++)
+                            searchAreaChecked[i] = false;
+                        for (int position : which)
+                            searchAreaChecked[position] = true;
+                        return true;
+                    }
+                })
+                .positiveText(R.string.confirm_button)
+                .show();
+        final List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < searchAreaChecked.length; i++)
+            if (searchAreaChecked[i])
+                indices.add(i);
+        dialog.setSelectedIndices(indices.toArray(new Integer[indices.size()]));
+    }
+
+    private void setSearchAreaTextView() {
+        final List<String> searchAreaList = new ArrayList<>();
+        final String[] searchAreaMessage = getResources().getStringArray(R.array.search_area);
+        for (int i = 0; i < searchAreaChecked.length; i++)
+            if (searchAreaChecked[i])
+                searchAreaList.add(searchAreaMessage[i]);
+        searchAreaTextView.setText(Joiner.on(", ").join(searchAreaList));
+    }
+
+    private void resetSearchArea() {
+        resetSearchArea(true, true, true, true);
+    }
+
+    private void resetSearchArea(boolean name, boolean serial, boolean chara, boolean text) {
+        searchAreaChecked = new boolean[]{name, serial, chara, text};
+        setSearchAreaTextView();
     }
 }

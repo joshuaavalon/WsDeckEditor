@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements Transactable,
                 fragment = new ExpansionFragment();
                 break;
             case R.id.nav_search:
-                fragment = new SearchFragment();
+                fragment = SearchFragment.newInstance(null);
                 break;
             case R.id.nav_deckedit:
                 fragment = new DeckListFragment();

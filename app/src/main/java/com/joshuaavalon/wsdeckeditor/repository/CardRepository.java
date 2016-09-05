@@ -1,16 +1,13 @@
 package com.joshuaavalon.wsdeckeditor.repository;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.DisplayMetrics;
 
 import com.google.common.base.Optional;
 import com.joshuaavalon.fluentquery.Condition;
@@ -21,7 +18,6 @@ import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.database.WsDatabaseHelper;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -236,7 +232,7 @@ public class CardRepository {
             else
                 condition = condition.or(Condition.property(SQL_CARD_SERIAL).equal(serial));
         }
-        if(condition == null) return cards;
+        if (condition == null) return cards;
         final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
                 .where(condition).commit(db);
         if (cursor.moveToFirst()) {
@@ -306,17 +302,13 @@ public class CardRepository {
         return version;
     }
 
-    public static Bitmap getImage(String imageName, Card.Type type) {
-        Bitmap bitmap = null;
-        final Context context = WsApplication.getContext();
-        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageName);
-        if (image.exists()) {
-            final BitmapFactory.Options option = new BitmapFactory.Options();
-            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
-            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
-        }
-        if (bitmap == null)
-            bitmap = BitmapFactory.decodeResource(context.getResources(),
+    public static Bitmap getImage(String imageName, @NonNull final Card.Type type) {
+        Bitmap bitmap;
+        final Optional<Bitmap> bitmapOptional = NetworkRepository.getImage(imageName);
+        if (bitmapOptional.isPresent())
+            bitmap = bitmapOptional.get();
+        else
+            bitmap = BitmapFactory.decodeResource(WsApplication.getContext().getResources(),
                     type != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
         return bitmap;
     }

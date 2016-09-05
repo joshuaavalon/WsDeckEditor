@@ -21,14 +21,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:padding="10dp"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                style="@style/TextAppearance.AppCompat.Medium" />
 
             <TextView
                 android:id="@+id/status_text_view"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:padding="10dp"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                style="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
 
         <include layout="@layout/color_bar" />

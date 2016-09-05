@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:textAppearance="?attr/textAppearanceListItem"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/highlight_text_color" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:textAppearance="?attr/textAppearanceListItem"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/highlight_text_color" />
         </LinearLayout>
         <LinearLayout
@@ -59,7 +59,7 @@
                 android:paddingEnd="5dp"
                 android:paddingTop="5dp"
                 android:gravity="center"
-                android:textAppearance="?attr/textAppearanceListItem"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/highlight_subtext_color" />
 
             <TextView
@@ -71,8 +71,8 @@
                 android:paddingEnd="5dp"
                 android:paddingBottom="5dp"
                 android:gravity="center"
-                android:textSize="12sp"
-                android:textAppearance="?attr/textAppearanceListItem"
+                android:text="Lv\nCharacter"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@color/highlight_subtext_color" />
         </LinearLayout>
     </LinearLayout>

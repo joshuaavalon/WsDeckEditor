@@ -148,10 +148,7 @@ public class CardDetailFragment extends BaseFragment {
     }
 
     private void startSearch(CardRepository.Filter filter) {
-        Bundle arguments = new Bundle();
-        arguments.putParcelable(SearchFragment.FILTER_KEY, filter);
-        SearchFragment fragment = new SearchFragment();
-        fragment.setArguments(arguments);
+        final SearchFragment fragment = SearchFragment.newInstance(filter);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, fragment)
                 .addToBackStack(null)
