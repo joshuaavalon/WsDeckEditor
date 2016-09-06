@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -194,7 +195,6 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         sort(PreferenceRepository.getSortOrder());
         if (PreferenceRepository.getAutoSave())
             DeckRepository.save(deck);
-
         ColorUtils.setColorView(deck, view);
     }
 
@@ -334,7 +334,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             imageView.setImageBitmap(bitmap);
             nameTextView.setText(card.getName());
             serialTextView.setText(card.getSerial());
-            colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
+            colorView.setBackgroundResource(card.getColor().getColorResId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
             countTextView.setText(String.valueOf(entry.getCount()));
             countTextView.setOnClickListener(new View.OnClickListener() {

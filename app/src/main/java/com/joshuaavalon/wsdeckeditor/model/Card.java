@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.model;
 
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -265,17 +266,20 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Color  implements StringResource{
-        Yellow(R.string.color_yellow, 1),
-        Green(R.string.color_green, 2),
-        Red(R.string.color_red, 3),
-        Blue(R.string.color_blue, 4);
+        Yellow(R.string.color_yellow, 1, R.color.cardYellow),
+        Green(R.string.color_green, 2, R.color.cardGreen),
+        Red(R.string.color_red, 3, R.color.cardRed),
+        Blue(R.string.color_blue, 4, R.color.cardBlue);
         @StringRes
         private final int resId;
+        @ColorRes
+        private final int colorResId;
         private final int order;
 
-        Color(@StringRes final int resId, final int order) {
+        Color(@StringRes final int resId, final int order,@ColorRes final int colorResId) {
             this.resId = resId;
             this.order = order;
+            this.colorResId = colorResId;
         }
 
         @Override
@@ -286,6 +290,11 @@ public class Card implements Comparable<Card> {
 
         public int getOrder() {
             return order;
+        }
+
+        @ColorRes
+        public int getColorResId() {
+            return colorResId;
         }
     }
 

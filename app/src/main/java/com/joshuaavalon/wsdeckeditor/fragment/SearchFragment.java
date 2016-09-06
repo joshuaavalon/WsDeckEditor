@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFragment extends BaseFragment {
-    private static final String FILTER_KEY = "Filter_Key";
+    private static final String ARG_FILTER = "Filter_Key";
     private static final String KEY_FILTER = "filters";
     private ConditionAdapter adapter;
     private ArrayList<CardFilterItem> filters;
@@ -43,7 +43,7 @@ public class SearchFragment extends BaseFragment {
         final SearchFragment fragment = new SearchFragment();
         if (filters != null) {
             final Bundle args = new Bundle();
-            args.putParcelableArrayList(FILTER_KEY, filters);
+            args.putParcelableArrayList(ARG_FILTER, filters);
             fragment.setArguments(args);
         }
         return fragment;
@@ -60,7 +60,7 @@ public class SearchFragment extends BaseFragment {
             filters = savedInstanceState.getParcelableArrayList(KEY_FILTER);
         if (filters == null)
             if (getArguments() != null)
-                filters = getArguments().getParcelableArrayList(FILTER_KEY);
+                filters = getArguments().getParcelableArrayList(ARG_FILTER);
         if (filters == null)
             filters = new ArrayList<>();
         adapter = new ConditionAdapter(filters);

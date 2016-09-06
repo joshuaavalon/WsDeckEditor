@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import com.joshuaavalon.wsdeckeditor.activity.Transactable;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
-import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItemFactory;
 import com.joshuaavalon.wsdeckeditor.repository.model.ExpansionCardFilterItem;
 import com.joshuaavalon.wsdeckeditor.repository.model.NormalCardFilterItem;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;

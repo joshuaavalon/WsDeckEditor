@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;

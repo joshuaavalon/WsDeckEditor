@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -59,6 +60,19 @@ public class CardDetailFragment extends BaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!getArguments().containsKey(CARD_SERIAL)) return;
+        final String serial = getArguments().getString(CARD_SERIAL);
+        if (serial == null) return;
+        final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
+        if (cardOptional.isPresent())
+            card = cardOptional.get();
+        else
+            card = new Card.Builder().build();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_card_detail, container, false);
@@ -78,17 +92,6 @@ public class CardDetailFragment extends BaseFragment {
         attributeTextView = (TextView) rootView.findViewById(R.id.card_detail_attribute);
         textTextView = (TextView) rootView.findViewById(R.id.card_detail_text);
         flavorTextView = (TextView) rootView.findViewById(R.id.card_detail_flavor_text);
-
-        if (getArguments().containsKey(CARD_SERIAL)) {
-            final String serial = getArguments().getString(CARD_SERIAL);
-            if (serial != null) {
-                final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
-                if (cardOptional.isPresent())
-                    card = cardOptional.get();
-                else
-                    card = new Card.Builder().build();
-            }
-        }
         bind(card);
         return rootView;
     }

@@ -297,7 +297,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             imageView.setImageBitmap(bitmap);
             nameTextView.setText(card.getName());
             serialTextView.setText(card.getSerial());
-            colorView.setBackgroundResource(ColorUtils.getColor(card.getColor()));
+            colorView.setBackgroundResource(card.getColor().getColorResId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
             if (card.getType() != Card.Type.Climax)
                 levelTextView.setText(getString(R.string.card_level_prefix, String.valueOf(card.getLevel())));

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.fragment.CardDetailFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity implements Transactable,
         NavigationView.OnNavigationItemSelectedListener {
     public static final String SEARCH_FILTER = "search_filter";
     public static final int CARD_DETAIL_CODE = 0;
+    private static final int MAX_BACK_STACK_COUNT = 10;
     private ArrayList<CardFilterItem> cardFilterItems = null;
 
     @Override
@@ -44,8 +45,7 @@ public class MainActivity extends BaseActivity implements Transactable,
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null && findViewById(R.id.frame_content) != null) {
-            CardDetailFragment homeFragment = CardDetailFragment.newInstance("DC/W01-001");
-            transactTo(homeFragment, false);
+            //transactTo(new DeckInfoFragment(), false);
         }
     }
 
@@ -97,7 +97,10 @@ public class MainActivity extends BaseActivity implements Transactable,
     }
 
     public void transactTo(@NonNull Fragment fragment, boolean addToBackStack) {
-        if (addToBackStack)
+        if (getSupportFragmentManager().getBackStackEntryCount() > MAX_BACK_STACK_COUNT)
+            getSupportFragmentManager().popBackStack(null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (addToBackStack) {
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_from_right,
                             R.anim.exit_to_left,
@@ -106,7 +109,7 @@ public class MainActivity extends BaseActivity implements Transactable,
                     .replace(R.id.frame_content, fragment, null)
                     .addToBackStack(null)
                     .commit();
-        else
+        } else
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_content, fragment, null)
                     .commit();

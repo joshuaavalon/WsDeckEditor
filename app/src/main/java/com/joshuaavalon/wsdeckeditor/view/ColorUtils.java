@@ -14,21 +14,6 @@ import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
 
 public class ColorUtils {
-    @ColorRes
-    public static int getColor(@NonNull final Card.Color color) {
-        switch (color) {
-            case Yellow:
-                return R.color.cardYellow;
-            case Green:
-                return R.color.cardGreen;
-            case Red:
-                return R.color.cardRed;
-            case Blue:
-                return R.color.cardBlue;
-            default:
-                return R.color.cardYellow;
-        }
-    }
 
     @DrawableRes
     public static int getBackgroundDrawable(@NonNull final Card.Color color) {
@@ -57,7 +42,7 @@ public class ColorUtils {
                     new LinearLayout.LayoutParams(colorView.getLayoutParams());
             params.weight = colorCount.count(color);
             colorView.setLayoutParams(params);
-            colorView.setBackgroundResource(ColorUtils.getColor(color));
+            colorView.setBackgroundResource(color.getColorResId());
         }
     }
 
