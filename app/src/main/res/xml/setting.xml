@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Setting">
+    <PreferenceCategory android:title="Common">
         <CheckBoxPreference
-            android:key="@string/pref_auto_save"
-            android:summary="as sum"
-            android:title="as title" />
-
-        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="@string/pref_hide_normal"
-            android:summary="hn sum"
-            android:title="hm title" />
+            android:summary="@string/pref_hide_normal_summary"
+            android:title="@string/pref_hide_normal_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Deck Edit">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_auto_save"
+            android:summary="@string/pref_auto_save_summary"
+            android:title="@string/pref_auto_save_title" />
     </PreferenceCategory>
 </PreferenceScreen>

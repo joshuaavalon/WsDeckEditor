@@ -28,25 +28,11 @@ public class PreferenceRepository {
 
     public static boolean getAutoSave() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        return preferences.getBoolean(AUTO_SAVE_KEY, false);
-    }
-
-    public static void setAutoSave(boolean autoSave) {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        final SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(AUTO_SAVE_KEY, autoSave);
-        editor.apply();
+        return preferences.getBoolean(AUTO_SAVE_KEY, true);
     }
 
     public static boolean getHideNormal() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        return preferences.getBoolean(HIDE_NORMAL_KEY, false);
-    }
-
-    public static void setHideNormal(boolean autoSave) {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        final SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(HIDE_NORMAL_KEY, autoSave);
-        editor.apply();
+        return preferences.getBoolean(HIDE_NORMAL_KEY, true);
     }
 }

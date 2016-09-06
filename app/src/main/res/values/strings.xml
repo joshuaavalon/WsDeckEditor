@@ -116,7 +116,13 @@
     <string name="op_eq">=</string>
     <string name="card_normal">Normal</string>
     <string name="pref_auto_save">autoSave</string>
+    <string name="pref_auto_save_title">Auto Save Deck</string>
+    <string name="pref_auto_save_summary">Any changes made to the deck will be saved automatically.</string>
     <string name="pref_hide_normal">hideNormal</string>
+    <string name="pref_hide_normal_title">Show Normal Card Only</string>
+    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP by default.</string>>
+    <string name="pref_cat_common">Common</string>>
+    <string name="pref_cat_deck_edit">Deck Edit</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
