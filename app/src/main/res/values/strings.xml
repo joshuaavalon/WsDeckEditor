@@ -123,6 +123,9 @@
     <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP by default.</string>>
     <string name="pref_cat_common">Common</string>>
     <string name="pref_cat_deck_edit">Deck Edit</string>
+    <string name="menu_deck_info">Show deck info</string>
+    <string name="deck_info">Deck Info</string>
+    <string name="info_string">%1$s: %2$s</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

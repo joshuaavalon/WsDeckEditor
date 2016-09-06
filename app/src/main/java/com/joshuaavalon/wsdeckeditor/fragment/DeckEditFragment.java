@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +22,9 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
@@ -39,6 +40,7 @@ import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
 import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +83,6 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                                                        View itemView,
                                                        int which,
                                                        CharSequence text) {
-
                                 final Card.SortOrder order = Card.SortOrder.fromInt(which);
                                 PreferenceRepository.setSortOrder(order);
                                 sort(order);
@@ -131,6 +132,43 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 .show();
     }
 
+    private void showDeckInfoDialog() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.deck_info)
+                .customView(R.layout.dialog_deck_info, false)
+                .show();
+        final View view = dialog.getCustomView();
+        if (view == null) return;
+        final TextView expansionTextView = (TextView) view.findViewById(R.id.expansion_content_text_view);
+        expansionTextView.setText(Joiner.on(", ").join(deck.getExpansions()));
+        final Multiset<Card.Color> colorCount = HashMultiset.create();
+        final Multiset<Card.Type> typeCount = HashMultiset.create();
+        final Multiset<Integer> levelCount = HashMultiset.create();
+        for (Card card : deck.getList()) {
+            colorCount.add(card.getColor());
+            typeCount.add(card.getType());
+            levelCount.add(card.getLevel());
+        }
+        final List<String> tempList = new ArrayList<>();
+        final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
+        for (Card.Color color : colorCount.elementSet()) {
+            tempList.add(getString(R.string.info_string, getString(color.getResId()), colorCount.count(color)));
+        }
+        colorTextView.setText(Joiner.on(", ").join(tempList));
+        tempList.clear();
+        final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
+        for (Card.Type type : typeCount.elementSet()) {
+            tempList.add(getString(R.string.info_string, getString(type.getResId()), typeCount.count(type)));
+        }
+        typeTextView.setText(Joiner.on(", ").join(tempList));
+        tempList.clear();
+        final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
+        for (Integer level : levelCount.elementSet()) {
+            tempList.add(getString(R.string.info_string, String.valueOf(level), levelCount.count(level)));
+        }
+        levelTextView.setText(Joiner.on(", ").join(tempList));
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -142,8 +180,8 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 DeckRepository.delete(deck);
                 getFragmentManager().popBackStack();
                 return true;
-            case R.id.menu_rename:
-                showRenameDialog(deck);
+            case R.id.menu_info:
+                showDeckInfoDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -213,6 +251,14 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             }
         });
         fab.setImageResource(R.drawable.ic_save_white_24dp);
+        final Activity activity = getActivity();
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).setToolbarOnClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showRenameDialog(deck);
+                }
+            });
     }
 
     @Override
@@ -223,8 +269,10 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             fab.hide();
 
         final Activity activity = getActivity();
-        if (activity instanceof MainActivity)
+        if (activity instanceof MainActivity) {
             ((MainActivity) activity).removeTitle();
+            ((MainActivity) activity).setToolbarOnClick(null);
+        }
     }
 
     private void sort(Card.SortOrder order) {
