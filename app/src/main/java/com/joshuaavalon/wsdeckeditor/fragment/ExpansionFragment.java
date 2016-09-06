@@ -18,12 +18,14 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.Transactable;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItemFactory;
+import com.joshuaavalon.wsdeckeditor.repository.model.ExpansionCardFilterItem;
+import com.joshuaavalon.wsdeckeditor.repository.model.NormalCardFilterItem;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ExpansionFragment extends BaseFragment implements SearchView.OnQueryTextListener {
@@ -107,12 +109,16 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!(getActivity() instanceof Transactable)) return;
+                    if (!(getActivity() instanceof Transactable)) return;
                     final Transactable transactable = (Transactable) getActivity();
-                    final CardRepository.Filter filter = new CardRepository.Filter();
+                    final ExpansionCardFilterItem filter = new ExpansionCardFilterItem();
                     filter.setExpansion(title);
-                    filter.setNormalOnly(PreferenceRepository.getHideNormal());
-                    final CardListFragment fragment = CardListFragment.newInstance(filter);
+                    final CardFilter cardFilter = new CardFilter();
+                    cardFilter.addFilterItem(filter);
+                    final NormalCardFilterItem filter2 = new NormalCardFilterItem();
+                    filter2.setNormalOnly(PreferenceRepository.getHideNormal());
+                    cardFilter.addFilterItem(filter2);
+                    final CardListFragment fragment = CardListFragment.newInstance(cardFilter);
                     transactable.transactTo(fragment);
                 }
             });

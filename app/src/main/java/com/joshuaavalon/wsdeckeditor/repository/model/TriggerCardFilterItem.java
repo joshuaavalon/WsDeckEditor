@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -53,4 +54,48 @@ public class TriggerCardFilterItem extends CardFilterItem {
     public String getContent() {
         return trigger.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TriggerCardFilterItem)) return false;
+        final TriggerCardFilterItem that = (TriggerCardFilterItem) o;
+        return trigger == that.trigger;
+    }
+
+    @Override
+    public int hashCode() {
+        return trigger != null ? trigger.hashCode() : 0;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.trigger == null ? -1 : this.trigger.ordinal());
+    }
+
+    public TriggerCardFilterItem() {
+    }
+
+    protected TriggerCardFilterItem(Parcel in) {
+        int tmpTrigger = in.readInt();
+        this.trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
+    }
+
+    public static final Creator<TriggerCardFilterItem> CREATOR = new Creator<TriggerCardFilterItem>() {
+        @Override
+        public TriggerCardFilterItem createFromParcel(Parcel source) {
+            return new TriggerCardFilterItem(source);
+        }
+
+        @Override
+        public TriggerCardFilterItem[] newArray(int size) {
+            return new TriggerCardFilterItem[size];
+        }
+    };
 }

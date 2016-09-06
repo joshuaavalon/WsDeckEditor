@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,13 +30,13 @@ public class CardViewActivity extends BaseActivity {
     private static final String ARG_POSITION = "position";
     private List<String> serials;
 
-    public static void start(@NonNull final Context context,
+    public static void start(@NonNull final Activity context,
                              @NonNull final List<String> serials,
                              @IntRange(from = 0) final int position) {
         final Intent intent = new Intent(context, CardViewActivity.class);
         intent.putExtra(ARG_SERIALS, new ArrayList<>(serials));
         intent.putExtra(ARG_POSITION, position);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, MainActivity.CARD_DETAIL_CODE);
     }
 
     @Override

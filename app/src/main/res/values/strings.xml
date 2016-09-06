@@ -114,6 +114,7 @@
     <string name="op_greater">&gt;</string>
     <string name="op_greater_eq">&gt;=</string>
     <string name="op_eq">=</string>
+    <string name="card_normal">Normal</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
@@ -162,6 +163,9 @@
         <item>@string/trigger_gate</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="card_normal">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
 </resources>

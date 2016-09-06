@@ -33,6 +33,8 @@ public class CardFilterItemFactory {
                 return new RangeCardFilterItem(R.string.card_power, CardRepository.SQL_CARD_POWER);
             case Soul:
                 return new RangeCardFilterItem(R.string.card_soul, CardRepository.SQL_CARD_SOUL);
+            case Normal:
+                return new NormalCardFilterItem();
             default:
                 throw new IllegalArgumentException();
         }
@@ -49,7 +51,8 @@ public class CardFilterItemFactory {
         Level(R.string.card_level),
         Cost(R.string.cost),
         Power(R.string.power),
-        Soul(R.string.soul);
+        Soul(R.string.soul),
+        Normal(R.string.card_normal);
         @StringRes
         private final int resId;
 

@@ -17,6 +17,7 @@ import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.database.WsDatabaseHelper;
 import com.joshuaavalon.wsdeckeditor.model.Card;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,6 +91,24 @@ public class CardRepository {
         if (right == null)
             return left;
         return left.or(right);
+    }
+
+    public static List<Card> getCards(@NonNull final CardFilter filter) {
+        final Query query = Query.select(getCols()).from(SQL_CARD);
+        final Optional<Condition> conditionOptional = filter.getCondition();
+        if (conditionOptional.isPresent())
+            query.where(conditionOptional.get());
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = query.commit(db);
+        final List<Card> cards = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                cards.add(buildCard(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+        return cards;
     }
 
     @NonNull

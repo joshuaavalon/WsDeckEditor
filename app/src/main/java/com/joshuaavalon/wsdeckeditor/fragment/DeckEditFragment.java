@@ -321,7 +321,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 @Override
                 public void onClick(View v) {
                     final List<Card> cards = Lists.newArrayList(deck.getList().elementSet());
-                    CardViewActivity.start(getContext(), Lists.newArrayList(
+                    CardViewActivity.start(getActivity(), Lists.newArrayList(
                             Iterables.transform(cards, new Function<Card, String>() {
                                 @Override
                                 public String apply(Card input) {

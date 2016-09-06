@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -21,6 +22,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,28 @@ public class KeywordCardFilterItem extends CardFilterItem {
     private TextInputEditText editText;
     private final boolean[] searchAreaChecked;
     private String phaseString = null;
+
+    public static KeywordCardFilterItem newCharInstance(@NonNull final String chara) {
+        final KeywordCardFilterItem cardFilterItem = new KeywordCardFilterItem(false);
+        cardFilterItem.phaseString = chara;
+        cardFilterItem.setPhases(chara);
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_NAME] = false;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_SERIAL] = false;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_CHAR] = true;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_TEXT] = false;
+        return cardFilterItem;
+    }
+
+    public static KeywordCardFilterItem newNameInstance(@NonNull final String name) {
+        final KeywordCardFilterItem cardFilterItem = new KeywordCardFilterItem(false);
+        cardFilterItem.phaseString = name;
+        cardFilterItem.setPhases(name);
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_NAME] = true;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_SERIAL] = false;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_CHAR] = false;
+        cardFilterItem.searchAreaChecked[SEARCH_AREA_TEXT] = false;
+        return cardFilterItem;
+    }
 
     public KeywordCardFilterItem(final boolean isNot) {
         this.isNot = isNot;
@@ -180,4 +204,56 @@ public class KeywordCardFilterItem extends CardFilterItem {
         }
         return resultCondition;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof KeywordCardFilterItem)) return false;
+        final KeywordCardFilterItem that = (KeywordCardFilterItem) o;
+        return isNot == that.isNot &&
+                phases.equals(that.phases) &&
+                Arrays.equals(searchAreaChecked, that.searchAreaChecked) &&
+                (phaseString != null ? phaseString.equals(that.phaseString) : that.phaseString == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = phases.hashCode();
+        result = 31 * result + (isNot ? 1 : 0);
+        result = 31 * result + Arrays.hashCode(searchAreaChecked);
+        result = 31 * result + (phaseString != null ? phaseString.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(isNot ? (byte) 1 : (byte) 0);
+        dest.writeBooleanArray(searchAreaChecked);
+        dest.writeString(phaseString);
+    }
+
+    protected KeywordCardFilterItem(Parcel in) {
+        phases = new HashSet<>();
+        isNot = in.readByte() != 0;
+        searchAreaChecked = in.createBooleanArray();
+        phaseString = in.readString();
+        setPhases(phaseString);
+    }
+
+    public static final Creator<KeywordCardFilterItem> CREATOR = new Creator<KeywordCardFilterItem>() {
+        @Override
+        public KeywordCardFilterItem createFromParcel(Parcel source) {
+            return new KeywordCardFilterItem(source);
+        }
+
+        @Override
+        public KeywordCardFilterItem[] newArray(int size) {
+            return new KeywordCardFilterItem[size];
+        }
+    };
 }

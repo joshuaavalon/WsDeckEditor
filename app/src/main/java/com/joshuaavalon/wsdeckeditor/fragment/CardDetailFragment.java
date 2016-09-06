@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
@@ -19,8 +20,11 @@ import android.widget.TextView;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
+import com.joshuaavalon.wsdeckeditor.repository.model.KeywordCardFilterItem;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +47,6 @@ public class CardDetailFragment extends BaseFragment {
     private TextView attributeTextView;
     private TextView textTextView;
     private TextView flavorTextView;
-
     private Card card;
 
     @NonNull
@@ -147,24 +150,20 @@ public class CardDetailFragment extends BaseFragment {
         flavorTextView.setText(card.getFlavor());
     }
 
-    private void startSearch(CardRepository.Filter filter) {
-        final SearchFragment2 fragment = SearchFragment2.newInstance(filter);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_content, fragment)
-                .addToBackStack(null)
-                .commit();
+    private void startSearch(@NonNull final CardFilter cardFilter) {
+        final Intent returnIntent = new Intent();
+        returnIntent.putParcelableArrayListExtra(MainActivity.SEARCH_FILTER, cardFilter.getParcelableList());
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        getActivity().finish();
     }
 
     private ClickableSpan getCharaSpan(final String chara) {
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                CardRepository.Filter filter = new CardRepository.Filter();
-                filter.setEnableName(false);
-                filter.setEnableText(false);
-                filter.setEnableSerial(false);
-                filter.addAnd(chara);
-                startSearch(filter);
+                final CardFilter cardFilter = new CardFilter();
+                cardFilter.addFilterItem(KeywordCardFilterItem.newCharInstance(chara));
+                startSearch(cardFilter);
             }
 
             @Override
@@ -179,12 +178,9 @@ public class CardDetailFragment extends BaseFragment {
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                CardRepository.Filter filter = new CardRepository.Filter();
-                filter.setEnableChara(false);
-                filter.setEnableText(false);
-                filter.setEnableSerial(false);
-                filter.addAnd(name);
-                startSearch(filter);
+                final CardFilter cardFilter = new CardFilter();
+                cardFilter.addFilterItem(KeywordCardFilterItem.newNameInstance(name));
+                startSearch(cardFilter);
             }
 
             @Override
@@ -198,8 +194,8 @@ public class CardDetailFragment extends BaseFragment {
     private SpannableStringBuilder regexSpan(SpannableStringBuilder spannableStringBuilder,
                                              String regex,
                                              Function<String, ClickableSpan> factoryMethod) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(spannableStringBuilder);
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(spannableStringBuilder);
         while (matcher.find()) {
             int start = matcher.start() + 1;
             int end = matcher.end() - 1;

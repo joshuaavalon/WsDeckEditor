@@ -17,6 +17,10 @@ public class CardFilter {
         filterItems = new ArrayList<>();
     }
 
+    public CardFilter(@NonNull final List<CardFilterItem> filterItems) {
+        this.filterItems = filterItems;
+    }
+
     public void addFilterItem(@NonNull final CardFilterItem filterItem) {
         filterItems.add(filterItem);
     }
@@ -37,5 +41,10 @@ public class CardFilter {
                 condition = condition.and(conditionOptional.get());
         }
         return Optional.fromNullable(condition);
+    }
+
+    @NonNull
+    public ArrayList<CardFilterItem> getParcelableList() {
+        return new ArrayList<>(filterItems);
     }
 }

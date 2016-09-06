@@ -1,6 +1,8 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -10,7 +12,7 @@ import com.google.common.base.Optional;
 import com.joshuaavalon.fluentquery.Condition;
 import com.joshuaavalon.wsdeckeditor.Handler;
 
-public abstract class CardFilterItem {
+public abstract class CardFilterItem implements Parcelable {
     @NonNull
     public abstract Optional<Condition> toCondition();
 

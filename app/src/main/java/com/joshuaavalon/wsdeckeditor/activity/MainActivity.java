@@ -1,5 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -22,12 +24,17 @@ import com.joshuaavalon.wsdeckeditor.fragment.CardDetailFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
-import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment2;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
+
+import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity implements Transactable,
         NavigationView.OnNavigationItemSelectedListener {
+    public static final String SEARCH_FILTER = "search_filter";
+    public static final int CARD_DETAIL_CODE = 0;
+    private ArrayList<CardFilterItem> cardFilterItems = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,11 +200,27 @@ public class MainActivity extends BaseActivity implements Transactable,
             }
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != CARD_DETAIL_CODE) return;
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            cardFilterItems = data.getParcelableArrayListExtra(SEARCH_FILTER);
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (cardFilterItems == null) return;
+        final SearchFragment fragment = SearchFragment.newInstance(cardFilterItems);
+        cardFilterItems = null;
+        transactTo(fragment);
+    }
 }
 
 
 /*
-
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {

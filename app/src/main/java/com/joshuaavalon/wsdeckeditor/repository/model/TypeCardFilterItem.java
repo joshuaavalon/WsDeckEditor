@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -53,4 +54,48 @@ public class TypeCardFilterItem extends CardFilterItem {
     public String getContent() {
         return type.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TypeCardFilterItem)) return false;
+        final TypeCardFilterItem that = (TypeCardFilterItem) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return type != null ? type.hashCode() : 0;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+    }
+
+    public TypeCardFilterItem() {
+    }
+
+    protected TypeCardFilterItem(Parcel in) {
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : Card.Type.values()[tmpType];
+    }
+
+    public static final Creator<TypeCardFilterItem> CREATOR = new Creator<TypeCardFilterItem>() {
+        @Override
+        public TypeCardFilterItem createFromParcel(Parcel source) {
+            return new TypeCardFilterItem(source);
+        }
+
+        @Override
+        public TypeCardFilterItem[] newArray(int size) {
+            return new TypeCardFilterItem[size];
+        }
+    };
 }

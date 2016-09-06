@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.view.View;
@@ -136,8 +137,59 @@ public class RangeCardFilterItem extends CardFilterItem {
         public int getResId() {
             return resId;
         }
-
     }
 
-    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RangeCardFilterItem)) return false;
+        final RangeCardFilterItem that = (RangeCardFilterItem) o;
+        return titleResId == that.titleResId &&
+                value == that.value &&
+                field.equals(that.field) &&
+                operator == that.operator;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = titleResId;
+        result = 31 * result + field.hashCode();
+        result = 31 * result + value;
+        result = 31 * result + (operator != null ? operator.hashCode() : 0);
+        return result;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.titleResId);
+        dest.writeString(this.field);
+        dest.writeInt(this.value);
+        dest.writeInt(this.operator == null ? -1 : this.operator.ordinal());
+    }
+
+    protected RangeCardFilterItem(Parcel in) {
+        titleResId = in.readInt();
+        field = in.readString();
+        value = in.readInt();
+        int tmpOperator = in.readInt();
+        operator = tmpOperator == -1 ? null : Operator.values()[tmpOperator];
+    }
+
+    public static final Creator<RangeCardFilterItem> CREATOR = new Creator<RangeCardFilterItem>() {
+        @Override
+        public RangeCardFilterItem createFromParcel(Parcel source) {
+            return new RangeCardFilterItem(source);
+        }
+
+        @Override
+        public RangeCardFilterItem[] newArray(int size) {
+            return new RangeCardFilterItem[size];
+        }
+    };
 }

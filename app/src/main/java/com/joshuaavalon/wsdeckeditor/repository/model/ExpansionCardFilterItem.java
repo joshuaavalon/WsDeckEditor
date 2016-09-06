@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -13,13 +14,35 @@ import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 import java.util.List;
 
-public class ExpansionCardFilterItem extends CardFilterItem{
+public class ExpansionCardFilterItem extends CardFilterItem {
+    public static final Creator<ExpansionCardFilterItem> CREATOR = new Creator<ExpansionCardFilterItem>() {
+        @Override
+        public ExpansionCardFilterItem createFromParcel(Parcel source) {
+            return new ExpansionCardFilterItem(source);
+        }
+
+        @Override
+        public ExpansionCardFilterItem[] newArray(int size) {
+            return new ExpansionCardFilterItem[size];
+        }
+    };
     private String expansion;
+
+    public void setExpansion(String expansion) {
+        this.expansion = expansion;
+    }
+
+    public ExpansionCardFilterItem() {
+    }
+
+    protected ExpansionCardFilterItem(Parcel in) {
+        this.expansion = in.readString();
+    }
 
     @NonNull
     @Override
     public Optional<Condition> toCondition() {
-        if(expansion == null) return  Optional.absent();
+        if (expansion == null) return Optional.absent();
         return Optional.of(Condition.property(CardRepository.SQL_CARD_EXP).equal(expansion));
     }
 
@@ -53,5 +76,28 @@ public class ExpansionCardFilterItem extends CardFilterItem{
     @Override
     public String getContent() {
         return expansion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExpansionCardFilterItem)) return false;
+        final ExpansionCardFilterItem that = (ExpansionCardFilterItem) o;
+        return expansion != null ? expansion.equals(that.expansion) : that.expansion == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return expansion != null ? expansion.hashCode() : 0;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.expansion);
     }
 }

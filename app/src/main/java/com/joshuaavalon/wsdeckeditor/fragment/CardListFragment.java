@@ -4,6 +4,7 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
@@ -35,7 +36,8 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
-import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
+import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
@@ -55,10 +57,10 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     private RecyclerView recyclerView;
 
     @NonNull
-    public static CardListFragment newInstance(@NonNull final CardRepository.Filter filter) {
+    public static CardListFragment newInstance(@NonNull final CardFilter filter) {
         final CardListFragment fragment = new CardListFragment();
         final Bundle args = new Bundle();
-        args.putParcelable(ARG_FILTER, filter);
+        args.putParcelableArrayList(ARG_FILTER, filter.getParcelableList());
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,9 +73,9 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
 
         final Bundle args = getArguments();
         if (args == null) return;
-        final CardRepository.Filter filter = args.getParcelable(ARG_FILTER);
-        if (filter != null)
-            resultCards.addAll(CardRepository.getCards(filter));
+        final List<CardFilterItem> filters = args.getParcelableArrayList(ARG_FILTER);
+        if (filters != null)
+            resultCards.addAll(CardRepository.getCards(new CardFilter(filters)));
     }
 
     @Override
@@ -278,7 +280,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                 @Override
                 public void onClick(View v) {
                     if (actionMode == null) {
-                        CardViewActivity.start(getContext(), Lists.newArrayList(
+                        CardViewActivity.start(getActivity(), Lists.newArrayList(
                                 Iterables.transform(resultCards, new Function<Card, String>() {
                                     @Override
                                     public String apply(Card input) {

@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -54,4 +55,48 @@ public class SideCardFilterItem extends CardFilterItem {
     public String getContent() {
         return WsApplication.getContext().getString(side.getResId());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SideCardFilterItem)) return false;
+        final SideCardFilterItem that = (SideCardFilterItem) o;
+        return side == that.side;
+    }
+
+    @Override
+    public int hashCode() {
+        return side != null ? side.hashCode() : 0;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.side == null ? -1 : this.side.ordinal());
+    }
+
+    public SideCardFilterItem() {
+    }
+
+    protected SideCardFilterItem(Parcel in) {
+        int tmpSide = in.readInt();
+        this.side = tmpSide == -1 ? null : Card.Side.values()[tmpSide];
+    }
+
+    public static final Creator<SideCardFilterItem> CREATOR = new Creator<SideCardFilterItem>() {
+        @Override
+        public SideCardFilterItem createFromParcel(Parcel source) {
+            return new SideCardFilterItem(source);
+        }
+
+        @Override
+        public SideCardFilterItem[] newArray(int size) {
+            return new SideCardFilterItem[size];
+        }
+    };
 }

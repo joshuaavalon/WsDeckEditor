@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.repository.model;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -14,7 +15,26 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 public class ColorCardFilterItem extends CardFilterItem {
+    public static final Creator<ColorCardFilterItem> CREATOR = new Creator<ColorCardFilterItem>() {
+        @Override
+        public ColorCardFilterItem createFromParcel(Parcel source) {
+            return new ColorCardFilterItem(source);
+        }
+
+        @Override
+        public ColorCardFilterItem[] newArray(int size) {
+            return new ColorCardFilterItem[size];
+        }
+    };
     private Card.Color color = null;
+
+    public ColorCardFilterItem() {
+    }
+
+    protected ColorCardFilterItem(Parcel in) {
+        int tmpColor = in.readInt();
+        this.color = tmpColor == -1 ? null : Card.Color.values()[tmpColor];
+    }
 
     @NonNull
     @Override
@@ -52,5 +72,28 @@ public class ColorCardFilterItem extends CardFilterItem {
     @Override
     public String getContent() {
         return color.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ColorCardFilterItem)) return false;
+        ColorCardFilterItem that = (ColorCardFilterItem) o;
+        return color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return color != null ? color.hashCode() : 0;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.color == null ? -1 : this.color.ordinal());
     }
 }
