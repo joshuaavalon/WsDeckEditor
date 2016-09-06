@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -29,23 +30,35 @@ import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
     private RecyclerView recyclerView;
     private DeckListAdapter adapter;
     private List<Deck> decks;
+    private ScheduledFuture<?> future;
+
+    private class ShakeFab implements Runnable {
+        @Override
+        public void run() {
+            if (decks.size() > 0) return;
+            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            if (fab == null) return;
+            fab.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_deck_list, container, false);
         decks = DeckRepository.getDecks();
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager( new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DeckListAdapter(decks);
         recyclerView.setAdapter(adapter);
-
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
                     @Override
@@ -233,6 +246,9 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             }
         });
         fab.setImageResource(R.drawable.ic_add_white_24dp);
+        if (future != null) return;
+        final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+        future = exec.scheduleAtFixedRate(new ShakeFab(), 0, 3, TimeUnit.SECONDS);
     }
 
     @Override
@@ -241,6 +257,9 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         if (fab != null)
             fab.hide();
+        if (future == null) return;
+        future.cancel(false);
+        future = null;
     }
 }
 
