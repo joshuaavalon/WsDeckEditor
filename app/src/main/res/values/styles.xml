@@ -8,6 +8,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">

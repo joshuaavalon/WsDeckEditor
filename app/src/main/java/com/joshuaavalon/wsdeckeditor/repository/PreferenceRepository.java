@@ -3,13 +3,16 @@ package com.joshuaavalon.wsdeckeditor.repository;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 
 public class PreferenceRepository {
     private static final String SORT_ORDER_KEY = "sortOrder";
-    private static final String AUTO_SAVE_KEY = "autoSave";
-    private static final String HIDE_NORMAL_KEY = "hideNormal";
+    private static final String AUTO_SAVE_KEY =
+            WsApplication.getContext().getString(R.string.pref_auto_save);
+    private static final String HIDE_NORMAL_KEY =
+            WsApplication.getContext().getString(R.string.pref_hide_normal);
 
     public static Card.SortOrder getSortOrder() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
@@ -23,7 +26,6 @@ public class PreferenceRepository {
         editor.apply();
     }
 
-
     public static boolean getAutoSave() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(AUTO_SAVE_KEY, false);
@@ -36,7 +38,7 @@ public class PreferenceRepository {
         editor.apply();
     }
 
-    public static boolean getHideNormal(){
+    public static boolean getHideNormal() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(HIDE_NORMAL_KEY, false);
     }

@@ -115,6 +115,8 @@
     <string name="op_greater_eq">&gt;=</string>
     <string name="op_eq">=</string>
     <string name="card_normal">Normal</string>
+    <string name="pref_auto_save">autoSave</string>
+    <string name="pref_hide_normal">hideNormal</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

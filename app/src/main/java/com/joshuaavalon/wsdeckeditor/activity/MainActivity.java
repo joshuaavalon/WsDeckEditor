@@ -24,6 +24,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
@@ -82,6 +83,9 @@ public class MainActivity extends BaseActivity implements Transactable,
                 break;
             case R.id.nav_update:
                 showUpdateDialog();
+                break;
+            case R.id.nav_setting:
+                fragment = new SettingFragment();
                 break;
         }
         if (fragment != null)
