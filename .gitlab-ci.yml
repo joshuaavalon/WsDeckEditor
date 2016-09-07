@@ -1,0 +1,25 @@
+before_script:
+  - chmod +x gradlew
+
+stages:
+  - build
+
+debug:
+  stage: build
+  except:
+    - release
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+    - app/build/outputs/apk/app-debug.apk
+
+release:
+  stage: build
+  only:
+    - release
+  script:
+    - ./gradlew assembleRelease
+  artifacts:
+    paths:
+    - app/build/outputs/apk/app-release-unsigned.apk
