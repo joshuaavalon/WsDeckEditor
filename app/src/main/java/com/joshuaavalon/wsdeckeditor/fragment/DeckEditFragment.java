@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -31,6 +32,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
 import com.joshuaavalon.wsdeckeditor.model.Card;
@@ -57,6 +59,8 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private Deck deck;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View view;
+    private Uri qrUri = null;
+    private boolean isChanged = false;
 
     public static DeckEditFragment newInstance(final long deckId) {
         final DeckEditFragment fragment = new DeckEditFragment();
@@ -103,8 +107,8 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
 
     private void showRenameDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
-                .title(R.string.rename_deck)
                 .iconRes(R.drawable.ic_edit_black_24dp)
+                .title(R.string.rename_deck)
                 .content(deck.getName())
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(R.string.rename_button)
@@ -114,6 +118,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 deck.setName(input.toString());
+                                isChanged = true;
                                 refresh();
                             }
                         })
@@ -123,6 +128,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private void showChangeCardCountDialog(@NonNull final Multiset.Entry<Card> entry) {
         final Card card = entry.getElement();
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_edit_black_24dp)
                 .title(R.string.change_card_count)
                 .content(card.getSerial() + " " + card.getName())
                 .inputType(InputType.TYPE_CLASS_NUMBER)
@@ -134,6 +140,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 deck.setCount(card.getSerial(),
                                         Integer.valueOf(input.toString()));
+                                isChanged = true;
                                 refresh();
                             }
                         })
@@ -187,12 +194,22 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 .title(R.string.share_deck)
                 .iconRes(R.drawable.ic_menu_share)
                 .customView(R.layout.dialog_share, false)
+                .positiveText(R.string.share_button)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if (qrUri == null) return;
+                        Utility.sharePublicBitmap(getActivity(), qrUri);
+                        qrUri = null;
+                    }
+                })
                 .show();
         final View view = dialog.getCustomView();
         if (view == null) return;
         final ImageView qrImageView = (ImageView) view.findViewById(R.id.image_view);
-        qrImageView.setImageBitmap(QRCode.encode(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE));
-        Log.e("asd",DeckUtils.encodeDeck(deck));
+        final Bitmap qrBitmap = QRCode.encode(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE);
+        qrImageView.setImageBitmap(qrBitmap);
+        qrUri = Utility.savePublicBitmap(qrBitmap, "QR");
     }
 
     @Override
@@ -245,6 +262,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                                          final int direction) {
                         if (!(viewHolder instanceof CardViewHolder)) return;
                         deck.setCount(adapter.getCards().get(viewHolder.getAdapterPosition()), 0);
+                        isChanged = true;
                         refresh();
                     }
                 });
@@ -260,7 +278,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         if (activity instanceof MainActivity)
             ((MainActivity) activity).setTitle(deck.getName());
         sort(PreferenceRepository.getSortOrder());
-        if (PreferenceRepository.getAutoSave())
+        if (PreferenceRepository.getAutoSave() && isChanged)
             DeckRepository.save(deck);
         ColorUtils.setColorView(deck, view);
     }
@@ -270,7 +288,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         super.onResume();
         refresh();
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab == null) return;
+        if (fab == null || PreferenceRepository.getAutoSave()) return;
         fab.show();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

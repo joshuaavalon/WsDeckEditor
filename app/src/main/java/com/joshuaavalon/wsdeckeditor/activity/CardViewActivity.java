@@ -1,7 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IntRange;
@@ -36,7 +35,7 @@ public class CardViewActivity extends BaseActivity {
         final Intent intent = new Intent(context, CardViewActivity.class);
         intent.putExtra(ARG_SERIALS, new ArrayList<>(serials));
         intent.putExtra(ARG_POSITION, position);
-        context.startActivityForResult(intent, MainActivity.CARD_DETAIL_CODE);
+        context.startActivityForResult(intent, MainActivity.REQUEST_CODE_CARD_DETAIL);
     }
 
     @Override

@@ -116,6 +116,10 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void submit() {
+        if(filters.size()<=0){
+            showMessage(R.string.search_condition_error);
+            return;
+        }
         if (!(getActivity() instanceof Transactable)) return;
         final Transactable transactable = (Transactable) getActivity();
         transactable.transactTo(CardListFragment.newInstance(new CardFilter(filters)));

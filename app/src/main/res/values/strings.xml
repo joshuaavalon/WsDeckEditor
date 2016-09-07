@@ -132,6 +132,10 @@
     <string name="share_deck">Share Deck</string>
     <string name="nav_qr">Scan QR</string>
     <string name="err_invalid_er">Invalid QR code</string>
+    <string name="camera_error">Camera Error</string>
+    <string name="no_camera">No camera detected</string>
+    <string name="share_button">Share</string>
+    <string name="search_condition_error">Please add at least one condition</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

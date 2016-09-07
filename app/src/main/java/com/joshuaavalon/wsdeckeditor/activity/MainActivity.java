@@ -1,7 +1,11 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +31,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.Utility;
 import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckEditFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
@@ -45,7 +50,8 @@ import java.util.ArrayList;
 public class MainActivity extends BaseActivity implements Transactable,
         NavigationView.OnNavigationItemSelectedListener {
     public static final String SEARCH_FILTER = "search_filter";
-    public static final int CARD_DETAIL_CODE = 0;
+    public static final int REQUEST_CODE_CARD_DETAIL = 0;
+    public static final int REQUEST_CODE_CAMERA = 1;
     private static final int MAX_BACK_STACK_COUNT = 10;
     private ArrayList<CardFilterItem> cardFilterItems = null;
     private long deckId = Deck.NO_ID;
@@ -68,7 +74,17 @@ public class MainActivity extends BaseActivity implements Transactable,
     }
 
     private void scanQr() {
-        new IntentIntegrator(this).initiateScan();
+        if (!Utility.requestPermission(this, REQUEST_CODE_CAMERA, Manifest.permission.CAMERA))
+            return;
+        final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            if (manager.getCameraIdList().length > 0)
+                new IntentIntegrator(this).initiateScan();
+            else
+                showMessage(R.string.no_camera);
+        } catch (CameraAccessException ignored) {
+            showMessage(R.string.camera_error);
+        }
     }
 
     private void initToolbar() {
@@ -256,7 +272,7 @@ public class MainActivity extends BaseActivity implements Transactable,
 
             return;
         }
-        if (requestCode != CARD_DETAIL_CODE) return;
+        if (requestCode != REQUEST_CODE_CARD_DETAIL) return;
         if (resultCode == Activity.RESULT_OK && data != null) {
             cardFilterItems = data.getParcelableArrayListExtra(SEARCH_FILTER);
         }
@@ -277,42 +293,14 @@ public class MainActivity extends BaseActivity implements Transactable,
         if (fragment != null)
             transactTo(fragment);
     }
-}
 
 
-/*
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull final String[] permissions,
+                                           @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (Utility.permissionGranted(
-                requestCode,
-                1,
-                grantResults)) {
-        }
+        if (Utility.permissionGranted(requestCode, REQUEST_CODE_CAMERA, grantResults))
+            scanQr();
     }
-*/
-
-
-/*
-        Log.e("Version", String.valueOf(CardRepository.getVersion()));
-        final CardRepository.Filter filter = new CardRepository.Filter();
-        filter.addAnd("CL");
-        filter.setMinLevel(0);
-        List<Card> cards = CardRepository.getCards(filter);
-        for (Card card : cards)
-            Log.e("Card", card.getName());
-        if (Utility.requestPermission(this, 1, Manifest.permission.CAMERA)) {
-
-            QRCode.decode(this, new Function<Optional<String>, Void>() {
-                @Override
-                public Void apply(Optional<String> input) {
-                    if (input.isPresent())
-                        Log.e("QR", input.get());
-                    else
-                        Log.e("QR", "FFF");
-                    return null;
-                }
-            });
-        }
-*/
+}

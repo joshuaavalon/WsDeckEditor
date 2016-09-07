@@ -1,15 +1,31 @@
 package com.joshuaavalon.wsdeckeditor;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Utility {
     public static String getImageNameFromUrl(@NonNull final String url) {
@@ -46,36 +62,38 @@ public class Utility {
                 grantResults[0] == PackageManager.PERMISSION_GRANTED;
     }
 
-
-    public static boolean requestPermission(Fragment fragment, int requestCode, String... permissions) {
-        boolean granted = true;
-        ArrayList<String> permissionsNeeded = new ArrayList<>();
-
-        for (String s : permissions) {
-            int permissionCheck = ContextCompat.checkSelfPermission(fragment.getContext(), s);
-            boolean hasPermission = (permissionCheck == PackageManager.PERMISSION_GRANTED);
-            granted &= hasPermission;
-            if (!hasPermission) {
-                permissionsNeeded.add(s);
-            }
-        }
-
-        if (granted) {
-            return true;
-        } else {
-            fragment.requestPermissions(permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
-                    requestCode);
-            return false;
-        }
-    }
-
+    @NonNull
     public static String toString(Collection<String> stringCollection, String separator) {
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
         for (String string : stringCollection) {
             if (!stringBuilder.toString().equals(""))
                 stringBuilder.append(separator);
             stringBuilder.append(string);
         }
         return stringBuilder.toString();
+    }
+
+    @SuppressLint("SetWorldReadable")
+    public static Uri savePublicBitmap(@NonNull final Bitmap bitmap, @NonNull final String fileName) {
+        try {
+            final File file = new File(WsApplication.getContext().getCacheDir(), fileName + ".png");
+            final FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+            if (!file.setReadable(true, false))
+                Log.e("Bitmap", "Share failed");
+            return Uri.fromFile(file);
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    public static void sharePublicBitmap(@NonNull final Activity activity, @NonNull final Uri uri) {
+        final Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/png");
+        activity.startActivity(shareIntent);
     }
 }
