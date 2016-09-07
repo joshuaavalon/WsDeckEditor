@@ -70,6 +70,16 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         return fragment;
     }
 
+    private static Comparator<Multiset.Entry<Card>> transformComparator(
+            @NonNull final Comparator<Card> comparator) {
+        return new Comparator<Multiset.Entry<Card>>() {
+            @Override
+            public int compare(Multiset.Entry<Card> left, Multiset.Entry<Card> right1) {
+                return comparator.compare(left.getElement(), right1.getElement());
+            }
+        };
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -367,16 +377,6 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                         }
                     }));
         }
-    }
-
-    private static Comparator<Multiset.Entry<Card>> transformComparator(
-            @NonNull final Comparator<Card> comparator) {
-        return new Comparator<Multiset.Entry<Card>>() {
-            @Override
-            public int compare(Multiset.Entry<Card> left, Multiset.Entry<Card> right1) {
-                return comparator.compare(left.getElement(), right1.getElement());
-            }
-        };
     }
 
     private class CardViewHolder extends BaseRecyclerViewHolder<Multiset.Entry<Card>> {

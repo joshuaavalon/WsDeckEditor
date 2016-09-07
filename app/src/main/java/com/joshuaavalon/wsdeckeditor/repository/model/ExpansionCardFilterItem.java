@@ -28,15 +28,15 @@ public class ExpansionCardFilterItem extends CardFilterItem {
     };
     private String expansion;
 
-    public void setExpansion(String expansion) {
-        this.expansion = expansion;
-    }
-
     public ExpansionCardFilterItem() {
     }
 
     protected ExpansionCardFilterItem(Parcel in) {
         this.expansion = in.readString();
+    }
+
+    public void setExpansion(String expansion) {
+        this.expansion = expansion;
     }
 
     @NonNull

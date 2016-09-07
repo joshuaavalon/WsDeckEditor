@@ -44,22 +44,6 @@ public class SearchFragment extends BaseFragment {
     private ArrayList<CardFilterItem> filters;
     private ScheduledFuture<?> future;
 
-    private class RotateFab implements Runnable {
-        @Override
-        public void run() {
-            if (filters.size() > 0) return;
-            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-            if (fab == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
-                    fab.startAnimation(anim);
-                }
-            });
-        }
-    }
-
     @NonNull
     public static SearchFragment newInstance(@Nullable final ArrayList<CardFilterItem> filters) {
         final SearchFragment fragment = new SearchFragment();
@@ -116,7 +100,7 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void submit() {
-        if(filters.size()<=0){
+        if (filters.size() <= 0) {
             showMessage(R.string.search_condition_error);
             return;
         }
@@ -225,6 +209,22 @@ public class SearchFragment extends BaseFragment {
         public ConditionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_condition, parent, false);
             return new ConditionViewHolder(view);
+        }
+    }
+
+    private class RotateFab implements Runnable {
+        @Override
+        public void run() {
+            if (filters.size() > 0) return;
+            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            if (fab == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+                    fab.startAnimation(anim);
+                }
+            });
         }
     }
 }

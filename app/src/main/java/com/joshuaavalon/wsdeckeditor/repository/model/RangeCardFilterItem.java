@@ -22,6 +22,17 @@ import com.joshuaavalon.wsdeckeditor.StringUtils;
 import com.joshuaavalon.wsdeckeditor.WsApplication;
 
 public class RangeCardFilterItem extends CardFilterItem {
+    public static final Creator<RangeCardFilterItem> CREATOR = new Creator<RangeCardFilterItem>() {
+        @Override
+        public RangeCardFilterItem createFromParcel(Parcel source) {
+            return new RangeCardFilterItem(source);
+        }
+
+        @Override
+        public RangeCardFilterItem[] newArray(int size) {
+            return new RangeCardFilterItem[size];
+        }
+    };
     @StringRes
     private final int titleResId;
     @NonNull
@@ -37,6 +48,14 @@ public class RangeCardFilterItem extends CardFilterItem {
         this.field = field;
         value = -1;
         operator = Operator.Equal;
+    }
+
+    protected RangeCardFilterItem(Parcel in) {
+        titleResId = in.readInt();
+        field = in.readString();
+        value = in.readInt();
+        int tmpOperator = in.readInt();
+        operator = tmpOperator == -1 ? null : Operator.values()[tmpOperator];
     }
 
     @NonNull
@@ -119,26 +138,6 @@ public class RangeCardFilterItem extends CardFilterItem {
         return WsApplication.getContext().getString(operator.getResId()) + " " + value;
     }
 
-    public enum Operator implements StringResource {
-        Less(R.string.op_lesser),
-        LessOrEqual(R.string.op_lesser_eq),
-        Equal(R.string.op_eq),
-        Greater(R.string.op_greater),
-        GreaterOrEqual(R.string.op_greater_eq);
-        @StringRes
-        private final int resId;
-
-        Operator(@StringRes final int resId) {
-            this.resId = resId;
-        }
-
-        @Override
-        @StringRes
-        public int getResId() {
-            return resId;
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -159,7 +158,6 @@ public class RangeCardFilterItem extends CardFilterItem {
         return result;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -173,23 +171,23 @@ public class RangeCardFilterItem extends CardFilterItem {
         dest.writeInt(this.operator == null ? -1 : this.operator.ordinal());
     }
 
-    protected RangeCardFilterItem(Parcel in) {
-        titleResId = in.readInt();
-        field = in.readString();
-        value = in.readInt();
-        int tmpOperator = in.readInt();
-        operator = tmpOperator == -1 ? null : Operator.values()[tmpOperator];
+    public enum Operator implements StringResource {
+        Less(R.string.op_lesser),
+        LessOrEqual(R.string.op_lesser_eq),
+        Equal(R.string.op_eq),
+        Greater(R.string.op_greater),
+        GreaterOrEqual(R.string.op_greater_eq);
+        @StringRes
+        private final int resId;
+
+        Operator(@StringRes final int resId) {
+            this.resId = resId;
+        }
+
+        @Override
+        @StringRes
+        public int getResId() {
+            return resId;
+        }
     }
-
-    public static final Creator<RangeCardFilterItem> CREATOR = new Creator<RangeCardFilterItem>() {
-        @Override
-        public RangeCardFilterItem createFromParcel(Parcel source) {
-            return new RangeCardFilterItem(source);
-        }
-
-        @Override
-        public RangeCardFilterItem[] newArray(int size) {
-            return new RangeCardFilterItem[size];
-        }
-    };
 }

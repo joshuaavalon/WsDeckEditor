@@ -15,7 +15,26 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 public class TriggerCardFilterItem extends CardFilterItem {
+    public static final Creator<TriggerCardFilterItem> CREATOR = new Creator<TriggerCardFilterItem>() {
+        @Override
+        public TriggerCardFilterItem createFromParcel(Parcel source) {
+            return new TriggerCardFilterItem(source);
+        }
+
+        @Override
+        public TriggerCardFilterItem[] newArray(int size) {
+            return new TriggerCardFilterItem[size];
+        }
+    };
     private Card.Trigger trigger = null;
+
+    public TriggerCardFilterItem() {
+    }
+
+    protected TriggerCardFilterItem(Parcel in) {
+        int tmpTrigger = in.readInt();
+        this.trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
+    }
 
     @NonNull
     @Override
@@ -68,7 +87,6 @@ public class TriggerCardFilterItem extends CardFilterItem {
         return trigger != null ? trigger.hashCode() : 0;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -78,24 +96,4 @@ public class TriggerCardFilterItem extends CardFilterItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.trigger == null ? -1 : this.trigger.ordinal());
     }
-
-    public TriggerCardFilterItem() {
-    }
-
-    protected TriggerCardFilterItem(Parcel in) {
-        int tmpTrigger = in.readInt();
-        this.trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
-    }
-
-    public static final Creator<TriggerCardFilterItem> CREATOR = new Creator<TriggerCardFilterItem>() {
-        @Override
-        public TriggerCardFilterItem createFromParcel(Parcel source) {
-            return new TriggerCardFilterItem(source);
-        }
-
-        @Override
-        public TriggerCardFilterItem[] newArray(int size) {
-            return new TriggerCardFilterItem[size];
-        }
-    };
 }

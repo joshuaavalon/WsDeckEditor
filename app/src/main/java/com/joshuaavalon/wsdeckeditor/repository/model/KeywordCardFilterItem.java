@@ -28,6 +28,17 @@ import java.util.List;
 import java.util.Set;
 
 public class KeywordCardFilterItem extends CardFilterItem {
+    public static final Creator<KeywordCardFilterItem> CREATOR = new Creator<KeywordCardFilterItem>() {
+        @Override
+        public KeywordCardFilterItem createFromParcel(Parcel source) {
+            return new KeywordCardFilterItem(source);
+        }
+
+        @Override
+        public KeywordCardFilterItem[] newArray(int size) {
+            return new KeywordCardFilterItem[size];
+        }
+    };
     private static final int SEARCH_AREA_NAME = 0;
     private static final int SEARCH_AREA_SERIAL = 1;
     private static final int SEARCH_AREA_CHAR = 2;
@@ -35,10 +46,24 @@ public class KeywordCardFilterItem extends CardFilterItem {
     private static final String SPLIT_REGEX = "\\s+";
     private final Set<String> phases;
     private final boolean isNot;
+    private final boolean[] searchAreaChecked;
     private TextView searchAreaTextView;
     private TextInputEditText editText;
-    private final boolean[] searchAreaChecked;
     private String phaseString = null;
+
+    public KeywordCardFilterItem(final boolean isNot) {
+        this.isNot = isNot;
+        phases = new HashSet<>();
+        searchAreaChecked = new boolean[]{true, true, true, true};
+    }
+
+    protected KeywordCardFilterItem(Parcel in) {
+        phases = new HashSet<>();
+        isNot = in.readByte() != 0;
+        searchAreaChecked = in.createBooleanArray();
+        phaseString = in.readString();
+        setPhases(phaseString);
+    }
 
     public static KeywordCardFilterItem newCharInstance(@NonNull final String chara) {
         final KeywordCardFilterItem cardFilterItem = new KeywordCardFilterItem(false);
@@ -60,12 +85,6 @@ public class KeywordCardFilterItem extends CardFilterItem {
         cardFilterItem.searchAreaChecked[SEARCH_AREA_CHAR] = false;
         cardFilterItem.searchAreaChecked[SEARCH_AREA_TEXT] = false;
         return cardFilterItem;
-    }
-
-    public KeywordCardFilterItem(final boolean isNot) {
-        this.isNot = isNot;
-        phases = new HashSet<>();
-        searchAreaChecked = new boolean[]{true, true, true, true};
     }
 
     @NonNull
@@ -236,24 +255,4 @@ public class KeywordCardFilterItem extends CardFilterItem {
         dest.writeBooleanArray(searchAreaChecked);
         dest.writeString(phaseString);
     }
-
-    protected KeywordCardFilterItem(Parcel in) {
-        phases = new HashSet<>();
-        isNot = in.readByte() != 0;
-        searchAreaChecked = in.createBooleanArray();
-        phaseString = in.readString();
-        setPhases(phaseString);
-    }
-
-    public static final Creator<KeywordCardFilterItem> CREATOR = new Creator<KeywordCardFilterItem>() {
-        @Override
-        public KeywordCardFilterItem createFromParcel(Parcel source) {
-            return new KeywordCardFilterItem(source);
-        }
-
-        @Override
-        public KeywordCardFilterItem[] newArray(int size) {
-            return new KeywordCardFilterItem[size];
-        }
-    };
 }

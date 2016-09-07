@@ -85,6 +85,20 @@ public class Card implements Comparable<Card> {
         this.image = image;
     }
 
+    public static Comparator<Card> Comparator(@NonNull final SortOrder order) {
+        switch (order) {
+            case Serial:
+                return new SerialComparator();
+            case Level:
+                return new LevelComparator();
+            case Detail:
+                return new DetailComparator();
+            default:
+                return new DetailComparator();
+        }
+
+    }
+
     @NonNull
     public String getName() {
         return name;
@@ -265,7 +279,7 @@ public class Card implements Comparable<Card> {
         }
     }
 
-    public enum Color  implements StringResource{
+    public enum Color implements StringResource {
         Yellow(R.string.color_yellow, 1, R.color.cardYellow),
         Green(R.string.color_green, 2, R.color.cardGreen),
         Red(R.string.color_red, 3, R.color.cardRed),
@@ -276,7 +290,7 @@ public class Card implements Comparable<Card> {
         private final int colorResId;
         private final int order;
 
-        Color(@StringRes final int resId, final int order,@ColorRes final int colorResId) {
+        Color(@StringRes final int resId, final int order, @ColorRes final int colorResId) {
             this.resId = resId;
             this.order = order;
             this.colorResId = colorResId;
@@ -295,6 +309,20 @@ public class Card implements Comparable<Card> {
         @ColorRes
         public int getColorResId() {
             return colorResId;
+        }
+    }
+
+
+    public enum SortOrder {
+        Serial, Level, Detail;
+        private static final SortOrder[] values = SortOrder.values();
+
+        public static SortOrder fromInt(int value) {
+            return values[value];
+        }
+
+        public int toInt() {
+            return Arrays.asList(values).indexOf(this);
         }
     }
 
@@ -463,7 +491,6 @@ public class Card implements Comparable<Card> {
         }
     }
 
-
     private static final class SerialComparator implements Comparator<Card> {
         @Override
         public int compare(final Card left, final Card right) {
@@ -493,32 +520,5 @@ public class Card implements Comparable<Card> {
                     .compare(left.serial, right.serial)
                     .result();
         }
-    }
-
-    public enum SortOrder {
-        Serial, Level, Detail;
-        private static final SortOrder[] values = SortOrder.values();
-
-        public static SortOrder fromInt(int value) {
-            return values[value];
-        }
-
-        public int toInt() {
-            return Arrays.asList(values).indexOf(this);
-        }
-    }
-
-    public static Comparator<Card> Comparator(@NonNull final SortOrder order) {
-        switch (order) {
-            case Serial:
-                return new SerialComparator();
-            case Level:
-                return new LevelComparator();
-            case Detail:
-                return new DetailComparator();
-            default:
-                return new DetailComparator();
-        }
-
     }
 }

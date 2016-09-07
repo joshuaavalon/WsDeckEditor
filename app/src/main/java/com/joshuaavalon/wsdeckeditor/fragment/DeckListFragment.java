@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,22 +40,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     private DeckListAdapter adapter;
     private List<Deck> decks;
     private ScheduledFuture<?> future;
-
-    private class RotateFab implements Runnable {
-        @Override
-        public void run() {
-            if (decks.size() > 0) return;
-            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-            if (fab == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
-                    fab.startAnimation(anim);
-                }
-            });
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -191,6 +174,51 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         adapter.setModels(decks);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab == null) return;
+        fab.show();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCreateDeckDialog();
+            }
+        });
+        fab.setImageResource(R.drawable.ic_add_white_24dp);
+        if (future != null) return;
+        final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+        future = exec.scheduleAtFixedRate(new RotateFab(), 0, 2, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab != null)
+            fab.hide();
+        if (future == null) return;
+        future.cancel(false);
+        future = null;
+    }
+
+    private class RotateFab implements Runnable {
+        @Override
+        public void run() {
+            if (decks.size() > 0) return;
+            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            if (fab == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+                    fab.startAnimation(anim);
+                }
+            });
+        }
+    }
+
     private class DeckListAdapter extends AnimatedRecyclerAdapter<Deck, DeckListViewHolder> {
         public DeckListAdapter(List<Deck> models) {
             super(models);
@@ -242,35 +270,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             statusTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
             ColorUtils.setColorView(deck, itemView);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab == null) return;
-        fab.show();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCreateDeckDialog();
-            }
-        });
-        fab.setImageResource(R.drawable.ic_add_white_24dp);
-        if (future != null) return;
-        final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-        future = exec.scheduleAtFixedRate(new RotateFab(), 0, 2, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab != null)
-            fab.hide();
-        if (future == null) return;
-        future.cancel(false);
-        future = null;
     }
 }
 

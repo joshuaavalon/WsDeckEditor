@@ -15,7 +15,26 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 
 public class TypeCardFilterItem extends CardFilterItem {
+    public static final Creator<TypeCardFilterItem> CREATOR = new Creator<TypeCardFilterItem>() {
+        @Override
+        public TypeCardFilterItem createFromParcel(Parcel source) {
+            return new TypeCardFilterItem(source);
+        }
+
+        @Override
+        public TypeCardFilterItem[] newArray(int size) {
+            return new TypeCardFilterItem[size];
+        }
+    };
     private Card.Type type = null;
+
+    public TypeCardFilterItem() {
+    }
+
+    protected TypeCardFilterItem(Parcel in) {
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : Card.Type.values()[tmpType];
+    }
 
     @NonNull
     @Override
@@ -68,7 +87,6 @@ public class TypeCardFilterItem extends CardFilterItem {
         return type != null ? type.hashCode() : 0;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -78,24 +96,4 @@ public class TypeCardFilterItem extends CardFilterItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
     }
-
-    public TypeCardFilterItem() {
-    }
-
-    protected TypeCardFilterItem(Parcel in) {
-        int tmpType = in.readInt();
-        this.type = tmpType == -1 ? null : Card.Type.values()[tmpType];
-    }
-
-    public static final Creator<TypeCardFilterItem> CREATOR = new Creator<TypeCardFilterItem>() {
-        @Override
-        public TypeCardFilterItem createFromParcel(Parcel source) {
-            return new TypeCardFilterItem(source);
-        }
-
-        @Override
-        public TypeCardFilterItem[] newArray(int size) {
-            return new TypeCardFilterItem[size];
-        }
-    };
 }
