@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,11 +29,14 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
+import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
+import com.joshuaavalon.wsdeckeditor.model.QRCode;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
@@ -47,6 +51,8 @@ import java.util.List;
 
 public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String ARG_DECK_ID = "deckId";
+    private static final String INFO_DIALOG_SEPARATOR = "\n";
+    private static final int QR_SIZE = 1000;
     private CardRecyclerViewAdapter adapter;
     private Deck deck;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -75,6 +81,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private void showSortDialog() {
         new MaterialDialog.Builder(getContext())
                 .title(R.string.sort)
+                .iconRes(R.drawable.ic_sort_black_24dp)
                 .items(R.array.sort_type)
                 .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder().toInt(),
                         new MaterialDialog.ListCallbackSingleChoice() {
@@ -97,6 +104,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private void showRenameDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
                 .title(R.string.rename_deck)
+                .iconRes(R.drawable.ic_edit_black_24dp)
                 .content(deck.getName())
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(R.string.rename_button)
@@ -135,12 +143,13 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private void showDeckInfoDialog() {
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
                 .title(R.string.deck_info)
-                .customView(R.layout.dialog_deck_info, false)
+                .iconRes(R.drawable.ic_info_outline_black_24dp)
+                .customView(R.layout.dialog_deck_info, true)
                 .show();
         final View view = dialog.getCustomView();
         if (view == null) return;
         final TextView expansionTextView = (TextView) view.findViewById(R.id.expansion_content_text_view);
-        expansionTextView.setText(Joiner.on(", ").join(deck.getExpansions()));
+        expansionTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(deck.getExpansions()));
         final Multiset<Card.Color> colorCount = HashMultiset.create();
         final Multiset<Card.Type> typeCount = HashMultiset.create();
         final Multiset<Integer> levelCount = HashMultiset.create();
@@ -149,24 +158,41 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             typeCount.add(card.getType());
             levelCount.add(card.getLevel());
         }
+        final TextView totalTextView = (TextView) view.findViewById(R.id.total_content_text_view);
+        totalTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
         final List<String> tempList = new ArrayList<>();
         final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
-        for (Card.Color color : colorCount.elementSet()) {
-            tempList.add(getString(R.string.info_string, getString(color.getResId()), colorCount.count(color)));
+        for (Card.Color color : Card.Color.values()) {
+            if (colorCount.contains(color))
+                tempList.add(getString(R.string.info_string, getString(color.getResId()), colorCount.count(color)));
         }
-        colorTextView.setText(Joiner.on(", ").join(tempList));
+        colorTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
         tempList.clear();
         final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
-        for (Card.Type type : typeCount.elementSet()) {
-            tempList.add(getString(R.string.info_string, getString(type.getResId()), typeCount.count(type)));
+        for (Card.Type type : Card.Type.values()) {
+            if (typeCount.contains(type))
+                tempList.add(getString(R.string.info_string, getString(type.getResId()), typeCount.count(type)));
         }
-        typeTextView.setText(Joiner.on(", ").join(tempList));
+        typeTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
         tempList.clear();
         final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
-        for (Integer level : levelCount.elementSet()) {
-            tempList.add(getString(R.string.info_string, String.valueOf(level), levelCount.count(level)));
+        for (Integer level : Ordering.natural().sortedCopy(levelCount.elementSet())) {
+            tempList.add(getString(R.string.info_level_string, String.valueOf(level), levelCount.count(level)));
         }
-        levelTextView.setText(Joiner.on(", ").join(tempList));
+        levelTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+    }
+
+    private void showDeckShareDialog() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                .title(R.string.share_deck)
+                .iconRes(R.drawable.ic_menu_share)
+                .customView(R.layout.dialog_share, false)
+                .show();
+        final View view = dialog.getCustomView();
+        if (view == null) return;
+        final ImageView qrImageView = (ImageView) view.findViewById(R.id.image_view);
+        qrImageView.setImageBitmap(QRCode.encode(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE));
+        Log.e("asd",DeckUtils.encodeDeck(deck));
     }
 
     @Override
@@ -182,6 +208,9 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 return true;
             case R.id.menu_info:
                 showDeckInfoDialog();
+                return true;
+            case R.id.menu_share:
+                showDeckShareDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

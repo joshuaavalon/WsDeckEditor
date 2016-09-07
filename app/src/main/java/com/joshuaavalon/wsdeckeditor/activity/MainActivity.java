@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,13 +21,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.joshuaavalon.wsdeckeditor.Handler;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.WsApplication;
+import com.joshuaavalon.wsdeckeditor.fragment.DeckEditFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
+import com.joshuaavalon.wsdeckeditor.model.Deck;
+import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
+import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
 
@@ -38,6 +48,7 @@ public class MainActivity extends BaseActivity implements Transactable,
     public static final int CARD_DETAIL_CODE = 0;
     private static final int MAX_BACK_STACK_COUNT = 10;
     private ArrayList<CardFilterItem> cardFilterItems = null;
+    private long deckId = Deck.NO_ID;
     private Toolbar toolbar;
 
     @Override
@@ -56,6 +67,10 @@ public class MainActivity extends BaseActivity implements Transactable,
         initToolbar();
     }
 
+    private void scanQr() {
+        new IntentIntegrator(this).initiateScan();
+    }
+
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,7 +85,7 @@ public class MainActivity extends BaseActivity implements Transactable,
         toggle.syncState();
     }
 
-    public void setToolbarOnClick(@Nullable final View.OnClickListener listener){
+    public void setToolbarOnClick(@Nullable final View.OnClickListener listener) {
         toolbar.setOnClickListener(listener);
     }
 
@@ -93,6 +108,9 @@ public class MainActivity extends BaseActivity implements Transactable,
                 break;
             case R.id.nav_setting:
                 fragment = new SettingFragment();
+                break;
+            case R.id.nav_qr:
+                scanQr();
                 break;
         }
         if (fragment != null)
@@ -217,6 +235,27 @@ public class MainActivity extends BaseActivity implements Transactable,
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            final Uri uri = Uri.parse(scanResult.getContents());
+            final String scheme = uri.getScheme();
+            final String host = uri.getHost();
+            if (Strings.isNullOrEmpty(scheme) || Strings.isNullOrEmpty(host) ||
+                    !scheme.equals(WsApplication.QR_SCHEME)) {
+                showMessage(R.string.err_invalid_er);
+            } else {
+                final Optional<Deck> deckOptional = DeckUtils.decodeDeck(host);
+                if (!deckOptional.isPresent())
+                    showMessage(R.string.err_invalid_er);
+                else {
+                    final Deck deck = deckOptional.get();
+                    DeckRepository.save(deck);
+                    deckId = deck.getId();
+                }
+            }
+
+            return;
+        }
         if (requestCode != CARD_DETAIL_CODE) return;
         if (resultCode == Activity.RESULT_OK && data != null) {
             cardFilterItems = data.getParcelableArrayListExtra(SEARCH_FILTER);
@@ -226,10 +265,17 @@ public class MainActivity extends BaseActivity implements Transactable,
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if (cardFilterItems == null) return;
-        final SearchFragment fragment = SearchFragment.newInstance(cardFilterItems);
-        cardFilterItems = null;
-        transactTo(fragment);
+        Fragment fragment = null;
+        if (cardFilterItems != null) {
+            fragment = SearchFragment.newInstance(cardFilterItems);
+            cardFilterItems = null;
+        }
+        if (deckId != Deck.NO_ID) {
+            fragment = DeckEditFragment.newInstance(deckId);
+            deckId = Deck.NO_ID;
+        }
+        if (fragment != null)
+            transactTo(fragment);
     }
 }
 

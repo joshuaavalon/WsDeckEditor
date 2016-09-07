@@ -9,12 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
@@ -40,13 +42,19 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     private List<Deck> decks;
     private ScheduledFuture<?> future;
 
-    private class ShakeFab implements Runnable {
+    private class RotateFab implements Runnable {
         @Override
         public void run() {
             if (decks.size() > 0) return;
             final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
             if (fab == null) return;
-            fab.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+                    fab.startAnimation(anim);
+                }
+            });
         }
     }
 
@@ -118,6 +126,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
     private void showRenameDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_edit_black_24dp)
                 .title(R.string.rename_deck)
                 .content(deck.getName())
                 .inputType(InputType.TYPE_CLASS_TEXT)
@@ -137,6 +146,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
     private void showDeckOptionDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_assignment_black_24dp)
                 .title(deck.getName())
                 .items(R.array.deck_option)
                 .itemsCallback(new MaterialDialog.ListCallback() {
@@ -159,6 +169,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
     private void showCreateDeckDialog() {
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_add_black_24dp)
                 .title(R.string.create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(R.string.create_deck_create)
@@ -248,7 +259,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         fab.setImageResource(R.drawable.ic_add_white_24dp);
         if (future != null) return;
         final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-        future = exec.scheduleAtFixedRate(new ShakeFab(), 0, 3, TimeUnit.SECONDS);
+        future = exec.scheduleAtFixedRate(new RotateFab(), 0, 2, TimeUnit.SECONDS);
     }
 
     @Override

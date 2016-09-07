@@ -72,6 +72,7 @@ public class CardViewActivity extends BaseActivity {
     private void showDeckSelectDialog(@NonNull final String serial) {
         final List<Deck> decks = DeckRepository.getDecks();
         new MaterialDialog.Builder(this)
+                .iconRes(R.drawable.ic_assignment_black_24dp)
                 .title(R.string.select_your_deck)
                 .items(Lists.newArrayList(Iterables.transform(decks,
                         new Function<Deck, String>() {
@@ -103,6 +104,7 @@ public class CardViewActivity extends BaseActivity {
     private void showCreateDeckDialog(@NonNull final MaterialDialog parent,
                                       @NonNull final String serial) {
         new MaterialDialog.Builder(this)
+                .iconRes(R.drawable.ic_add_black_24dp)
                 .title(R.string.create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(R.string.create_deck_create)

@@ -163,6 +163,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     private void showDeckSelectDialog(@NonNull final List<String> cardsToAdd) {
         final List<Deck> decks = DeckRepository.getDecks();
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_assignment_black_24dp)
                 .title(R.string.select_your_deck)
                 .items(Lists.newArrayList(Iterables.transform(decks,
                         new Function<Deck, String>() {
@@ -195,6 +196,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     private void showCreateDeckDialog(@NonNull final MaterialDialog parent,
                                       @NonNull final List<String> cardsToAdd) {
         new MaterialDialog.Builder(getContext())
+                .iconRes(R.drawable.ic_add_black_24dp)
                 .title(R.string.create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(R.string.create_deck_create)

@@ -7,6 +7,7 @@ import com.orm.SugarContext;
 
 public class WsApplication extends Application {
     private static WsApplication instance;
+    public static final String QR_SCHEME = "wsde";
 
     public static Context getContext() {
         return instance;

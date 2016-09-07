@@ -126,6 +126,12 @@
     <string name="menu_deck_info">Show deck info</string>
     <string name="deck_info">Deck Info</string>
     <string name="info_string">%1$s: %2$s</string>
+    <string name="info_level_string">Lv.%1$s: %2$s</string>
+    <string name="total">Total</string>
+    <string name="menu_share_deck">Share deck</string>
+    <string name="share_deck">Share Deck</string>
+    <string name="nav_qr">Scan QR</string>
+    <string name="err_invalid_er">Invalid QR code</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

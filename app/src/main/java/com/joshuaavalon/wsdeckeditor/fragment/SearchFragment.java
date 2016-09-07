@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -31,12 +33,32 @@ import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class SearchFragment extends BaseFragment {
     private static final String ARG_FILTER = "Filter_Key";
     private static final String KEY_FILTER = "filters";
     private ConditionAdapter adapter;
     private ArrayList<CardFilterItem> filters;
+    private ScheduledFuture<?> future;
+
+    private class RotateFab implements Runnable {
+        @Override
+        public void run() {
+            if (filters.size() > 0) return;
+            final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+            if (fab == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+                    fab.startAnimation(anim);
+                }
+            });
+        }
+    }
 
     @NonNull
     public static SearchFragment newInstance(@Nullable final ArrayList<CardFilterItem> filters) {
@@ -130,6 +152,8 @@ public class SearchFragment extends BaseFragment {
             }
         });
         fab.setImageResource(R.drawable.ic_add_white_24dp);
+        final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+        future = exec.scheduleAtFixedRate(new RotateFab(), 0, 2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -138,6 +162,9 @@ public class SearchFragment extends BaseFragment {
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         if (fab != null)
             fab.hide();
+        if (future == null) return;
+        future.cancel(false);
+        future = null;
     }
 
     private void showConditionDialog() {

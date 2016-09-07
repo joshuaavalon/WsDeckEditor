@@ -14,6 +14,11 @@
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/nav_search" />
+
+        <item
+            android:id="@+id/nav_qr"
+            android:icon="@drawable/ic_action_qr_code"
+            android:title="@string/nav_qr" />
     </group>
 
     <item android:title="@string/system">
