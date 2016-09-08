@@ -101,8 +101,8 @@
     <string name="pref_auto_close_title">Auto Close Select Mode</string>
     <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
     <string name="pref_show_limit">showLimit</string>
-    <string name="pref_show_limit_title">Limit Card Show</string>
-    <string name="pref_show_limit_summary">Limit of card show at the same time. 0 for unlimited.</string>
+    <string name="pref_show_limit_title">Card Limit</string>
+    <string name="pref_show_limit_summary">Number of cards show at the same time. 0 for unlimited.</string>
     <string name="pref_cat_common">Common</string>
     <string name="pref_cat_deck_edit">Deck Edit</string>
     <string name="menu_deck_info">Show deck info</string>
