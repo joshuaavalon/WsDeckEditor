@@ -1,12 +1,12 @@
 package com.joshuaavalon.wsdeckeditor.repository;
 
 import android.support.annotation.NonNull;
+import android.support.v4.util.LongSparseArray;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Multiset;
-import com.joshuaavalon.wsdeckeditor.database.DeckDao;
-import com.joshuaavalon.wsdeckeditor.database.DeckRecord;
-import com.joshuaavalon.wsdeckeditor.model.Card;
+import com.joshuaavalon.wsdeckeditor.WsApplication;
+import com.joshuaavalon.wsdeckeditor.database.DeckDatabaseHelper;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 
 import java.util.ArrayList;
@@ -15,56 +15,51 @@ import java.util.List;
 public class DeckRepository {
 
     public static void save(@NonNull final Deck deck) {
-        DeckDao deckDao;
+        final DeckDatabaseHelper helper = getHelper();
         if (deck.getId() == Deck.NO_ID) {
-            deckDao = new DeckDao(deck.getName());
+            deck.setId(helper.setDeck(deck.getName()));
         } else {
-            deckDao = DeckDao.findById(DeckDao.class, deck.getId());
-            deckDao.setName(deck.getName());
+            helper.setDeck(deck.getId(), deck.getName());
         }
-        final long id = deckDao.save();
-        deck.setId(id);
-        DeckRecord.deleteAll(DeckRecord.class, "DECK = ?", String.valueOf(id));
-        final Multiset<Card> cards = deck.getList();
-        for (Card card : cards.elementSet()) {
-            final DeckRecord record = new DeckRecord(card.getSerial(), cards.count(card), deckDao);
-            record.save();
-        }
+        helper.deleteDeckRecordkById(deck.getId());
+        final Multiset<String> serials = deck.getSerialList();
+        helper.setDeckRecord(deck.getId(), serials);
     }
 
     public static void delete(@NonNull final Deck deck) {
         if (deck.getId() == Deck.NO_ID) return;
-        final DeckDao deckDao = DeckDao.findById(DeckDao.class, deck.getId());
-        deckDao.delete();
-        DeckRecord.deleteAll(DeckRecord.class, "DECK = ?", String.valueOf(deck.getId()));
+        final DeckDatabaseHelper helper = getHelper();
+        helper.deleteDeckById(deck.getId());
+        helper.deleteDeckRecordkById(deck.getId());
         deck.setId(Deck.NO_ID);
     }
 
     @NonNull
     public static List<Deck> getDecks() {
         final List<Deck> decks = new ArrayList<>();
-        for (DeckDao deckDao : DeckDao.find(DeckDao.class, null)) {
-            decks.add(toDeck(deckDao));
+        final DeckDatabaseHelper helper = getHelper();
+        final LongSparseArray<String> deckNames = helper.getAllDecks();
+        for (int i = 0; i < deckNames.size(); i++) {
+            final long deckId = deckNames.keyAt(i);
+            final Deck deck = new Deck(deckId, helper.getDeckRecordsById(deckId));
+            deck.setName(deckNames.get(deckId));
+            decks.add(deck);
         }
         return decks;
     }
 
-    private static Deck toDeck(@NonNull DeckDao deckDao) {
-        final Deck deck = new Deck(deckDao.getId());
-        deck.setName(deckDao.getName());
-        final List<DeckRecord> records = deckDao.getRecords();
-        for (DeckRecord record : records) {
-            deck.setCount(record.getSerial(), record.getCount());
-        }
-        return deck;
+    @NonNull
+    public static Optional<Deck> getDeckById(final long id) {
+        final DeckDatabaseHelper helper = getHelper();
+        final Optional<String> deckNameOptional = helper.getDeckNameById(id);
+        if (!deckNameOptional.isPresent()) return Optional.absent();
+        final Deck deck = new Deck(id, helper.getDeckRecordsById(id));
+        deck.setName(deckNameOptional.get());
+        return Optional.of(deck);
     }
 
     @NonNull
-    public static Optional<Deck> getDeckById(final long id) {
-        final DeckDao deckDao = DeckDao.findById(DeckDao.class, id);
-        if (deckDao == null)
-            return Optional.absent();
-        else
-            return Optional.of(toDeck(deckDao));
+    private static DeckDatabaseHelper getHelper() {
+        return new DeckDatabaseHelper(WsApplication.getContext());
     }
 }

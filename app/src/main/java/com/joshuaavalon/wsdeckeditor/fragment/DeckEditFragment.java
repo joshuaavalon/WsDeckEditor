@@ -415,14 +415,9 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final List<Card> cards = Lists.newArrayList(deck.getList().elementSet());
-                    CardViewActivity.start(getActivity(), Lists.newArrayList(
-                            Iterables.transform(cards, new Function<Card, String>() {
-                                @Override
-                                public String apply(Card input) {
-                                    return input.getSerial();
-                                }
-                            })), cards.indexOf(card));
+                    final List<String> cards = Lists.newArrayList(deck.getSerialList());
+                    CardViewActivity.start(getActivity(), Lists.newArrayList(deck.getSerialList()),
+                            cards.indexOf(card.getSerial()));
                 }
             });
             final Bitmap bitmap = CardRepository.getImage(card.getImage(), card.getType());

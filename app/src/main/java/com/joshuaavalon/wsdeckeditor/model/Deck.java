@@ -111,6 +111,11 @@ public class Deck {
     }
 
     @NonNull
+    public Multiset<String> getSerialList(){
+        return serialList;
+    }
+
+    @NonNull
     public String getName() {
         return name;
     }
