@@ -49,6 +49,9 @@ public class CardRepository {
         final Optional<Condition> conditionOptional = filter.getCondition();
         if (conditionOptional.isPresent())
             query.where(conditionOptional.get());
+        final int showLimit = PreferenceRepository.getShowLimit();
+        if(showLimit > 0)
+            query.limit(showLimit);
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = query.commit(db);
         final List<Card> cards = new ArrayList<>();

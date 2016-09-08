@@ -15,6 +15,8 @@ public class PreferenceRepository {
             WsApplication.getContext().getString(R.string.pref_auto_close);
     private static final String HIDE_NORMAL_KEY =
             WsApplication.getContext().getString(R.string.pref_hide_normal);
+    private static final String SHOW_LIMIT_KEY =
+            WsApplication.getContext().getString(R.string.pref_show_limit);
 
     public static Card.SortOrder getSortOrder() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
@@ -36,6 +38,12 @@ public class PreferenceRepository {
     public static boolean getHideNormal() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(HIDE_NORMAL_KEY, true);
+    }
+
+
+    public static int getShowLimit() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
+        return preferences.getInt(SHOW_LIMIT_KEY, 200);
     }
 
     public static boolean getAutoClose() {
