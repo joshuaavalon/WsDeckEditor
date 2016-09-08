@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Common">
+    <PreferenceCategory android:title="@string/pref_cat_common">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_hide_normal"
             android:summary="@string/pref_hide_normal_summary"
             android:title="@string/pref_hide_normal_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Deck Edit">
+    <PreferenceCategory android:title="@string/pref_cat_deck_edit">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_auto_save"

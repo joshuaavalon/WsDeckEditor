@@ -269,7 +269,6 @@ public class MainActivity extends BaseActivity implements Transactable,
                     deckId = deck.getId();
                 }
             }
-
             return;
         }
         if (requestCode != REQUEST_CODE_CARD_DETAIL) return;

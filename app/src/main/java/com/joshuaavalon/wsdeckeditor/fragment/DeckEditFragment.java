@@ -202,7 +202,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private void showDeckShareDialog() {
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
                 .title(R.string.share_deck)
-                .iconRes(R.drawable.ic_menu_share)
+                .iconRes(R.drawable.ic_share_black_24dp)
                 .customView(R.layout.dialog_share, false)
                 .positiveText(R.string.share_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
