@@ -217,7 +217,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         final View view = dialog.getCustomView();
         if (view == null) return;
         final ImageView qrImageView = (ImageView) view.findViewById(R.id.image_view);
-        final Bitmap qrBitmap = QRCode.encode(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE);
+        final Bitmap qrBitmap = QRCode.encodeWithLogo(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE);
         qrImageView.setImageBitmap(qrBitmap);
         qrUri = Utility.savePublicBitmap(qrBitmap, "QR");
     }
