@@ -27,103 +27,101 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
+                    android:text="@string/card_name" />
+
+                <TextView
+                    android:id="@+id/card_detail_name"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/text_margin"
+                    android:textIsSelectable="true" />
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
+                    android:text="@string/card_serial" />
+
+                <TextView
+                    android:id="@+id/card_detail_serial"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/text_margin"
+                    android:textIsSelectable="true" />
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
+                    android:text="@string/card_expansion" />
+
+                <TextView
+                    android:id="@+id/card_detail_expansion"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/text_margin"
+                    android:textIsSelectable="true" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:padding="@dimen/text_margin"
-                        android:text="@string/card_name" />
-
-                    <TextView
-                        android:id="@+id/card_detail_name"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="@dimen/text_margin"
-                        android:text="@string/card_serial" />
-
-                    <TextView
-                        android:id="@+id/card_detail_serial"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:padding="@dimen/text_margin"
-                        android:text="@string/card_expansion" />
-
-                    <TextView
-                        android:id="@+id/card_detail_expansion"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_rarity" />
 
                     <TextView
-                        android:id="@+id/card_detail_rarity"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
-
-
-                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_side" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/card_detail_rarity"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/text_margin"
+                        android:textIsSelectable="true" />
 
                     <FrameLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3">
+                        android:layout_weight="1">
 
                         <ImageView
                             android:id="@+id/card_detail_side"
@@ -141,32 +139,46 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_type" />
 
                     <TextView
-                        android:id="@+id/card_detail_type"
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
+                        android:text="@string/card_color" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/card_detail_type"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
-                        android:text="@string/card_color" />
+                        android:textIsSelectable="true" />
 
                     <TextView
                         android:id="@+id/card_detail_color"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
                 </LinearLayout>
@@ -177,32 +189,46 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_level" />
 
                     <TextView
-                        android:id="@+id/card_detail_level"
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:padding="@dimen/text_margin"
-                        android:textIsSelectable="true" />
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
+                        android:text="@string/card_cost" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/card_detail_level"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
-                        android:text="@string/card_cost" />
+                        android:textIsSelectable="true" />
 
                     <TextView
                         android:id="@+id/card_detail_cost"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
                 </LinearLayout>
@@ -213,32 +239,46 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_power" />
 
                     <TextView
-                        android:id="@+id/card_detail_power"
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
+                        android:text="@string/card_soul" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/card_detail_power"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
-                        android:text="@string/card_soul" />
-
-                    <TextView
                         android:id="@+id/card_detail_soul"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
                 </LinearLayout>
@@ -249,44 +289,63 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
                         android:text="@string/card_trigger" />
 
                     <TextView
-                        android:id="@+id/card_detail_trigger"
+                        style="@style/Base.TextAppearance.AppCompat.Large"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
+                        android:paddingEnd="@dimen/text_margin"
+                        android:paddingStart="@dimen/text_margin"
+                        android:paddingTop="@dimen/text_margin"
+                        android:text="@string/card_attribute" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/card_detail_trigger"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:padding="@dimen/text_margin"
-                        android:text="@string/card_attribute" />
-
-                    <TextView
                         android:id="@+id/card_detail_attribute"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="1"
                         android:padding="@dimen/text_margin"
                         android:textIsSelectable="true" />
                 </LinearLayout>
 
+
                 <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/text_margin"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
                     android:text="@string/card_text" />
 
                 <TextView
                     android:id="@+id/card_detail_text"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/text_margin"
@@ -294,13 +353,17 @@
 
 
                 <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/text_margin"
+                    android:paddingEnd="@dimen/text_margin"
+                    android:paddingStart="@dimen/text_margin"
+                    android:paddingTop="@dimen/text_margin"
                     android:text="@string/card_flavor_text" />
 
                 <TextView
                     android:id="@+id/card_detail_flavor_text"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/text_margin"
