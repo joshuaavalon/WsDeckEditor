@@ -35,6 +35,7 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
@@ -105,7 +106,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         if (actionMode == null) return;
         adapter.toggleSelection(position);
         final int count = adapter.getSelectedItemCount();
-        if (count == 0) {
+        if (count == 0 && PreferenceRepository.getAutoClose()) {
             actionMode.finish();
         } else {
             actionMode.invalidate();
@@ -179,6 +180,8 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                             currentDeck.addIfNotExist(serial);
                         DeckRepository.save(currentDeck);
                         dialog.dismiss();
+                        if (actionMode != null)
+                            actionMode.finish();
                     }
                 })
                 .positiveText(R.string.new_deck)
@@ -210,6 +213,8 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                         DeckRepository.save(deck);
                         parent.dismiss();
                         showMessage(R.string.add_to_deck);
+                        if (actionMode != null)
+                            actionMode.finish();
                     }
                 })
                 .show();

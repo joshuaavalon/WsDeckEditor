@@ -3,9 +3,8 @@ package com.joshuaavalon.wsdeckeditor;
 import android.app.Application;
 import android.content.Context;
 
-import com.orm.SugarContext;
-
 public class WsApplication extends Application {
+    public static final String QR_SCHEME = "wsde";
     private static WsApplication instance;
 
     public static Context getContext() {

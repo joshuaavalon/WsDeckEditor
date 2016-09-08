@@ -11,6 +11,8 @@ public class PreferenceRepository {
     private static final String SORT_ORDER_KEY = "sortOrder";
     private static final String AUTO_SAVE_KEY =
             WsApplication.getContext().getString(R.string.pref_auto_save);
+    private static final String AUTO_CLOSE_KEY =
+            WsApplication.getContext().getString(R.string.pref_auto_close);
     private static final String HIDE_NORMAL_KEY =
             WsApplication.getContext().getString(R.string.pref_hide_normal);
 
@@ -34,5 +36,10 @@ public class PreferenceRepository {
     public static boolean getHideNormal() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(HIDE_NORMAL_KEY, true);
+    }
+
+    public static boolean getAutoClose() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
+        return preferences.getBoolean(AUTO_CLOSE_KEY, true);
     }
 }

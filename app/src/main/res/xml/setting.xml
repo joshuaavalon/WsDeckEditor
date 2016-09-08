@@ -13,5 +13,10 @@
             android:key="@string/pref_auto_save"
             android:summary="@string/pref_auto_save_summary"
             android:title="@string/pref_auto_save_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_auto_close"
+            android:summary="@string/pref_auto_close_summary"
+            android:title="@string/pref_auto_close_title" />
     </PreferenceCategory>
 </PreferenceScreen>
