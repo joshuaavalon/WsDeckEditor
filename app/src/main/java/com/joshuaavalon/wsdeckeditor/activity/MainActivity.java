@@ -18,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +42,7 @@ import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.repository.NetworkRepository;
+import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ public class MainActivity extends BaseActivity implements Transactable,
     public static final String SEARCH_FILTER = "search_filter";
     public static final int REQUEST_CODE_CARD_DETAIL = 0;
     public static final int REQUEST_CODE_CAMERA = 1;
-    private static final int MAX_BACK_STACK_COUNT = 10;
     private ArrayList<CardFilterItem> cardFilterItems = null;
     private long deckId = Deck.NO_ID;
     private Toolbar toolbar;
@@ -129,8 +128,11 @@ public class MainActivity extends BaseActivity implements Transactable,
                 scanQr();
                 break;
         }
-        if (fragment != null)
+        if (fragment != null) {
+            if (PreferenceRepository.getPopBack())
+                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             transactTo(fragment);
+        }
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -142,15 +144,12 @@ public class MainActivity extends BaseActivity implements Transactable,
     }
 
     public void transactTo(@NonNull Fragment fragment, boolean addToBackStack) {
-        if (getSupportFragmentManager().getBackStackEntryCount() > MAX_BACK_STACK_COUNT)
-            getSupportFragmentManager().popBackStack(null,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
         if (addToBackStack) {
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_from_right,
                             R.anim.exit_to_left,
-                            R.anim.enter_from_left,
-                            R.anim.exit_to_right)
+                            R.anim.enter_from_right,
+                            R.anim.exit_to_left)
                     .replace(R.id.frame_content, fragment, null)
                     .addToBackStack(null)
                     .commit();
@@ -193,6 +192,7 @@ public class MainActivity extends BaseActivity implements Transactable,
                 new Handler<Integer>() {
                     @Override
                     public void handle(Integer version) {
+                        if (!progressDialog.isShowing()) return;
                         progressDialog.dismiss();
                         showDownloadDialog(version);
                     }
@@ -200,7 +200,7 @@ public class MainActivity extends BaseActivity implements Transactable,
                 new Handler<String>() {
                     @Override
                     public void handle(String object) {
-                        Log.e("Error", object);
+                        if (!progressDialog.isShowing()) return;
                         progressDialog.dismiss();
                         showMessage(object);
                     }

@@ -102,9 +102,13 @@
     <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
     <string name="pref_show_limit">showLimit</string>
     <string name="pref_show_limit_title">Card Limit</string>
-    <string name="pref_show_limit_summary">Number of cards show at the same time. 0 for unlimited.</string>
+    <string name="pref_show_limit_summary">Number of cards show at the same time. 0 for unlimited (Not Recommended).</string>
+    <string name="pref_pop_back">popBack</string>
+    <string name="pref_pop_back_title">Reset Back Stack</string>
+    <string name="pref_pop_back_summary">(Recommended) Reset back stack when pressing on navigation to reduce memory usage.</string>
     <string name="pref_cat_common">Common</string>
     <string name="pref_cat_deck_edit">Deck Edit</string>
+    <string name="pref_cat_misc">Miscellaneous</string>
     <string name="menu_deck_info">Show deck info</string>
     <string name="deck_info">Deck Info</string>
     <string name="info_string">%1$s: %2$s</string>

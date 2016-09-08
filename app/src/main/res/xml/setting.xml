@@ -25,4 +25,11 @@
             android:summary="@string/pref_auto_close_summary"
             android:title="@string/pref_auto_close_title" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_misc">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_pop_back"
+            android:summary="@string/pref_pop_back_summary"
+            android:title="@string/pref_pop_back_title" />
+    </PreferenceCategory>
 </PreferenceScreen>
