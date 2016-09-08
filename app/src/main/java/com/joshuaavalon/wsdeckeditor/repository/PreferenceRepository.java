@@ -43,7 +43,7 @@ public class PreferenceRepository {
 
     public static int getShowLimit() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
-        return preferences.getInt(SHOW_LIMIT_KEY, 200);
+        return Integer.valueOf(preferences.getString(SHOW_LIMIT_KEY, "200"));
     }
 
     public static boolean getAutoClose() {
