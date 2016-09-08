@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity implements Transactable,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (scanResult != null) {
+        if (scanResult != null && scanResult.getContents() != null) {
             final Uri uri = Uri.parse(scanResult.getContents());
             final String scheme = uri.getScheme();
             final String host = uri.getHost();
