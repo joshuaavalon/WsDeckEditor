@@ -69,11 +69,13 @@ public class DeckDatabaseHelper extends SQLiteOpenHelper {
     public void deleteDeckById(final long id) {
         final SQLiteDatabase db = getWritableDatabase();
         db.delete(DECK_TABLE, DECK_ID + " = ?", new String[]{String.valueOf(id)});
+        db.close();
     }
 
-    public void deleteDeckRecordkById(final long deckId) {
+    public void deleteDeckRecordById(final long deckId) {
         final SQLiteDatabase db = getWritableDatabase();
         db.delete(DECK_RECORD_TABLE, DECK_RECORD_DECK_ID + " = ?", new String[]{String.valueOf(deckId)});
+        db.close();
     }
 
     @NonNull

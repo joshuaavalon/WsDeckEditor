@@ -122,6 +122,10 @@
     <string name="no_camera">No camera detected</string>
     <string name="share_button">Share</string>
     <string name="search_condition_error">Please add at least one condition</string>
+    <string name="too_many_cards">You have too many cards in that deck</string>
+    <string name="select_too_many">You have selected too many cards</string>
+    <string name="high_card_count">The card count is too high</string>
+    <string name="invalid_deck">The deck is not valid</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

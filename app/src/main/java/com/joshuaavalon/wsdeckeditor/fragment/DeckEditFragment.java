@@ -61,6 +61,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private View view;
     private Uri qrUri = null;
     private boolean isChanged = false;
+    private final int CARDS_LIMIT = 50;
 
     public static DeckEditFragment newInstance(final long deckId) {
         final DeckEditFragment fragment = new DeckEditFragment();
@@ -148,8 +149,12 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                         new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                deck.setCount(card.getSerial(),
-                                        Integer.valueOf(input.toString()));
+                                final int count = Integer.valueOf(input.toString());
+                                if (count > CARDS_LIMIT) {
+                                    showMessage(R.string.high_card_count);
+                                    return;
+                                }
+                                deck.setCount(card.getSerial(), count);
                                 isChanged = true;
                                 refresh();
                             }
@@ -200,6 +205,10 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     }
 
     private void showDeckShareDialog() {
+        if(deck.size() != CARDS_LIMIT){
+            showMessage(R.string.invalid_deck);
+            return;
+        }
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
                 .title(R.string.share_deck)
                 .iconRes(R.drawable.ic_share_black_24dp)

@@ -5,8 +5,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import com.joshuaavalon.fluentquery.Condition;
 import com.joshuaavalon.fluentquery.Query;
 import com.joshuaavalon.wsdeckeditor.R;
@@ -17,10 +24,10 @@ import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class CardRepository {
     public static final String SQL_CARD = "card";
@@ -43,6 +50,9 @@ public class CardRepository {
     public static final String SQL_CARD_IMAGE = "Image";
     public static final String SQL_VERSION = "version";
     public static final String SQL_VERSION_FIELD = "Version";
+    private static final int PARTITION_SIZE = 50;
+    private static final LoadingCache<String, Card> cardCache = CacheBuilder.newBuilder()
+            .maximumSize(400).build(new CardCacheLoader());
 
     public static List<Card> getCards(@NonNull final CardFilter filter) {
         final Query query = Query.select(getCols()).from(SQL_CARD);
@@ -50,7 +60,7 @@ public class CardRepository {
         if (conditionOptional.isPresent())
             query.where(conditionOptional.get());
         final int showLimit = PreferenceRepository.getShowLimit();
-        if(showLimit > 0)
+        if (showLimit > 0)
             query.limit(showLimit);
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = query.commit(db);
@@ -97,6 +107,16 @@ public class CardRepository {
 
     @NonNull
     public static Optional<Card> getCardBySerial(@NonNull final String serial) {
+        try {
+            return Optional.fromNullable(cardCache.get(serial));
+        } catch (ExecutionException e) {
+            Log.e("Cache Error", e.getMessage());
+            return Optional.fromNullable(findCardBySerial(serial));
+        }
+    }
+
+    @Nullable
+    private static Card findCardBySerial(@NonNull final String serial) {
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
                 .where(Condition.property(SQL_CARD_SERIAL).equal(serial)).commit(db);
@@ -106,29 +126,42 @@ public class CardRepository {
             cursor.close();
         }
         db.close();
-        return Optional.fromNullable(card);
+        return card;
     }
 
     @NonNull
-    public static Map<String, Card> getCardsBySerial(@NonNull final Collection<String> serials) {
+    public static Map<String, Card> getCardsBySerial(@NonNull final Iterable<String> serials) {
+        try {
+            return cardCache.getAll(serials);
+        } catch (ExecutionException e) {
+            Log.e("Cache Error", e.getMessage());
+            return findCardsBySerial(serials);
+        }
+    }
+
+    @NonNull
+    private static Map<String, Card> findCardsBySerial(@NonNull final Iterable<String> serials) {
         final Map<String, Card> cards = new HashMap<>();
         final SQLiteDatabase db = getReadableDatabase();
-        Condition condition = null;
-        for (String serial : serials) {
-            if (condition == null)
-                condition = Condition.property(SQL_CARD_SERIAL).equal(serial);
-            else
-                condition = condition.or(Condition.property(SQL_CARD_SERIAL).equal(serial));
-        }
-        if (condition == null) return cards;
-        final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
-                .where(condition).commit(db);
-        if (cursor.moveToFirst()) {
-            do {
-                final Card card = buildCard(cursor);
-                cards.put(card.getSerial(), card);
-            } while (cursor.moveToNext());
-            cursor.close();
+        final Iterable<List<String>> subSerials = Iterables.partition(serials, PARTITION_SIZE);
+        for (List<String> serialSubSet : subSerials) {
+            Condition condition = null;
+            for (String serial : serialSubSet) {
+                if (condition == null)
+                    condition = Condition.property(SQL_CARD_SERIAL).equal(serial);
+                else
+                    condition = condition.or(Condition.property(SQL_CARD_SERIAL).equal(serial));
+            }
+            if (condition == null) return cards;
+            final Cursor cursor = Query.select(getCols()).from(SQL_CARD)
+                    .where(condition).commit(db);
+            if (cursor.moveToFirst()) {
+                do {
+                    final Card card = buildCard(cursor);
+                    cards.put(card.getSerial(), card);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
         }
         db.close();
         return cards;
@@ -204,5 +237,23 @@ public class CardRepository {
     @NonNull
     private static SQLiteDatabase getReadableDatabase() {
         return new WsDatabaseHelper(WsApplication.getContext()).getReadableDatabase();
+    }
+
+    private static class CardCacheLoader extends CacheLoader<String, Card> {
+
+        @Override
+        public Card load(String key) throws Exception {
+            return findCardBySerial(key);
+        }
+
+        @Override
+        public Map<String, Card> loadAll(Iterable<? extends String> keys) throws Exception {
+            return findCardsBySerial(Iterables.transform(keys, new Function<String, String>() {
+                @Override
+                public String apply(String input) {
+                    return input;
+                }
+            }));
+        }
     }
 }

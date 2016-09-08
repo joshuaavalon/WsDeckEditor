@@ -132,6 +132,10 @@ public class Deck {
         this.id = id;
     }
 
+    public int getCountOfType() {
+        return serialList.elementSet().size();
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Deck && ((Deck) obj).id == id && ((Deck) obj).name.equals(name);

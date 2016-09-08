@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -51,10 +52,12 @@ public class QRCode {
         final Bitmap qrBitmap = encode(data, width, height);
         final Bitmap logoBitmap = BitmapFactory.decodeResource(
                 WsApplication.getContext().getResources(),
-                R.drawable.qr_logo);
+                R.mipmap.ic_launcher);
         final Bitmap resultBitmap = Bitmap.createBitmap(qrBitmap.getWidth(),
                 qrBitmap.getHeight(),
                 qrBitmap.getConfig());
+        Log.e("size", logoBitmap.getHeight()+":"+logoBitmap.getWidth());
+        Log.e("size2", qrBitmap.getHeight()+":"+qrBitmap.getWidth());
         final Canvas canvas = new Canvas(resultBitmap);
         canvas.drawBitmap(qrBitmap, new Matrix(), null);
         final int deltaHeight = qrBitmap.getHeight() - logoBitmap.getHeight();

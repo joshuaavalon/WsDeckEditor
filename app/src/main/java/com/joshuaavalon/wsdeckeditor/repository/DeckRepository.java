@@ -21,7 +21,7 @@ public class DeckRepository {
         } else {
             helper.setDeck(deck.getId(), deck.getName());
         }
-        helper.deleteDeckRecordkById(deck.getId());
+        helper.deleteDeckRecordById(deck.getId());
         final Multiset<String> serials = deck.getSerialList();
         helper.setDeckRecord(deck.getId(), serials);
     }
@@ -30,7 +30,7 @@ public class DeckRepository {
         if (deck.getId() == Deck.NO_ID) return;
         final DeckDatabaseHelper helper = getHelper();
         helper.deleteDeckById(deck.getId());
-        helper.deleteDeckRecordkById(deck.getId());
+        helper.deleteDeckRecordById(deck.getId());
         deck.setId(Deck.NO_ID);
     }
 

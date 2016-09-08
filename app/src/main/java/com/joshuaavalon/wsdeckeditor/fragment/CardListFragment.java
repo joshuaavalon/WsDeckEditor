@@ -55,6 +55,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     @Nullable
     private ActionMode actionMode;
     private RecyclerView recyclerView;
+    private final int CARDS_LIMIT = 60;
 
     @NonNull
     public static CardListFragment newInstance(@NonNull final CardFilter filter) {
@@ -176,12 +177,16 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         final Deck currentDeck = decks.get(which);
-                        for (String serial : cardsToAdd)
-                            currentDeck.addIfNotExist(serial);
-                        DeckRepository.save(currentDeck);
+                        if (currentDeck.getCountOfType() + cardsToAdd.size() > CARDS_LIMIT) {
+                            showMessage(R.string.too_many_cards);
+                        } else {
+                            for (String serial : cardsToAdd)
+                                currentDeck.addIfNotExist(serial);
+                            DeckRepository.save(currentDeck);
+                            if (actionMode != null && PreferenceRepository.getAutoClose())
+                                actionMode.finish();
+                        }
                         dialog.dismiss();
-                        if (actionMode != null)
-                            actionMode.finish();
                     }
                 })
                 .positiveText(R.string.new_deck)
@@ -343,7 +348,10 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                     for (int index : adapter.getSelectedItems()) {
                         cardsToAdd.add(resultCards.get(index).getSerial());
                     }
-                    showDeckSelectDialog(cardsToAdd);
+                    if (cardsToAdd.size() > CARDS_LIMIT)
+                        showMessage(R.string.select_too_many);
+                    else
+                        showDeckSelectDialog(cardsToAdd);
                     return true;
                 default:
                     return false;
