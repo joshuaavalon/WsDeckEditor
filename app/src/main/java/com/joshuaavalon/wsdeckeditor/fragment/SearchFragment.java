@@ -101,7 +101,7 @@ public class SearchFragment extends BaseFragment {
 
     private void submit() {
         if (filters.size() <= 0) {
-            showMessage(R.string.search_condition_error);
+            showMessage(R.string.msg_no_search_condition);
             return;
         }
         if (!(getActivity() instanceof Transactable)) return;
@@ -112,7 +112,7 @@ public class SearchFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_search, menu);
+        inflater.inflate(R.menu.search, menu);
     }
 
     @Override
@@ -131,7 +131,6 @@ public class SearchFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab == null) return;
         fab.show();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,11 +147,8 @@ public class SearchFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab != null)
-            fab.hide();
-        if (future == null) return;
+        fab.hide();
         future.cancel(false);
-        future = null;
     }
 
     private void showConditionDialog() {

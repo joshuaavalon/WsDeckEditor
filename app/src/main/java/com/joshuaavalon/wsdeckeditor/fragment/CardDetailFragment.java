@@ -109,15 +109,15 @@ public class CardDetailFragment extends BaseFragment {
             levelTextView.setText(String.valueOf(card.getLevel()));
             costTextView.setText(String.valueOf(card.getCost()));
         } else {
-            levelTextView.setText(R.string.not_applicable);
-            costTextView.setText(R.string.not_applicable);
+            levelTextView.setText(R.string.not_applicable_value);
+            costTextView.setText(R.string.not_applicable_value);
         }
         if (card.getType() == Card.Type.Character) {
             powerTextView.setText(String.valueOf(card.getPower()));
             soulTextView.setText(String.valueOf(card.getSoul()));
         } else {
-            powerTextView.setText(R.string.not_applicable);
-            soulTextView.setText(R.string.not_applicable);
+            powerTextView.setText(R.string.not_applicable_value);
+            soulTextView.setText(R.string.not_applicable_value);
         }
         triggerTextView.setText(card.getTrigger().getResId());
         final String first = card.getAttribute1();

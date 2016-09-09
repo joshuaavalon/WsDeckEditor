@@ -207,26 +207,20 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Type implements StringResource {
-        Character(R.string.type_chara, 1),
-        Event(R.string.type_event, 2),
-        Climax(R.string.type_climax, 3);
+        Character(R.string.type_chara),
+        Event(R.string.type_event),
+        Climax(R.string.type_climax);
         @StringRes
         private final int resId;
-        private final int order;
 
-        Type(@StringRes final int resId, final int order) {
+        Type(@StringRes final int resId) {
             this.resId = resId;
-            this.order = order;
         }
 
         @Override
         @StringRes
         public int getResId() {
             return resId;
-        }
-
-        public int getOrder() {
-            return order;
         }
     }
 
@@ -280,19 +274,17 @@ public class Card implements Comparable<Card> {
     }
 
     public enum Color implements StringResource {
-        Yellow(R.string.color_yellow, 1, R.color.cardYellow),
-        Green(R.string.color_green, 2, R.color.cardGreen),
-        Red(R.string.color_red, 3, R.color.cardRed),
-        Blue(R.string.color_blue, 4, R.color.cardBlue);
+        Yellow(R.string.color_yellow, R.color.cardYellow),
+        Green(R.string.color_green, R.color.cardGreen),
+        Red(R.string.color_red, R.color.cardRed),
+        Blue(R.string.color_blue, R.color.cardBlue);
         @StringRes
         private final int resId;
         @ColorRes
         private final int colorResId;
-        private final int order;
 
-        Color(@StringRes final int resId, final int order, @ColorRes final int colorResId) {
+        Color(@StringRes final int resId, @ColorRes final int colorResId) {
             this.resId = resId;
-            this.order = order;
             this.colorResId = colorResId;
         }
 
@@ -300,10 +292,6 @@ public class Card implements Comparable<Card> {
         @StringRes
         public int getResId() {
             return resId;
-        }
-
-        public int getOrder() {
-            return order;
         }
 
         @ColorRes
@@ -514,8 +502,8 @@ public class Card implements Comparable<Card> {
         @Override
         public int compare(final Card left, final Card right) {
             return ComparisonChain.start()
-                    .compare(left.color.getOrder(), right.color.getOrder())
-                    .compare(left.type.getOrder(), right.type.getOrder())
+                    .compare(left.color.ordinal(), right.color.ordinal())
+                    .compare(left.type.ordinal(), right.type.ordinal())
                     .compare(left.level, right.level)
                     .compare(left.serial, right.serial)
                     .result();

@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/custom_dialog_padding"
-    android:paddingStart="@dimen/custom_dialog_padding">
+    android:paddingEnd="@dimen/dialog_horizontal_margin"
+    android:paddingStart="@dimen/dialog_horizontal_margin">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout"
@@ -18,22 +18,21 @@
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
-        android:id="@+id/search_area_linear_layout"
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Medium"
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/search_area" />
+            android:text="@string/dialog_search_area" />
 
         <TextView
-            android:id="@+id/search_area_text_view"
-            style="@style/TextAppearance.AppCompat.Small"
+            android:id="@+id/text_view"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
 </LinearLayout>

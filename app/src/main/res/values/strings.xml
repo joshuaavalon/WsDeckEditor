@@ -1,5 +1,9 @@
 <resources>
+    <!--        App Metadata Start       -->
     <string name="app_name">WS Deck Editor</string>
+    <!--        App Metadata End         -->
+
+    <!--        Data Related Start       -->
     <string name="card_name">Name</string>
     <string name="card_serial">Serial</string>
     <string name="card_expansion">Expansion</string>
@@ -15,18 +19,17 @@
     <string name="card_attribute">Attribute</string>
     <string name="card_text">Text</string>
     <string name="card_flavor_text">Flavor Text</string>
-    <string name="nav_search">Search</string>
-    <string name="nav_cardlist">Card List</string>
-    <string name="nav_update">Update</string>
-    <string name="nav_about">About</string>
-    <string name="menu_search">Filter expansions</string>
+    <string name="card_total">Total</string>
+
     <string name="type_chara">Character</string>
     <string name="type_climax">Climax</string>
     <string name="type_event">Event</string>
-    <string name="color_yellow">Y</string>
-    <string name="color_green">G</string>
-    <string name="color_red">R</string>
-    <string name="color_blue">B</string>
+
+    <string name="color_yellow">Yellow</string>
+    <string name="color_green">Green</string>
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+
     <string name="trigger_none">None</string>
     <string name="trigger_1s">One Soul</string>
     <string name="trigger_2s">Two Soul</string>
@@ -37,95 +40,152 @@
     <string name="trigger_door">Door</string>
     <string name="trigger_book">Book</string>
     <string name="trigger_gate">Gate</string>
+
     <string name="side_w">Weib</string>
     <string name="side_s">Schwarz</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="and">And</string>
-    <string name="not">Not</string>
-    <string name="cost">Cost</string>
-    <string name="power">Power</string>
-    <string name="soul">Soul</string>
-    <string name="card_char">Attribute</string>
-    <string name="select_all">Select All</string>
-    <string name="normal_only">Normal Only</string>
-    <string name="filter_cards">Filter cards</string>
-    <string name="select_your_deck">Select Your Deck</string>
-    <string name="create_a_new_deck">Create a new deck</string>
-    <string name="deck_name">Deck Name</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="create_deck_create">Create</string>
-    <string name="filter_decks">Filter Decks</string>
-    <string name="deck_edit">Deck Edit</string>
-    <string name="rename_button">Rename</string>
-    <string name="deck_saved">Deck saved!</string>
-    <string name="sort">Sort</string>
+    <!--        Data Metadata End         -->
+
+    <!--      Condition Related Start     -->
+    <string name="filter_expansion">@string/card_expansion</string>
+    <string name="filter_side">@string/card_side</string>
+    <string name="filter_type">@string/card_type</string>
+    <string name="filter_color">@string/card_color</string>
+    <string name="filter_level">@string/card_level</string>
+    <string name="filter_cost">@string/card_cost</string>
+    <string name="filter_power">@string/card_power</string>
+    <string name="filter_soul">@string/card_soul</string>
+    <string name="filter_trigger">@string/card_trigger</string>
+    <string name="filter_and">And</string>
+    <string name="filter_not">Not</string>
+    <string name="filter_normal_only">Normal Only</string>
+
+    <string name="filter_dialog_expansion">@string/filter_expansion</string>
+    <string name="filter_dialog_side">@string/filter_side</string>
+    <string name="filter_dialog_type">@string/filter_type</string>
+    <string name="filter_dialog_color">@string/filter_color</string>
+    <string name="filter_dialog_level">@string/filter_level</string>
+    <string name="filter_dialog_cost">@string/filter_cost</string>
+    <string name="filter_dialog_power">@string/filter_power</string>
+    <string name="filter_dialog_soul">@string/filter_soul</string>
+    <string name="filter_dialog_trigger">@string/filter_trigger</string>
+    <string name="filter_dialog_and">@string/filter_and</string>
+    <string name="filter_dialog_not">@string/filter_not</string>
+    <string name="filter_dialog_normal_only">@string/filter_normal_only</string>
+    <!--       Condition Related End      -->
+
+    <!--            Menu Start            -->
+    <string name="nav_search">Search</string>
+    <string name="nav_card_list">Card Lists</string>
+    <string name="nav_update">Update</string>
+    <string name="nav_about">About</string>
+    <string name="nav_deck_edit">Deck Edit</string>
+    <string name="nav_qr">Scan QR</string>
+
+    <string name="nav_drawer_open">Open Navigation Drawer</string>
+    <string name="nav_drawer_close">Close Navigation Drawer</string>
+
+    <string name="nav_cat_system">System</string>
+
+    <string name="menu_filter_exp">Filter Expansions</string>
+    <string name="menu_select_all">Select All</string>
+    <string name="menu_filter_cards">Filter Cards</string>
+    <string name="menu_filter_decks">Filter Decks</string>
     <string name="menu_sorting">Sorting</string>
-    <string name="card_level_prefix">Lv.%s</string>
-    <string name="not_applicable">-</string>
-    <string name="menu_delete_deck">Delete deck</string>
-    <string name="count">Count</string>
-    <string name="change_button">Change</string>
-    <string name="select_button">Select</string>
-    <string name="rename_deck">Rename Deck</string>
-    <string name="change_card_count">Change Card Count</string>
-    <string name="add_to_deck">Added to deck</string>
-    <string name="new_deck">New</string>
-    <string name="card_detail_prefix">Lv.%1$s\n%2$s</string>
-    <string name="card_detail_prefix_climax">-\n%s</string>
-    <string name="load_version">Loading latest version</string>
-    <string name="wait_message">Please wait</string>
-    <string name="network_error">Network error. Please check your network and try again.</string>
-    <string name="download_dialog_title">Download Resources</string>
-    <string name="latest_version">Latest Version: %1$s\nYour Version: %2$s</string>
-    <string name="update_database">Update Database</string>
-    <string name="update_images">Update Images</string>
-    <string name="download_all_images">Download All Images</string>
-    <string name="update_started">Update started</string>
-    <string name="system">System</string>
-    <string name="search_area">Search Area</string>
-    <string name="confirm_button">Confirm</string>
+    <string name="menu_delete_deck">Delete Deck</string>
+    <string name="menu_deck_info">Deck Info</string>
+    <string name="menu_share_deck">Share Deck</string>
+    <!--             Menu End             -->
+
+    <!--           Dialog Start           -->
+    <string name="dialog_select_your_deck">Select Your Deck</string>
+    <string name="dialog_create_a_new_deck">Create A New Deck</string>
+    <string name="dialog_rename_deck">Rename Deck</string>
+    <string name="dialog_change_card_count">Change Card Count</string>
+    <string name="dialog_deck_name">Deck Name</string>
+    <string name="dialog_sort_by">Sort By</string>
+    <string name="dialog_load_version">Loading latest version</string>
+    <string name="dialog_download_res">Download Resources</string>
+    <string name="dialog_deck_info">Deck Info</string>
+    <string name="dialog_share_deck">Share Deck</string>
+
+    <string name="dialog_count">Count</string>
+    <string name="dialog_wait_message">Please wait</string>
+    <string name="dialog_search_area">Search Area</string>
+
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_create_button">Create</string>
+    <string name="dialog_rename_button">Rename</string>
+    <string name="dialog_apply_button">Apply</string>
+    <string name="dialog_select_button">Select</string>
+    <string name="dialog_new_button">New</string>
+    <string name="dialog_update_db_button">Update Database</string>
+    <string name="dialog_update_images_button">Update Images</string>
+    <string name="dialog_download_all_images_button">Download All Images</string>
+    <string name="dialog_add_button">Add</string>
+    <string name="dialog_share_button">Share</string>
+    <!--            Dialog End            -->
+
+    <!--           Message Start          -->
+    <string name="msg_deck_saved">Deck saved.</string>
+    <string name="msg_add_to_deck">Added to deck.</string>
+    <string name="msg_update_started">Update started.</string>
+    <string name="msg_network_err">Network error. Please check your network and try again.</string>
+    <string name="msg_invalid_qr">Invalid QR code.</string>
+    <string name="msg_camera_error">Camera Error.</string>
+    <string name="msg_no_camera">No camera detected.</string>
+    <string name="msg_no_search_condition">Please add at least one condition.</string>
+    <string name="msg_too_many_cards">You have too many cards in that deck.</string>
+    <string name="msg_select_too_many">You have selected too many cards.</string>
+    <string name="msg_high_card_count">The card count is too high.</string>
+    <string name="msg_invalid_deck">The deck is not valid.</string>
+    <!--            Message End           -->
+
+    <!--            Display Start         -->
+    <string name="format_card_level">Lv.%s</string>
+    <string name="format_card_detail">Lv.%1$s\n%2$s</string>
+    <string name="format_card_detail_cx">-\n%s</string>
+    <string name="format_latest_version">Latest Version: %1$s\nYour Version: %2$s</string>
+    <string name="format_info_string">%1$s: %2$s</string>
+    <string name="format_info_string_lvl">Lv.%1$s: %2$s</string>
+    <string name="not_applicable_value">-</string>
+
     <string name="op_lesser">&lt;</string>
     <string name="op_lesser_eq">&lt;=</string>
     <string name="op_greater">&gt;</string>
     <string name="op_greater_eq">&gt;=</string>
     <string name="op_eq">=</string>
-    <string name="card_normal">Normal</string>
+    <!--             Display End          -->
+
+    <!--          Preference Start        -->
     <string name="pref_auto_save">autoSave</string>
-    <string name="pref_auto_save_title">Auto Save Deck</string>
-    <string name="pref_auto_save_summary">Any changes made to the deck will be saved automatically.</string>
     <string name="pref_hide_normal">hideNormal</string>
-    <string name="pref_hide_normal_title">Normal Card Only</string>
-    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
     <string name="pref_auto_close">autoClose</string>
-    <string name="pref_auto_close_title">Auto Close Select Mode</string>
-    <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
     <string name="pref_show_limit">showLimit</string>
-    <string name="pref_show_limit_title">Card Limit</string>
-    <string name="pref_show_limit_summary">Number of cards show at the same time. 0 for unlimited (Not Recommended).</string>
     <string name="pref_pop_back">popBack</string>
+
+    <string name="pref_auto_save_title">Auto Save Deck</string>
+    <string name="pref_hide_normal_title">Normal Card Only</string>
+    <string name="pref_auto_close_title">Auto Close Select Mode</string>
+    <string name="pref_show_limit_title">Card Limit</string>
     <string name="pref_pop_back_title">Reset Back Stack</string>
+
+    <string name="pref_auto_save_summary">Any changes made to the deck will be saved automatically.</string>
+    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
+    <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
+    <string name="pref_show_limit_summary">Number of cards show at the same time. 0 for unlimited (Not Recommended).</string>
     <string name="pref_pop_back_summary">(Recommended) Reset back stack when pressing on navigation to reduce memory usage.</string>
+
     <string name="pref_cat_common">Common</string>
-    <string name="pref_cat_deck_edit">Deck Edit</string>
+    <string name="pref_cat_deck_edit">@string/nav_deck_edit</string>
     <string name="pref_cat_misc">Miscellaneous</string>
-    <string name="menu_deck_info">Show deck info</string>
-    <string name="deck_info">Deck Info</string>
-    <string name="info_string">%1$s: %2$s</string>
-    <string name="info_level_string">Lv.%1$s: %2$s</string>
-    <string name="total">Total</string>
-    <string name="menu_share_deck">Share deck</string>
-    <string name="share_deck">Share Deck</string>
-    <string name="nav_qr">Scan QR</string>
-    <string name="err_invalid_er">Invalid QR code</string>
-    <string name="camera_error">Camera Error</string>
-    <string name="no_camera">No camera detected</string>
-    <string name="share_button">Share</string>
-    <string name="search_condition_error">Please add at least one condition</string>
-    <string name="too_many_cards">You have too many cards in that deck</string>
-    <string name="select_too_many">You have selected too many cards</string>
-    <string name="high_card_count">The card count is too high</string>
-    <string name="invalid_deck">The deck is not valid</string>
+    <!--           Preference End         -->
+
+    <!--         Accessibility Start      -->
+    <string name="acb_ws_logo">Weib Schwarz Logo</string>
+    <string name="acb_qr">QR Code</string>
+    <string name="acb_card_image">Card Image</string>
+    <string name="acb_card_side">Card Side</string>
+    <!--          Accessibility End       -->
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
@@ -141,7 +201,7 @@
     <string-array name="search_area">
         <item>@string/card_name</item>
         <item>@string/card_serial</item>
-        <item>@string/card_char</item>
+        <item>@string/card_attribute</item>
         <item>@string/card_text</item>
     </string-array>
 

@@ -11,32 +11,34 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.common.base.Optional;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Utility {
     public static String getImageNameFromUrl(@NonNull final String url) {
         return Uri.parse(url).getLastPathSegment();
     }
 
-    public static boolean requestPermission(Activity activity, int requestCode, String... permissions) {
+    public static boolean requestPermission(@NonNull final Activity activity,
+                                            final int requestCode,
+                                            @NonNull final String... permissions) {
         boolean granted = true;
-        ArrayList<String> permissionsNeeded = new ArrayList<>();
+        final ArrayList<String> permissionsNeeded = new ArrayList<>();
 
-        for (String s : permissions) {
-            int permissionCheck = ContextCompat.checkSelfPermission(activity, s);
-            boolean hasPermission = (permissionCheck == PackageManager.PERMISSION_GRANTED);
+        for (String permission : permissions) {
+            final int permissionCheck = ContextCompat.checkSelfPermission(activity, permission);
+            final boolean hasPermission = (permissionCheck == PackageManager.PERMISSION_GRANTED);
             granted &= hasPermission;
-            if (!hasPermission) {
-                permissionsNeeded.add(s);
-            }
+            if (!hasPermission)
+                permissionsNeeded.add(permission);
         }
 
-        if (granted) {
+        if (granted)
             return true;
-        } else {
+        else {
             ActivityCompat.requestPermissions(activity,
                     permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                     requestCode);
@@ -44,26 +46,18 @@ public class Utility {
         }
     }
 
-    public static boolean permissionGranted(
-            int requestCode, int permissionCode, int[] grantResults) {
+    public static boolean permissionGranted(final int requestCode,
+                                            final int permissionCode,
+                                            @NonNull final int[] grantResults) {
         return requestCode == permissionCode &&
                 grantResults.length > 0 &&
                 grantResults[0] == PackageManager.PERMISSION_GRANTED;
     }
 
     @NonNull
-    public static String toString(Collection<String> stringCollection, String separator) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        for (String string : stringCollection) {
-            if (!stringBuilder.toString().equals(""))
-                stringBuilder.append(separator);
-            stringBuilder.append(string);
-        }
-        return stringBuilder.toString();
-    }
-
     @SuppressLint("SetWorldReadable")
-    public static Uri savePublicBitmap(@NonNull final Bitmap bitmap, @NonNull final String fileName) {
+    public static Optional<Uri> savePublicBitmap(@NonNull final Bitmap bitmap,
+                                                 @NonNull final String fileName) {
         try {
             final File file = new File(WsApplication.getContext().getCacheDir(), fileName + ".png");
             final FileOutputStream fOut = new FileOutputStream(file);
@@ -72,10 +66,10 @@ public class Utility {
             fOut.close();
             if (!file.setReadable(true, false))
                 Log.e("Bitmap", "Share failed");
-            return Uri.fromFile(file);
+            return Optional.of(Uri.fromFile(file));
         } catch (Exception ignored) {
         }
-        return null;
+        return Optional.absent();
     }
 
     public static void sharePublicBitmap(@NonNull final Activity activity, @NonNull final Uri uri) {

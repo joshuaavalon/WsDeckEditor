@@ -65,7 +65,7 @@ public class TriggerCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_trigger;
+        return R.string.filter_dialog_trigger;
     }
 
     @NonNull

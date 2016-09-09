@@ -50,7 +50,7 @@ public abstract class SelectableAdapter<T, VH extends BaseRecyclerViewHolder<T>>
         return items;
     }
 
-    public void selecAll() {
+    public void selectAll() {
         for (int i = 0; i < models.size(); i++) {
             selectedItems.put(i, true);
             notifyItemChanged(i);

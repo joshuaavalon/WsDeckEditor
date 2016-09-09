@@ -127,7 +127,7 @@ public class NetworkRepository {
                     public void onErrorResponse(VolleyError error) {
                         if (failHandler != null)
                             failHandler.handle(WsApplication.getContext()
-                                    .getString(R.string.network_error));
+                                    .getString(R.string.msg_network_err));
                     }
                 });
         if (requestQueue == null) {

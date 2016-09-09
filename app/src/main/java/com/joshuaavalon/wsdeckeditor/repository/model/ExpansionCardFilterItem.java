@@ -69,7 +69,7 @@ public class ExpansionCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_expansion;
+        return R.string.filter_dialog_expansion;
     }
 
     @NonNull

@@ -73,7 +73,7 @@ public class NormalCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.normal_only;
+        return R.string.filter_dialog_normal_only;
     }
 
     @NonNull

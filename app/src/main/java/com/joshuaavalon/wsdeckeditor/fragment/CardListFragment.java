@@ -30,6 +30,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.WsApplication;
 import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
 import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
@@ -48,14 +49,12 @@ import java.util.List;
 
 public class CardListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
     private static final String ARG_FILTER = "filter";
-
     private List<Card> resultCards;
     private CardRecyclerViewAdapter adapter;
     private ActionModeCallback actionModeCallback;
     @Nullable
     private ActionMode actionMode;
     private RecyclerView recyclerView;
-    private final int CARDS_LIMIT = 60;
 
     @NonNull
     public static CardListFragment newInstance(@NonNull final CardFilter filter) {
@@ -136,7 +135,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_cardlist, menu);
+        inflater.inflate(R.menu.card_list, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
@@ -165,7 +164,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         final List<Deck> decks = DeckRepository.getDecks();
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_assignment_black_24dp)
-                .title(R.string.select_your_deck)
+                .title(R.string.dialog_select_your_deck)
                 .items(Lists.newArrayList(Iterables.transform(decks,
                         new Function<Deck, String>() {
                             @Override
@@ -177,8 +176,8 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         final Deck currentDeck = decks.get(which);
-                        if (currentDeck.getCountOfType() + cardsToAdd.size() > CARDS_LIMIT) {
-                            showMessage(R.string.too_many_cards);
+                        if (currentDeck.getCountOfType() + cardsToAdd.size() > WsApplication.CARD_TYPE_LIMIT) {
+                            showMessage(R.string.msg_too_many_cards);
                         } else {
                             for (String serial : cardsToAdd)
                                 currentDeck.addIfNotExist(serial);
@@ -186,29 +185,26 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                             if (actionMode != null && PreferenceRepository.getAutoClose())
                                 actionMode.finish();
                         }
-                        dialog.dismiss();
                     }
                 })
-                .positiveText(R.string.new_deck)
+                .positiveText(R.string.dialog_new_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        showCreateDeckDialog(dialog, cardsToAdd);
+                        showCreateDeckDialog(cardsToAdd);
                     }
                 })
-                .autoDismiss(false)
                 .show();
     }
 
-    private void showCreateDeckDialog(@NonNull final MaterialDialog parent,
-                                      @NonNull final List<String> cardsToAdd) {
+    private void showCreateDeckDialog(@NonNull final List<String> cardsToAdd) {
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_add_black_24dp)
-                .title(R.string.create_a_new_deck)
+                .title(R.string.dialog_create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.create_deck_create)
-                .negativeText(R.string.cancel_button)
-                .input(R.string.deck_name, 0, false, new MaterialDialog.InputCallback() {
+                .positiveText(R.string.dialog_create_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(R.string.dialog_deck_name, 0, false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         final Deck deck = new Deck();
@@ -216,8 +212,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                         for (String serial : cardsToAdd)
                             deck.addIfNotExist(serial);
                         DeckRepository.save(deck);
-                        parent.dismiss();
-                        showMessage(R.string.add_to_deck);
+                        showMessage(R.string.msg_add_to_deck);
                         if (actionMode != null)
                             actionMode.finish();
                     }
@@ -311,9 +306,9 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             colorView.setBackgroundResource(card.getColor().getColorResId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
             if (card.getType() != Card.Type.Climax)
-                levelTextView.setText(getString(R.string.card_level_prefix, String.valueOf(card.getLevel())));
+                levelTextView.setText(getString(R.string.format_card_level, String.valueOf(card.getLevel())));
             else
-                levelTextView.setText(R.string.not_applicable);
+                levelTextView.setText(R.string.not_applicable_value);
             typeTextView.setText(card.getType().getResId());
         }
 
@@ -328,7 +323,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
 
         @Override
         public boolean onCreateActionMode(final ActionMode actionMode, final Menu menu) {
-            actionMode.getMenuInflater().inflate(R.menu.menu_cardlist_actionmode, menu);
+            actionMode.getMenuInflater().inflate(R.menu.card_list_action_mode, menu);
             return true;
         }
 
@@ -341,15 +336,15 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.select_all:
-                    adapter.selecAll();
+                    adapter.selectAll();
                     return true;
                 case R.id.add_to_deck:
                     final List<String> cardsToAdd = new ArrayList<>();
                     for (int index : adapter.getSelectedItems()) {
                         cardsToAdd.add(resultCards.get(index).getSerial());
                     }
-                    if (cardsToAdd.size() > CARDS_LIMIT)
-                        showMessage(R.string.select_too_many);
+                    if (cardsToAdd.size() > WsApplication.CARD_TYPE_LIMIT)
+                        showMessage(R.string.msg_select_too_many);
                     else
                         showDeckSelectDialog(cardsToAdd);
                     return true;

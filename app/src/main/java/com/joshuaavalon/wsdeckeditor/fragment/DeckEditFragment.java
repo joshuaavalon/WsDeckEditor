@@ -55,13 +55,12 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     private static final String ARG_DECK_ID = "deckId";
     private static final String INFO_DIALOG_SEPARATOR = "\n";
     private static final int QR_SIZE = 1000;
+    private final int CARDS_LIMIT = 50;
     private CardRecyclerViewAdapter adapter;
     private Deck deck;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private View view;
     private Uri qrUri = null;
     private boolean isChanged = false;
-    private final int CARDS_LIMIT = 50;
 
     public static DeckEditFragment newInstance(final long deckId) {
         final DeckEditFragment fragment = new DeckEditFragment();
@@ -95,7 +94,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
 
     private void showSortDialog() {
         new MaterialDialog.Builder(getContext())
-                .title(R.string.sort)
+                .title(R.string.dialog_sort_by)
                 .iconRes(R.drawable.ic_sort_black_24dp)
                 .items(R.array.sort_type)
                 .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder().toInt(),
@@ -111,20 +110,20 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                                 return true;
                             }
                         })
-                .positiveText(R.string.select_button)
-                .negativeText(R.string.cancel_button)
+                .positiveText(R.string.dialog_select_button)
+                .negativeText(R.string.dialog_cancel_button)
                 .show();
     }
 
     private void showRenameDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_edit_black_24dp)
-                .title(R.string.rename_deck)
+                .title(R.string.dialog_rename_deck)
                 .content(deck.getName())
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.rename_button)
-                .negativeText(R.string.cancel_button)
-                .input(getString(R.string.deck_name), deck.getName(), false,
+                .positiveText(R.string.dialog_rename_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(getString(R.string.dialog_deck_name), deck.getName(), false,
                         new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -140,18 +139,18 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         final Card card = entry.getElement();
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_edit_black_24dp)
-                .title(R.string.change_card_count)
+                .title(R.string.dialog_change_card_count)
                 .content(card.getSerial() + " " + card.getName())
                 .inputType(InputType.TYPE_CLASS_NUMBER)
-                .positiveText(R.string.change_button)
-                .negativeText(R.string.cancel_button)
-                .input(getString(R.string.count), String.valueOf(entry.getCount()), false,
+                .positiveText(R.string.dialog_apply_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(getString(R.string.dialog_count), String.valueOf(entry.getCount()), false,
                         new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 final int count = Integer.valueOf(input.toString());
                                 if (count > CARDS_LIMIT) {
-                                    showMessage(R.string.high_card_count);
+                                    showMessage(R.string.msg_high_card_count);
                                     return;
                                 }
                                 deck.setCount(card.getSerial(), count);
@@ -164,7 +163,7 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
 
     private void showDeckInfoDialog() {
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
-                .title(R.string.deck_info)
+                .title(R.string.dialog_deck_info)
                 .iconRes(R.drawable.ic_info_outline_black_24dp)
                 .customView(R.layout.dialog_deck_info, true)
                 .show();
@@ -186,34 +185,34 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
         for (Card.Color color : Card.Color.values()) {
             if (colorCount.contains(color))
-                tempList.add(getString(R.string.info_string, getString(color.getResId()), colorCount.count(color)));
+                tempList.add(getString(R.string.format_info_string, getString(color.getResId()), colorCount.count(color)));
         }
         colorTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
         tempList.clear();
         final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
         for (Card.Type type : Card.Type.values()) {
             if (typeCount.contains(type))
-                tempList.add(getString(R.string.info_string, getString(type.getResId()), typeCount.count(type)));
+                tempList.add(getString(R.string.format_info_string, getString(type.getResId()), typeCount.count(type)));
         }
         typeTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
         tempList.clear();
         final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
         for (Integer level : Ordering.natural().sortedCopy(levelCount.elementSet())) {
-            tempList.add(getString(R.string.info_level_string, String.valueOf(level), levelCount.count(level)));
+            tempList.add(getString(R.string.format_info_string_lvl, String.valueOf(level), levelCount.count(level)));
         }
         levelTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
     }
 
     private void showDeckShareDialog() {
-        if(deck.size() != CARDS_LIMIT){
-            showMessage(R.string.invalid_deck);
+        if (deck.size() != CARDS_LIMIT) {
+            showMessage(R.string.msg_invalid_deck);
             return;
         }
         final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
-                .title(R.string.share_deck)
+                .title(R.string.dialog_share_deck)
                 .iconRes(R.drawable.ic_share_black_24dp)
                 .customView(R.layout.dialog_share, false)
-                .positiveText(R.string.share_button)
+                .positiveText(R.string.dialog_share_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -228,7 +227,9 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         final ImageView qrImageView = (ImageView) view.findViewById(R.id.image_view);
         final Bitmap qrBitmap = QRCode.encodeWithLogo(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE);
         qrImageView.setImageBitmap(qrBitmap);
-        qrUri = Utility.savePublicBitmap(qrBitmap, "QR");
+        final Optional<Uri> uriOptional = Utility.savePublicBitmap(qrBitmap, "QR");
+        if (uriOptional.isPresent())
+            qrUri = uriOptional.get();
     }
 
     @Override
@@ -256,13 +257,14 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_deckedit, menu);
+        inflater.inflate(R.menu.deck_edit, menu);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
+        final View view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new CardRecyclerViewAdapter(deck.getList());
         recyclerView.setAdapter(adapter);
@@ -299,46 +301,45 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
         sort(PreferenceRepository.getSortOrder());
         if (PreferenceRepository.getAutoSave() && isChanged)
             DeckRepository.save(deck);
-        ColorUtils.setColorView(deck, view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refresh();
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab == null || PreferenceRepository.getAutoSave()) return;
-        fab.show();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeckRepository.save(deck);
-                showMessage(R.string.deck_saved);
-            }
-        });
-        fab.setImageResource(R.drawable.ic_save_white_24dp);
         final Activity activity = getActivity();
-        if (activity instanceof MainActivity)
-            ((MainActivity) activity).setToolbarOnClick(new View.OnClickListener() {
+        if (!(activity instanceof MainActivity)) return;
+        final MainActivity mainActivity = (MainActivity) activity;
+        final FloatingActionButton fab = (FloatingActionButton) mainActivity.findViewById(R.id.fab);
+        if (!PreferenceRepository.getAutoSave()) {
+            fab.show();
+            fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showRenameDialog(deck);
+                    DeckRepository.save(deck);
+                    showMessage(R.string.msg_deck_saved);
                 }
             });
+            fab.setImageResource(R.drawable.ic_save_white_24dp);
+        }
+        mainActivity.setToolbarOnClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRenameDialog(deck);
+            }
+        });
+        refresh();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab != null)
-            fab.hide();
-
         final Activity activity = getActivity();
-        if (activity instanceof MainActivity) {
-            ((MainActivity) activity).removeTitle();
-            ((MainActivity) activity).setToolbarOnClick(null);
-        }
+        if (!(activity instanceof MainActivity)) return;
+        final MainActivity mainActivity = (MainActivity) activity;
+        final FloatingActionButton fab = (FloatingActionButton) mainActivity.findViewById(R.id.fab);
+        fab.hide();
+        mainActivity.removeTitle();
+        mainActivity.setToolbarOnClick(null);
     }
 
     private void sort(Card.SortOrder order) {
@@ -443,10 +444,10 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                 }
             });
             if (card.getType() != Card.Type.Climax)
-                typeTextView.setText(getString(R.string.card_detail_prefix, card.getLevel(),
+                typeTextView.setText(getString(R.string.format_card_detail, card.getLevel(),
                         getString(card.getType().getResId())));
             else
-                typeTextView.setText(getString(R.string.card_detail_prefix_climax,
+                typeTextView.setText(getString(R.string.format_card_detail_cx,
                         getString(card.getType().getResId())));
             typeTextView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="@dimen/card_spacing">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,20 +17,20 @@
 
             <TextView
                 android:id="@+id/text_view"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="10dp"
-                style="@style/TextAppearance.AppCompat.Medium" />
+                android:padding="@dimen/double_standard_spacing" />
 
             <TextView
                 android:id="@+id/status_text_view"
-                android:layout_width="80dp"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="@dimen/status_text_view_width"
                 android:layout_height="match_parent"
-                android:padding="10dp"
-                style="@style/TextAppearance.AppCompat.Medium" />
+                android:padding="@dimen/double_standard_spacing" />
         </LinearLayout>
 
-        <include layout="@layout/color_bar" />
+        <include layout="@layout/view_color_bar" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

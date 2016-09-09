@@ -45,6 +45,8 @@ public class DeckDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(final SQLiteDatabase sqLiteDatabase,
                           final int oldVersion,
                           final int newVersion) {
+        sqLiteDatabase.execSQL(String.format("DROP TABLE IF EXISTS %s", DECK_TABLE));
+        sqLiteDatabase.execSQL(String.format("DROP TABLE IF EXISTS %s", DECK_RECORD_TABLE));
         onCreate(sqLiteDatabase);
     }
 

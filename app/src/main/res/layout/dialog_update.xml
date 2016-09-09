@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/custom_dialog_padding"
-    android:paddingStart="@dimen/custom_dialog_padding">
+    android:paddingEnd="@dimen/dialog_horizontal_margin"
+    android:paddingStart="@dimen/dialog_horizontal_margin">
 
     <TextView
         android:id="@+id/text_view"
@@ -17,19 +17,19 @@
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/update_database" />
+        android:text="@string/dialog_update_db_button" />
 
     <Button
         android:id="@+id/update_images_button"
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/update_images" />
+        android:text="@string/dialog_update_images_button" />
 
     <Button
         android:id="@+id/download_all_images_button"
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/download_all_images" />
+        android:text="@string/dialog_download_all_images_button" />
 </LinearLayout>

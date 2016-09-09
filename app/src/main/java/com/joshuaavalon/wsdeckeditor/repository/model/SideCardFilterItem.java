@@ -49,7 +49,7 @@ public class SideCardFilterItem extends CardFilterItem {
     public MaterialDialog getDialog(@NonNull final Context context,
                                     @NonNull final Handler<Void> callback) {
         return new MaterialDialog.Builder(context)
-                .title(R.string.card_side)
+                .title(getTitle())
                 .items(StringUtils.getStringResourceList(Card.Side.class))
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
@@ -66,7 +66,7 @@ public class SideCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_side;
+        return R.string.filter_dialog_side;
     }
 
     @NonNull

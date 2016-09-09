@@ -94,7 +94,7 @@ public class RangeCardFilterItem extends CardFilterItem {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(getTitle())
                 .customView(R.layout.dialog_range, false)
-                .positiveText(R.string.confirm_button)
+                .positiveText(R.string.dialog_add_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

@@ -61,15 +61,15 @@ public class MainActivity extends BaseActivity implements Transactable,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        if (savedInstanceState == null && findViewById(R.id.frame_content) != null) {
+        if (savedInstanceState == null && findViewById(R.id.fragment) != null) {
             //transactTo(new DeckInfoFragment(), false);
         }
     }
 
     private void initUi() {
         initToolbar();
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void scanQr() {
@@ -80,9 +80,9 @@ public class MainActivity extends BaseActivity implements Transactable,
             if (manager.getCameraIdList().length > 0)
                 new IntentIntegrator(this).initiateScan();
             else
-                showMessage(R.string.no_camera);
+                showMessage(R.string.msg_no_camera);
         } catch (CameraAccessException ignored) {
-            showMessage(R.string.camera_error);
+            showMessage(R.string.msg_camera_error);
         }
     }
 
@@ -94,8 +94,8 @@ public class MainActivity extends BaseActivity implements Transactable,
         actionBar.setDisplayShowTitleEnabled(false);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.nav_drawer_open,
+                R.string.nav_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
@@ -109,13 +109,13 @@ public class MainActivity extends BaseActivity implements Transactable,
         final int id = item.getItemId();
         Fragment fragment = null;
         switch (id) {
-            case R.id.nav_cardlist:
+            case R.id.nav_card_list:
                 fragment = new ExpansionFragment();
                 break;
             case R.id.nav_search:
                 fragment = new SearchFragment();
                 break;
-            case R.id.nav_deckedit:
+            case R.id.nav_deck_edit:
                 fragment = new DeckListFragment();
                 break;
             case R.id.nav_update:
@@ -150,12 +150,12 @@ public class MainActivity extends BaseActivity implements Transactable,
                             R.anim.exit_to_left,
                             R.anim.enter_from_right,
                             R.anim.exit_to_left)
-                    .replace(R.id.frame_content, fragment, null)
+                    .replace(R.id.fragment, fragment, null)
                     .addToBackStack(null)
                     .commit();
         } else
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_content, fragment, null)
+                    .replace(R.id.fragment, fragment, null)
                     .commit();
     }
 
@@ -184,8 +184,8 @@ public class MainActivity extends BaseActivity implements Transactable,
 
     private void showUpdateDialog() {
         final MaterialDialog progressDialog = new MaterialDialog.Builder(this)
-                .title(R.string.load_version)
-                .content(R.string.wait_message)
+                .title(R.string.dialog_load_version)
+                .content(R.string.dialog_wait_message)
                 .progress(true, 0)
                 .show();
         NetworkRepository.downloadVersion(
@@ -209,14 +209,14 @@ public class MainActivity extends BaseActivity implements Transactable,
 
     private void showDownloadDialog(final int version) {
         final MaterialDialog updateDialog = new MaterialDialog.Builder(this)
-                .title(R.string.download_dialog_title)
+                .title(R.string.dialog_download_res)
                 .customView(R.layout.dialog_update, false)
                 .show();
         final View view = updateDialog.getCustomView();
         if (view == null) return;
         final TextView textView = (TextView) view.findViewById(R.id.text_view);
         textView.setText(getString(
-                R.string.latest_version,
+                R.string.format_latest_version,
                 String.valueOf(version),
                 String.valueOf(CardRepository.getVersion()
                 )));
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity implements Transactable,
             @Override
             public void onClick(View view) {
                 NetworkRepository.downloadDatabase();
-                showMessage(R.string.update_started);
+                showMessage(R.string.msg_update_started);
                 updateDialog.dismiss();
             }
         });
@@ -234,7 +234,7 @@ public class MainActivity extends BaseActivity implements Transactable,
             @Override
             public void onClick(View view) {
                 NetworkRepository.downloadImages(CardRepository.getAllImages(), false);
-                showMessage(R.string.update_started);
+                showMessage(R.string.msg_update_started);
                 updateDialog.dismiss();
             }
         });
@@ -243,7 +243,7 @@ public class MainActivity extends BaseActivity implements Transactable,
             @Override
             public void onClick(View view) {
                 NetworkRepository.downloadImages(CardRepository.getAllImages(), true);
-                showMessage(R.string.update_started);
+                showMessage(R.string.msg_update_started);
                 updateDialog.dismiss();
             }
         });
@@ -258,11 +258,11 @@ public class MainActivity extends BaseActivity implements Transactable,
             final String host = uri.getHost();
             if (Strings.isNullOrEmpty(scheme) || Strings.isNullOrEmpty(host) ||
                     !scheme.equals(WsApplication.QR_SCHEME)) {
-                showMessage(R.string.err_invalid_er);
+                showMessage(R.string.msg_invalid_qr);
             } else {
                 final Optional<Deck> deckOptional = DeckUtils.decodeDeck(host);
                 if (!deckOptional.isPresent())
-                    showMessage(R.string.err_invalid_er);
+                    showMessage(R.string.msg_invalid_qr);
                 else {
                     final Deck deck = deckOptional.get();
                     DeckRepository.save(deck);

@@ -76,7 +76,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_decklist, menu);
+        inflater.inflate(R.menu.deck_list, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
@@ -110,12 +110,12 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     private void showRenameDialog(@NonNull final Deck deck) {
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_edit_black_24dp)
-                .title(R.string.rename_deck)
+                .title(R.string.dialog_rename_deck)
                 .content(deck.getName())
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.rename_button)
-                .negativeText(R.string.cancel_button)
-                .input(getString(R.string.deck_name), deck.getName(), false, new MaterialDialog.InputCallback() {
+                .positiveText(R.string.dialog_rename_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(getString(R.string.dialog_deck_name), deck.getName(), false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         final Deck renameDeck = DeckRepository.getDeckById(deck.getId()).get();
@@ -153,11 +153,11 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     private void showCreateDeckDialog() {
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.drawable.ic_add_black_24dp)
-                .title(R.string.create_a_new_deck)
+                .title(R.string.dialog_create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.create_deck_create)
-                .negativeText(R.string.cancel_button)
-                .input(R.string.deck_name, 0, false, new MaterialDialog.InputCallback() {
+                .positiveText(R.string.dialog_create_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(R.string.dialog_deck_name, 0, false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         final Deck deck = new Deck();
@@ -178,7 +178,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     public void onResume() {
         super.onResume();
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab == null) return;
         fab.show();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +186,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             }
         });
         fab.setImageResource(R.drawable.ic_add_white_24dp);
-        if (future != null) return;
         final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
         future = exec.scheduleAtFixedRate(new RotateFab(), 0, 2, TimeUnit.SECONDS);
     }
@@ -196,11 +194,8 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     public void onPause() {
         super.onPause();
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (fab != null)
-            fab.hide();
-        if (future == null) return;
+        fab.hide();
         future.cancel(false);
-        future = null;
     }
 
     private class RotateFab implements Runnable {

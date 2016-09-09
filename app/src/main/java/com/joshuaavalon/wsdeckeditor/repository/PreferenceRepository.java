@@ -51,6 +51,7 @@ public class PreferenceRepository {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(AUTO_CLOSE_KEY, true);
     }
+
     public static boolean getPopBack() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WsApplication.getContext());
         return preferences.getBoolean(POP_BACK_KEY, true);

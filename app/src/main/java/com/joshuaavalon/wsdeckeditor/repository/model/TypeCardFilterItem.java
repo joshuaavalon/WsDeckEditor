@@ -65,7 +65,7 @@ public class TypeCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_type;
+        return R.string.filter_dialog_type;
     }
 
     @NonNull

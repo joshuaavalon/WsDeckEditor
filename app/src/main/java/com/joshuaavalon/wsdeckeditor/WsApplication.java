@@ -5,6 +5,8 @@ import android.content.Context;
 
 public class WsApplication extends Application {
     public static final String QR_SCHEME = "wsde";
+    public static final int SINGLE_CARD_LIMIT = 50;
+    public static final int CARD_TYPE_LIMIT = 60;
     private static WsApplication instance;
 
     public static Context getContext() {

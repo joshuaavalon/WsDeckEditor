@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="@dimen/card_spacing">
 
     <LinearLayout
         android:id="@+id/card_background"
@@ -13,7 +13,7 @@
 
         <View
             android:id="@+id/color_bar"
-            android:layout_width="10dp"
+            android:layout_width="@dimen/vertical_color_bar_width"
             android:layout_height="match_parent" />
 
         <ImageView
@@ -21,41 +21,50 @@
             android:layout_width="@dimen/list_item_card_image_width"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/acb_card_image"
             android:scaleType="centerCrop"
             android:src="@drawable/dc_w00_00" />
+
+        <Space
+            android:layout_width="@dimen/standard_spacing"
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/standard_spacing"
+            android:paddingTop="@dimen/standard_spacing">
 
             <TextView
                 android:id="@+id/card_serial"
                 style="@style/TextAppearance.AppCompat.Subhead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:textColor="@color/highlight_text_color" />
+                android:textColor="@color/highlight_text" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/standard_spacing" />
 
             <TextView
                 android:id="@+id/card_name"
-                style="@style/TextAppearance.AppCompat.Medium"
+                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:padding="5dp"
                 android:gravity="center_vertical"
-                android:textColor="@color/highlight_text_color" />
+                android:maxLines="1"
+                android:textColor="@color/highlight_text" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="80dp"
+            android:layout_width="@dimen/status_text_view_width"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/standard_spacing"
+            android:paddingTop="@dimen/standard_spacing">
 
             <TextView
                 android:id="@+id/card_level"
@@ -63,10 +72,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:textColor="@color/highlight_subtext_color" />
+                android:textColor="@color/highlight_subtext" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/standard_spacing" />
 
             <TextView
                 android:id="@+id/card_type"
@@ -74,10 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingBottom="5dp"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
-                android:textColor="@color/highlight_subtext_color" />
+                android:textColor="@color/highlight_subtext" />
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

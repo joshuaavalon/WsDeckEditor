@@ -103,7 +103,7 @@ public class KeywordCardFilterItem extends CardFilterItem {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(getTitle())
                 .customView(R.layout.dialog_keyword, false)
-                .positiveText(R.string.confirm_button)
+                .positiveText(R.string.dialog_add_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -112,11 +112,11 @@ public class KeywordCardFilterItem extends CardFilterItem {
                         callback.handle(null);
                     }
                 })
-                .negativeText(R.string.cancel_button)
+                .negativeText(R.string.dialog_cancel_button)
                 .show();
         final View view = dialog.getCustomView();
         if (view != null) {
-            final LinearLayout searchAreaLinearLayout = (LinearLayout) view.findViewById(R.id.search_area_linear_layout);
+            final LinearLayout searchAreaLinearLayout = (LinearLayout) view.findViewById(R.id.linear_layout);
             searchAreaLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -128,7 +128,7 @@ public class KeywordCardFilterItem extends CardFilterItem {
             editText = (TextInputEditText) view.findViewById(R.id.edit_text);
             if (phaseString != null)
                 editText.setText(phaseString);
-            searchAreaTextView = (TextView) view.findViewById(R.id.search_area_text_view);
+            searchAreaTextView = (TextView) view.findViewById(R.id.text_view);
             setSearchAreaTextView(context);
         }
         return dialog;
@@ -137,7 +137,7 @@ public class KeywordCardFilterItem extends CardFilterItem {
     @Override
     @StringRes
     public int getTitle() {
-        return isNot ? R.string.not : R.string.and;
+        return isNot ? R.string.filter_dialog_not : R.string.filter_dialog_and;
     }
 
     public void setPhases(@NonNull final String phases) {
@@ -158,7 +158,7 @@ public class KeywordCardFilterItem extends CardFilterItem {
 
     private void showSearchAreaDialog(@NonNull final Context context) {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
-                .title(R.string.search_area)
+                .title(R.string.dialog_search_area)
                 .iconRes(R.drawable.ic_search_black_24dp)
                 .items(R.array.search_area)
                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
@@ -172,7 +172,7 @@ public class KeywordCardFilterItem extends CardFilterItem {
                         return true;
                     }
                 })
-                .positiveText(R.string.confirm_button)
+                .positiveText(R.string.dialog_add_button)
                 .show();
         final List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < searchAreaChecked.length; i++)

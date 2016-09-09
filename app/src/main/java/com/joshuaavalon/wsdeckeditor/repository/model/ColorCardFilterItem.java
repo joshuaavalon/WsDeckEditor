@@ -65,7 +65,7 @@ public class ColorCardFilterItem extends CardFilterItem {
 
     @Override
     public int getTitle() {
-        return R.string.card_color;
+        return R.string.filter_dialog_color;
     }
 
     @NonNull

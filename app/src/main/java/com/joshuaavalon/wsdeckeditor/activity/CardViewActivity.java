@@ -17,47 +17,65 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.WsApplication;
+import com.joshuaavalon.wsdeckeditor.model.Card;
 import com.joshuaavalon.wsdeckeditor.model.Deck;
+import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
 import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.view.CardPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Show a list of {@link Card} in {@link ViewPager}.
+ */
 public class CardViewActivity extends BaseActivity {
     private static final String ARG_SERIALS = "serials";
     private static final String ARG_POSITION = "position";
     private List<String> serials;
 
-    public static void start(@NonNull final Activity context,
+    /**
+     * Use this method to start the activity.
+     *
+     * @param activity Current activity.
+     * @param serials  Serials of the cards to be shown
+     * @param position Starting position of the {@link Card}
+     */
+    public static void start(@NonNull final Activity activity,
                              @NonNull final List<String> serials,
                              @IntRange(from = 0) final int position) {
-        final Intent intent = new Intent(context, CardViewActivity.class);
+        final Intent intent = new Intent(activity, CardViewActivity.class);
         intent.putExtra(ARG_SERIALS, new ArrayList<>(serials));
         intent.putExtra(ARG_POSITION, position);
-        context.startActivityForResult(intent, MainActivity.REQUEST_CODE_CARD_DETAIL);
+        // To start search fragment on activity.
+        activity.startActivityForResult(intent, MainActivity.REQUEST_CODE_CARD_DETAIL);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final Intent intent = getIntent();
         int position = 0;
         if (intent != null) {
             serials = intent.getStringArrayListExtra(ARG_SERIALS);
             final int intentPosition = intent.getIntExtra(ARG_POSITION, 0);
-            if (intentPosition >= 0 && intentPosition < serials.size())
+            if (intentPosition >= 0 && serials != null && intentPosition < serials.size())
                 position = intentPosition;
         }
         if (serials == null)
             serials = new ArrayList<>();
+        initViewPager(position);
+    }
+
+    private void initViewPager(final int startPosition) {
         final CardPagerAdapter adapter = new CardPagerAdapter(getSupportFragmentManager(), serials);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(position);
+        viewPager.setCurrentItem(startPosition);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -68,11 +86,16 @@ public class CardViewActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Show a dialog to add a given serial to deck.
+     *
+     * @param serial Serial to be added.
+     */
     private void showDeckSelectDialog(@NonNull final String serial) {
         final List<Deck> decks = DeckRepository.getDecks();
         new MaterialDialog.Builder(this)
                 .iconRes(R.drawable.ic_assignment_black_24dp)
-                .title(R.string.select_your_deck)
+                .title(R.string.dialog_select_your_deck)
                 .items(Lists.newArrayList(Iterables.transform(decks,
                         new Function<Deck, String>() {
                             @Override
@@ -83,40 +106,63 @@ public class CardViewActivity extends BaseActivity {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        final Deck currentDeck = decks.get(which);
-                        currentDeck.addIfNotExist(serial);
-                        DeckRepository.save(currentDeck);
-                        dialog.dismiss();
+                        final Deck deck = decks.get(which);
+                        showCardCountDialog(deck.getId(), serial);
                     }
                 })
-                .positiveText(R.string.new_deck)
+                .positiveText(R.string.dialog_new_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        showCreateDeckDialog(dialog, serial);
+                        showCreateDeckDialog(serial);
                     }
                 })
-                .autoDismiss(false)
                 .show();
     }
 
-    private void showCreateDeckDialog(@NonNull final MaterialDialog parent,
-                                      @NonNull final String serial) {
+    private void showCardCountDialog(final long deckId, @NonNull final String serial) {
+        final Card card = CardRepository.getCardBySerial(serial).get();
+        final Deck deck = DeckRepository.getDeckById(deckId).get();
+        new MaterialDialog.Builder(this)
+                .iconRes(R.drawable.ic_edit_black_24dp)
+                .title(R.string.dialog_change_card_count)
+                .content(serial + " " + card.getName())
+                .inputType(InputType.TYPE_CLASS_NUMBER)
+                .positiveText(R.string.dialog_apply_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(getString(R.string.dialog_count),
+                        String.valueOf(deck.getSerialList().count(serial)),
+                        false,
+                        new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                final int count = Integer.valueOf(input.toString());
+                                if (count > WsApplication.SINGLE_CARD_LIMIT) {
+                                    showMessage(R.string.msg_high_card_count);
+                                    return;
+                                }
+                                deck.setCount(card.getSerial(), count);
+                                DeckRepository.save(deck);
+                                showMessage(R.string.msg_add_to_deck);
+                            }
+                        })
+                .show();
+    }
+
+    private void showCreateDeckDialog(@NonNull final String serial) {
         new MaterialDialog.Builder(this)
                 .iconRes(R.drawable.ic_add_black_24dp)
-                .title(R.string.create_a_new_deck)
+                .title(R.string.dialog_create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.create_deck_create)
-                .negativeText(R.string.cancel_button)
-                .input(R.string.deck_name, 0, false, new MaterialDialog.InputCallback() {
+                .positiveText(R.string.dialog_create_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .input(R.string.dialog_deck_name, 0, false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         final Deck deck = new Deck();
                         deck.setName(input.toString());
-                        deck.addIfNotExist(serial);
                         DeckRepository.save(deck);
-                        parent.dismiss();
-                        showMessage(R.string.add_to_deck);
+                        showCardCountDialog(deck.getId(), serial);
                     }
                 })
                 .show();
