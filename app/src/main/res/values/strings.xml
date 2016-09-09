@@ -95,8 +95,8 @@
     <string name="pref_auto_save_title">Auto Save Deck</string>
     <string name="pref_auto_save_summary">Any changes made to the deck will be saved automatically.</string>
     <string name="pref_hide_normal">hideNormal</string>
-    <string name="pref_hide_normal_title">Show Normal Card Only</string>
-    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP by default.</string>
+    <string name="pref_hide_normal_title">Normal Card Only</string>
+    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
     <string name="pref_auto_close">autoClose</string>
     <string name="pref_auto_close_title">Auto Close Select Mode</string>
     <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>

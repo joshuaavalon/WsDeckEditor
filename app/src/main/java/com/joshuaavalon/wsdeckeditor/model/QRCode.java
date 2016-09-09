@@ -26,7 +26,7 @@ public class QRCode {
                                 @IntRange(from = 1) final int width,
                                 @IntRange(from = 1) final int height) {
         final Hashtable<EncodeHintType, ErrorCorrectionLevel> encodeConfig = new Hashtable<>();
-        encodeConfig.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
+        encodeConfig.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
         final QRCodeWriter writer = new QRCodeWriter();
         try {
             final BitMatrix bitMatrix = writer.encode(data, BarcodeFormat.QR_CODE, width, height, encodeConfig);
@@ -56,8 +56,6 @@ public class QRCode {
         final Bitmap resultBitmap = Bitmap.createBitmap(qrBitmap.getWidth(),
                 qrBitmap.getHeight(),
                 qrBitmap.getConfig());
-        Log.e("size", logoBitmap.getHeight()+":"+logoBitmap.getWidth());
-        Log.e("size2", qrBitmap.getHeight()+":"+qrBitmap.getWidth());
         final Canvas canvas = new Canvas(resultBitmap);
         canvas.drawBitmap(qrBitmap, new Matrix(), null);
         final int deltaHeight = qrBitmap.getHeight() - logoBitmap.getHeight();
