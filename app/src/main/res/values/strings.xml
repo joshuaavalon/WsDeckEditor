@@ -178,6 +178,8 @@
     <string name="pref_cat_common">Common</string>
     <string name="pref_cat_deck_edit">@string/nav_deck_edit</string>
     <string name="pref_cat_misc">Miscellaneous</string>
+
+    <string name="default_show_limit">200</string>
     <!--           Preference End         -->
 
     <!--         Accessibility Start      -->

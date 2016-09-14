@@ -7,7 +7,7 @@
             android:summary="@string/pref_hide_normal_summary"
             android:title="@string/pref_hide_normal_title" />
         <EditTextPreference
-            android:defaultValue="200"
+            android:defaultValue="@string/default_show_limit"
             android:inputType="number"
             android:key="@string/pref_show_limit"
             android:summary="@string/pref_show_limit_summary"
