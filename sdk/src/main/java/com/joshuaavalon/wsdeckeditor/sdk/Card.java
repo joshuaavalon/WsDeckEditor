@@ -1,8 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.sdk;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
@@ -11,7 +9,7 @@ import android.support.annotation.StringRes;
 
 import com.google.common.collect.ComparisonChain;
 
-public class Card implements Comparable<Card>, Parcelable {
+public class Card implements Comparable<Card> {
     @NonNull
     private final String name, serial, rarity, expansion, attribute1, attribute2, text, flavor, image;
     @IntRange(from = 0)
@@ -142,6 +140,96 @@ public class Card implements Comparable<Card>, Parcelable {
                 .compare(serial, other.serial)
                 .compare(name, other.name)
                 .result();
+    }
+
+    public enum Type {
+        Character(R.string.type_chara),
+        Event(R.string.type_event),
+        Climax(R.string.type_climax);
+        @StringRes
+        private final int resId;
+
+        Type(@StringRes final int resId) {
+            this.resId = resId;
+        }
+
+        @StringRes
+        public int getStringId() {
+            return resId;
+        }
+    }
+
+    public enum Trigger {
+        None(R.string.trigger_none),
+        OneSoul(R.string.trigger_1s),
+        TwoSoul(R.string.trigger_2s),
+        Wind(R.string.trigger_wind),
+        Fire(R.string.trigger_fire),
+        Bag(R.string.trigger_bag),
+        Gold(R.string.trigger_gold),
+        Door(R.string.trigger_door),
+        Book(R.string.trigger_book),
+        Gate(R.string.trigger_gate);
+        @StringRes
+        private final int resId;
+
+        Trigger(@StringRes final int resId) {
+            this.resId = resId;
+        }
+
+        @StringRes
+        public int getStringId() {
+            return resId;
+        }
+    }
+
+    public enum Side {
+        W(R.drawable.side_w, R.string.side_w), S(R.drawable.side_s, R.string.side_s);
+        @StringRes
+        private final int resId;
+        @DrawableRes
+        private final int drawable;
+
+        Side(@DrawableRes final int drawable, @StringRes final int resId) {
+            this.drawable = drawable;
+            this.resId = resId;
+        }
+
+        @DrawableRes
+        public int getDrawableId() {
+            return drawable;
+        }
+
+        @StringRes
+        public int getStringId() {
+            return resId;
+        }
+    }
+
+    public enum Color {
+        Yellow(R.string.color_yellow, R.color.card_yellow),
+        Green(R.string.color_green, R.color.card_green),
+        Red(R.string.color_red, R.color.card_red),
+        Blue(R.string.color_blue, R.color.card_blue);
+        @StringRes
+        private final int resId;
+        @ColorRes
+        private final int colorResId;
+
+        Color(@StringRes final int resId, @ColorRes final int colorResId) {
+            this.resId = resId;
+            this.colorResId = colorResId;
+        }
+
+        @StringRes
+        public int getStringId() {
+            return resId;
+        }
+
+        @ColorRes
+        public int getColorId() {
+            return colorResId;
+        }
     }
 
     public static class Builder {
@@ -286,156 +374,4 @@ public class Card implements Comparable<Card>, Parcelable {
                     power, soul, trigger, attribute1, attribute2, text, flavor, image);
         }
     }
-
-    public enum Type {
-        Character(R.string.type_chara),
-        Event(R.string.type_event),
-        Climax(R.string.type_climax);
-        @StringRes
-        private final int resId;
-
-        Type(@StringRes final int resId) {
-            this.resId = resId;
-        }
-
-        @StringRes
-        public int getStringId() {
-            return resId;
-        }
-    }
-
-    public enum Trigger {
-        None(R.string.trigger_none),
-        OneSoul(R.string.trigger_1s),
-        TwoSoul(R.string.trigger_2s),
-        Wind(R.string.trigger_wind),
-        Fire(R.string.trigger_fire),
-        Bag(R.string.trigger_bag),
-        Gold(R.string.trigger_gold),
-        Door(R.string.trigger_door),
-        Book(R.string.trigger_book),
-        Gate(R.string.trigger_gate);
-        @StringRes
-        private final int resId;
-
-        Trigger(@StringRes final int resId) {
-            this.resId = resId;
-        }
-
-        @StringRes
-        public int getStringId() {
-            return resId;
-        }
-    }
-
-    public enum Side {
-        W(R.drawable.side_w, R.string.side_w), S(R.drawable.side_s, R.string.side_s);
-        @StringRes
-        private final int resId;
-        @DrawableRes
-        private final int drawable;
-
-        Side(@DrawableRes final int drawable, @StringRes final int resId) {
-            this.drawable = drawable;
-            this.resId = resId;
-        }
-
-        @DrawableRes
-        public int getDrawableId() {
-            return drawable;
-        }
-
-        @StringRes
-        public int getStringId() {
-            return resId;
-        }
-    }
-
-    public enum Color {
-        Yellow(R.string.color_yellow, R.color.card_yellow),
-        Green(R.string.color_green, R.color.card_green),
-        Red(R.string.color_red, R.color.card_red),
-        Blue(R.string.color_blue, R.color.card_blue);
-        @StringRes
-        private final int resId;
-        @ColorRes
-        private final int colorResId;
-
-        Color(@StringRes final int resId, @ColorRes final int colorResId) {
-            this.resId = resId;
-            this.colorResId = colorResId;
-        }
-
-        @StringRes
-        public int getStringId() {
-            return resId;
-        }
-
-        @ColorRes
-        public int getColorId() {
-            return colorResId;
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(serial);
-        dest.writeString(rarity);
-        dest.writeString(expansion);
-        dest.writeString(attribute1);
-        dest.writeString(attribute2);
-        dest.writeString(text);
-        dest.writeString(flavor);
-        dest.writeString(image);
-        dest.writeInt(level);
-        dest.writeInt(cost);
-        dest.writeInt(power);
-        dest.writeInt(soul);
-        dest.writeInt(side.ordinal());
-        dest.writeInt(type.ordinal());
-        dest.writeInt(color.ordinal());
-        dest.writeInt(trigger.ordinal());
-    }
-
-    protected Card(Parcel in) {
-        name = in.readString();
-        serial = in.readString();
-        rarity = in.readString();
-        expansion = in.readString();
-        attribute1 = in.readString();
-        attribute2 = in.readString();
-        text = in.readString();
-        flavor = in.readString();
-        image = in.readString();
-        level = in.readInt();
-        cost = in.readInt();
-        power = in.readInt();
-        soul = in.readInt();
-        int tmpSide = in.readInt();
-        side = Side.values()[tmpSide];
-        int tmpType = in.readInt();
-        type = Type.values()[tmpType];
-        int tmpColor = in.readInt();
-        color = Color.values()[tmpColor];
-        int tmpTrigger = in.readInt();
-        trigger = Trigger.values()[tmpTrigger];
-    }
-
-    public static final Creator<Card> CREATOR = new Creator<Card>() {
-        @Override
-        public Card createFromParcel(Parcel source) {
-            return new Card(source);
-        }
-
-        @Override
-        public Card[] newArray(int size) {
-            return new Card[size];
-        }
-    };
 }
