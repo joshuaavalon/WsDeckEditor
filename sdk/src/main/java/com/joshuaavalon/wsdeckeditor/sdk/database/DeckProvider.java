@@ -16,11 +16,10 @@ import android.text.TextUtils;
 
 public class DeckProvider extends ContentProvider {
     private static final String PROVIDER_NAME = "com.joshuaavalon.wsdeckeditor.sdk.Deck";
-    private static final String URL = "content://%s/%s";
-    private static final String DECK_URL = String.format(URL, PROVIDER_NAME, DeckDatabase.Table.Deck);
-    private static final Uri DECK_CONTENT_URI = Uri.parse(DECK_URL);
-    private static final String DECK_RECORD_URL = String.format(URL, PROVIDER_NAME, DeckDatabase.Table.DeckRecord);
-    private static final Uri DECK_RECORD_CONTENT_URI = Uri.parse(DECK_RECORD_URL);
+    private static final String DECK_URL = String.format("content://%s/%s", PROVIDER_NAME, DeckDatabase.Table.Deck);
+    static final Uri DECK_CONTENT_URI = Uri.parse(DECK_URL);
+    private static final String DECK_RECORD_URL = String.format("content://%s/%s", PROVIDER_NAME, DeckDatabase.Table.DeckRecord);
+    static final Uri DECK_RECORD_CONTENT_URI = Uri.parse(DECK_RECORD_URL);
     private static final UriMatcher uriMatcher;
     private static final int CODE_DECK = 1;
     private static final int CODE_DECK_ID = 2;
@@ -36,6 +35,14 @@ public class DeckProvider extends ContentProvider {
     }
 
     private SQLiteDatabase database;
+
+    @NonNull
+    private static String addIdConstraint(@Nullable final String selection,
+                                          @NonNull final String field, @NonNull final String id) {
+        return String.format("%s = %s", field, id) +
+                (!TextUtils.isEmpty(selection) ? String.format("AND ( %s )", selection) : "");
+
+    }
 
     @Override
     public boolean onCreate() {
@@ -177,13 +184,5 @@ public class DeckProvider extends ContentProvider {
         if (context != null)
             context.getContentResolver().notifyChange(uri, null);
         return count;
-    }
-
-    @NonNull
-    private static String addIdConstraint(@Nullable final String selection,
-                                          @NonNull final String field, @NonNull final String id) {
-        return String.format("%s = %s", field, id) +
-                (!TextUtils.isEmpty(selection) ? String.format("AND ( %s )", selection) : "");
-
     }
 }

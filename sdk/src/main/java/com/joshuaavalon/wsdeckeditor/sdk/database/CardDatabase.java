@@ -78,6 +78,7 @@ class CardDatabase extends SQLiteOpenHelper {
 
     interface Table {
         String Card = "card";
+        String Version = "version";
     }
 
     interface Field {
@@ -88,6 +89,7 @@ class CardDatabase extends SQLiteOpenHelper {
         String Side = "Side";
         String Color = "Color";
         String Level = "Level";
+        String Power = "Power";
         String Cost = "Cost";
         String Soul = "Soul";
         String Type = "Type";
@@ -97,5 +99,6 @@ class CardDatabase extends SQLiteOpenHelper {
         String Flavor = "Flavor";
         String Trigger = "Trigger";
         String Image = "Image";
+        String Version = "Version";
     }
 }

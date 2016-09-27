@@ -14,14 +14,20 @@ import android.support.annotation.Nullable;
 
 public class CardProvider extends ContentProvider {
     private static final String PROVIDER_NAME = "com.joshuaavalon.wsdeckeditor.sdk.Card";
+    private static final String CARD_URL = String.format("content://%s/%s", PROVIDER_NAME, CardDatabase.Table.Card);
+    static final Uri CARD_CONTENT_URI = Uri.parse(CARD_URL);
+    private static final String VERSION_URL = String.format("content://%s/%s", PROVIDER_NAME, CardDatabase.Table.Version);
+    static final Uri VERSION_CONTENT_URI = Uri.parse(VERSION_URL);
     private static final UriMatcher uriMatcher;
     private static final int CODE_CARD = 1;
     private static final int CODE_CARD_ID = 2;
+    private static final int CODE_VERSION = 3;
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, CardDatabase.Table.Card, CODE_CARD);
         uriMatcher.addURI(PROVIDER_NAME, CardDatabase.Table.Card + "/#", CODE_CARD_ID);
+        uriMatcher.addURI(PROVIDER_NAME, CardDatabase.Table.Version, CODE_VERSION);
     }
 
     private SQLiteDatabase database;
@@ -47,6 +53,9 @@ public class CardProvider extends ContentProvider {
                 queryBuilder.setTables(CardDatabase.Table.Card);
                 queryBuilder.appendWhere(CardDatabase.Field.Serial + "=" + uri.getPathSegments().get(1));
                 break;
+            case CODE_VERSION:
+                queryBuilder.setTables(CardDatabase.Table.Version);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -65,6 +74,8 @@ public class CardProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/vnd.com.joshuaavalon.wsdeckeditor.sdk.Card";
             case CODE_CARD_ID:
                 return "vnd.android.cursor.item/vnd.com.joshuaavalon.wsdeckeditor.sdk.Card";
+            case CODE_VERSION:
+                return "vnd.android.cursor.item/vnd.com.joshuaavalon.wsdeckeditor.sdk.Version";
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
