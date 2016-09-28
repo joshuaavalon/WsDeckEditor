@@ -22,6 +22,8 @@ public class CardProvider extends ContentProvider {
     private static final int CODE_CARD = 1;
     private static final int CODE_CARD_ID = 2;
     private static final int CODE_VERSION = 3;
+    static final String ARG_LIMIT = "limit";
+    static final String ARG_OFFSET = "offset";
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -59,7 +61,14 @@ public class CardProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-        final Cursor cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder);
+        final String limit = uri.getQueryParameter(ARG_LIMIT);
+        final String offset = uri.getQueryParameter(ARG_OFFSET);
+        Cursor cursor;
+        if (limit != null && offset != null) {
+            final String limitString = offset + "," + limit;
+            cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder, limitString);
+        } else
+            cursor = queryBuilder.query(database, projection, selection, selectionArgs, null, null, sortOrder);
         final Context context = getContext();
         if (context != null)
             cursor.setNotificationUri(context.getContentResolver(), uri);

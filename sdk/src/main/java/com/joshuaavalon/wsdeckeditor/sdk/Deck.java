@@ -111,4 +111,9 @@ public class Deck {
         if (!cardList.contains(card))
             addCard(card);
     }
+
+    public void setCardList(@NonNull final Multiset<Card> cardList) {
+        this.cardList.clear();
+        this.cardList.addAll(cardList);
+    }
 }

@@ -1,5 +1,121 @@
 package com.joshuaavalon.wsdeckeditor.sdk.database;
 
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+
+import com.google.common.collect.Multiset;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.Deck;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
+import com.joshuaavalon.wsdeckeditor.sdk.util.DeckRecord;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeckRepository {
+    public Loader<Cursor> newDecksLoader(@NonNull final Context context) {
+        return new CursorLoader(context, DeckProvider.DECK_CONTENT_URI, null, null, null, DeckDatabase.Field.Id);
+    }
+
+    public Loader<Cursor> newDeckLoader(@NonNull final Context context, final long id) {
+        return new CursorLoader(context, ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI, id)
+                , null, null, null, null);
+    }
+
+    public Loader<Cursor> newDeckRecordLoader(@NonNull final Context context, final long id) {
+        return new CursorLoader(context, ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI, id)
+                , new String[]{DeckDatabase.Field.Serial, DeckDatabase.Field.Count}, null, null, null);
+    }
+
+    public static void createDeck(@NonNull final Context context, @NonNull final Deck deck) {
+        final ContentResolver contentResolver = context.getContentResolver();
+        final ContentValues deckValues = new ContentValues();
+        deckValues.put(DeckDatabase.Field.Name, deck.getName());
+        final Uri uri = contentResolver.insert(DeckProvider.DECK_CONTENT_URI, deckValues);
+        if (uri == null) return;
+        final long id = ContentUris.parseId(uri);
+        deck.setId(id);
+        insertCard(contentResolver, id, deck.getCardList());
+    }
+
+    public static void deleteDeck(@NonNull final Context context, @NonNull final Deck deck) {
+        if (deck.getId() == Deck.NO_ID) return;
+        final ContentResolver contentResolver = context.getContentResolver();
+        contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
+                deck.getId()), null, null);
+        contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
+                deck.getId()), null, null);
+    }
+
+    public static void updateDeck(@NonNull final Context context, @NonNull final Deck deck) {
+        if (deck.getId() == Deck.NO_ID) return;
+        final ContentResolver contentResolver = context.getContentResolver();
+        final ContentValues deckValues = new ContentValues();
+        deckValues.put(DeckDatabase.Field.Name, deck.getName());
+        contentResolver.update(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
+                deck.getId()), deckValues, null, null);
+        contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
+                deck.getId()), null, null);
+        insertCard(contentResolver, deck.getId(), deck.getCardList());
+    }
+
+    private static void insertCard(@NonNull final ContentResolver contentResolver, final long id,
+                                   @NonNull final Multiset<Card> cards) {
+        final List<ContentValues> deckRecordValues = new ArrayList<>();
+        for (Card card : cards.elementSet()) {
+            final ContentValues cardValues = new ContentValues();
+            cardValues.put(DeckDatabase.Field.DeckId, id);
+            cardValues.put(DeckDatabase.Field.Serial, card.getSerial());
+            cardValues.put(DeckDatabase.Field.Count, cards.count(card));
+            deckRecordValues.add(cardValues);
+        }
+        contentResolver.bulkInsert(DeckProvider.DECK_RECORD_CONTENT_URI,
+                deckRecordValues.toArray(new ContentValues[deckRecordValues.size()]));
+    }
+
+
+    @NonNull
+    public static List<AbstractDeck> toDecks(@NonNull final Cursor cursor) {
+        final List<AbstractDeck> abstractDecks = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                abstractDecks.add(buildDeck(cursor));
+            } while (cursor.moveToNext());
+        return abstractDecks;
+    }
+
+    @Nullable
+    public static AbstractDeck toDeck(@NonNull final Cursor cursor) {
+        if (cursor.moveToFirst())
+            return buildDeck(cursor);
+        else
+            return null;
+    }
+
+    @NonNull
+    public static List<DeckRecord> toDeckRecords(@NonNull final Cursor cursor) {
+        final List<DeckRecord> deckRecords = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                deckRecords.add(new DeckRecord(
+                        cursor.getString(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Serial)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Count))));
+            } while (cursor.moveToNext());
+        return deckRecords;
+    }
+
+    @NonNull
+    private static AbstractDeck buildDeck(@NonNull final Cursor cursor) {
+        return new AbstractDeck(cursor.getLong(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Id)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Name)));
+    }
 }

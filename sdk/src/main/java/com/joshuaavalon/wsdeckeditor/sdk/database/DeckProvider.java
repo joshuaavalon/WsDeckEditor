@@ -14,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.Locale;
+
 public class DeckProvider extends ContentProvider {
     private static final String PROVIDER_NAME = "com.joshuaavalon.wsdeckeditor.sdk.Deck";
     private static final String DECK_URL = String.format("content://%s/%s", PROVIDER_NAME, DeckDatabase.Table.Deck);
@@ -38,10 +40,9 @@ public class DeckProvider extends ContentProvider {
 
     @NonNull
     private static String addIdConstraint(@Nullable final String selection,
-                                          @NonNull final String field, @NonNull final String id) {
-        return String.format("%s = %s", field, id) +
+                                          @NonNull final String field, final long id) {
+        return String.format(Locale.getDefault(), "%s = %d", field, id) +
                 (!TextUtils.isEmpty(selection) ? String.format("AND ( %s )", selection) : "");
-
     }
 
     @Override
@@ -63,14 +64,14 @@ public class DeckProvider extends ContentProvider {
                 break;
             case CODE_DECK_ID:
                 queryBuilder.setTables(DeckDatabase.Table.Deck);
-                queryBuilder.appendWhere(DeckDatabase.Field.Id + "=" + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(DeckDatabase.Field.Id + "=" + ContentUris.parseId(uri));
                 break;
             case CODE_DECK_RECORD:
                 queryBuilder.setTables(DeckDatabase.Table.DeckRecord);
                 break;
             case CODE_DECK_RECORD_ID:
                 queryBuilder.setTables(DeckDatabase.Table.DeckRecord);
-                queryBuilder.appendWhere(DeckDatabase.Field.DeckId + "=" + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(DeckDatabase.Field.DeckId + "=" + ContentUris.parseId(uri));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -135,16 +136,15 @@ public class DeckProvider extends ContentProvider {
                 break;
             case CODE_DECK_ID:
                 count = database.delete(DeckDatabase.Table.Deck,
-                        addIdConstraint(selection, DeckDatabase.Field.Id, uri.getPathSegments().get(1)),
+                        addIdConstraint(selection, DeckDatabase.Field.Id, ContentUris.parseId(uri)),
                         selectionArgs);
-
                 break;
             case CODE_DECK_RECORD:
                 count = database.delete(DeckDatabase.Table.DeckRecord, selection, selectionArgs);
                 break;
             case CODE_DECK_RECORD_ID:
                 count = database.delete(DeckDatabase.Table.DeckRecord,
-                        addIdConstraint(selection, DeckDatabase.Field.DeckId, uri.getPathSegments().get(1)),
+                        addIdConstraint(selection, DeckDatabase.Field.DeckId, ContentUris.parseId(uri)),
                         selectionArgs);
                 break;
             default:
@@ -159,14 +159,13 @@ public class DeckProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int count;
-
         switch (uriMatcher.match(uri)) {
             case CODE_DECK:
                 count = database.update(DeckDatabase.Table.Deck, values, selection, selectionArgs);
                 break;
             case CODE_DECK_ID:
                 count = database.update(DeckDatabase.Table.Deck, values,
-                        addIdConstraint(selection, DeckDatabase.Field.Id, uri.getPathSegments().get(1))
+                        addIdConstraint(selection, DeckDatabase.Field.Id, ContentUris.parseId(uri))
                         , selectionArgs);
                 break;
             case CODE_DECK_RECORD:
@@ -174,7 +173,7 @@ public class DeckProvider extends ContentProvider {
                 break;
             case CODE_DECK_RECORD_ID:
                 count = database.update(DeckDatabase.Table.DeckRecord, values,
-                        addIdConstraint(selection, DeckDatabase.Field.DeckId, uri.getPathSegments().get(1)),
+                        addIdConstraint(selection, DeckDatabase.Field.DeckId, ContentUris.parseId(uri)),
                         selectionArgs);
                 break;
             default:

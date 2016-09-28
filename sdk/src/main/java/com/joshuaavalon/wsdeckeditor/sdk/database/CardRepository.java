@@ -3,13 +3,14 @@ package com.joshuaavalon.wsdeckeditor.sdk.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.util.Range;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class CardRepository {
@@ -41,37 +43,147 @@ public class CardRepository {
 
     @NonNull
     public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final Iterable<String> serials) {
+        return newCardsLoaderBySerial(context, CardProvider.CARD_CONTENT_URI, serials);
+    }
+
+    @NonNull
+    public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final Iterable<String> serials,
+                                                final int limit, final int offset) {
+        final Uri uri = CardProvider.CARD_CONTENT_URI.buildUpon()
+                .appendQueryParameter(CardProvider.ARG_LIMIT, String.valueOf(limit))
+                .appendQueryParameter(CardProvider.ARG_OFFSET, String.valueOf(offset))
+                .build();
+        return newCardsLoaderBySerial(context, uri, serials);
+    }
+
+    @NonNull
+    private static Loader<Cursor> newCardsLoaderBySerial(@NonNull final Context context,
+                                                         @NonNull final Uri uri,
+                                                         @NonNull final Iterable<String> serials) {
         final String[] selectArgs = Iterables.toArray(serials, String.class);
         final String[] argsPlaceHolder = new String[selectArgs.length];
         Arrays.fill(argsPlaceHolder, "?");
         final String argsPart = Joiner.on(",").join(argsPlaceHolder);
-        return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, null,
-                String.format("%s IN (%s)", CardDatabase.Field.Serial, argsPart), selectArgs, CardDatabase.Field.Serial);
+        return new CursorLoader(context, uri, null, String.format("%s IN (%s)", CardDatabase.Field.Serial, argsPart),
+                selectArgs, CardDatabase.Field.Serial);
     }
 
+    @NonNull
+    public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final String expansion,
+                                                final int limit, final int offset) {
+
+        final Uri uri = CardProvider.CARD_CONTENT_URI.buildUpon()
+                .appendQueryParameter(CardProvider.ARG_LIMIT, String.valueOf(limit))
+                .appendQueryParameter(CardProvider.ARG_OFFSET, String.valueOf(offset))
+                .build();
+        return newCardsLoaderByExpansion(context, uri, expansion);
+    }
 
     @NonNull
     public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final String expansion) {
-        return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, null,
+        return newCardsLoaderByExpansion(context, CardProvider.CARD_CONTENT_URI, expansion);
+    }
+
+    @NonNull
+    private static Loader<Cursor> newCardsLoaderByExpansion(@NonNull final Context context,
+                                                            @NonNull final Uri uri,
+                                                            @NonNull final String expansion) {
+        return new CursorLoader(context, uri, null,
                 String.format("%s = ?", CardDatabase.Field.Expansion), new String[]{expansion}, null);
     }
 
     @NonNull
     public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final Filter filter) {
+        return newCardsLoaderByFilter(context, CardProvider.CARD_CONTENT_URI, filter);
+    }
+
+
+    @NonNull
+    public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final Filter filter,
+                                                final int limit, final int offset) {
+        final Uri uri = CardProvider.CARD_CONTENT_URI.buildUpon()
+                .appendQueryParameter(CardProvider.ARG_LIMIT, String.valueOf(limit))
+                .appendQueryParameter(CardProvider.ARG_OFFSET, String.valueOf(offset))
+                .build();
+        return newCardsLoaderByFilter(context, uri, filter);
+    }
+
+    @NonNull
+    private static Loader<Cursor> newCardsLoaderByFilter(@NonNull final Context context,
+                                                         @NonNull final Uri uri,
+                                                         @NonNull final Filter filter) {
         final List<String> selects = new ArrayList<>();
         final List<String> selectArgs = new ArrayList<>();
-        if (filter.getKeyword().size() > 0 && (filter.isHasChara() || filter.isHasName() ||
-                filter.isHasSerial() || filter.isHasSerial())) {
-            //TODO
+        final String likeSql = "%s LIKE ?";
+        final String equalSql = "%s = ?";
+        final List<String> keywords = new ArrayList<>();
+        if (filter.isHasChara() || filter.isHasName() || filter.isHasSerial() || filter.isHasText())
+            for (String keyword : filter.getKeyword()) {
+                keywords.clear();
+                final String wildCardKeyword = "%" + keyword + "%";
+                if (filter.isHasChara()) {
+                    keywords.add(String.format(likeSql, CardDatabase.Field.FirstChara));
+                    selectArgs.add(wildCardKeyword);
+                    keywords.add(String.format(likeSql, CardDatabase.Field.SecondChara));
+                    selectArgs.add(wildCardKeyword);
+                }
+                if (filter.isHasName()) {
+                    keywords.add(String.format(likeSql, CardDatabase.Field.Name));
+                    selectArgs.add(wildCardKeyword);
+                }
+                if (filter.isHasSerial()) {
+                    keywords.add(String.format(likeSql, CardDatabase.Field.Serial));
+                    selectArgs.add(wildCardKeyword);
+                }
+                if (filter.isHasName()) {
+                    keywords.add(String.format(likeSql, CardDatabase.Field.Text));
+                    selectArgs.add(wildCardKeyword);
+                }
+                selects.add("(" + Joiner.on(" OR ").join(keywords) + ")");
+            }
 
+        if (filter.getType() != null) {
+            selects.add(String.format(equalSql, CardDatabase.Field.Type));
+            selectArgs.add(filter.getType().toString());
         }
-        return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, null,
-                String.format("%s = ?", CardDatabase.Field.Serial), new String[]{}, null);
+
+        if (filter.getTrigger() != null) {
+            selects.add(String.format(equalSql, CardDatabase.Field.Trigger));
+            selectArgs.add(filter.getTrigger().toString());
+        }
+
+        if (!TextUtils.isEmpty(filter.getExpansion())) {
+            selects.add(String.format(equalSql, CardDatabase.Field.Expansion));
+            selectArgs.add(filter.getExpansion());
+        }
+        addRange(selects, selectArgs, CardDatabase.Field.Level, filter.getLevel());
+        addRange(selects, selectArgs, CardDatabase.Field.Cost, filter.getCost());
+        addRange(selects, selectArgs, CardDatabase.Field.Power, filter.getPower());
+        addRange(selects, selectArgs, CardDatabase.Field.Soul, filter.getSoul());
+        return new CursorLoader(context, uri, null,
+                Joiner.on(" AND ").join(selects), selectArgs.toArray(new String[selectArgs.size()]), null);
+    }
+
+    private static void addRange(@NonNull final List<String> selects, @NonNull final List<String> selectArgs,
+                                 @NonNull final String table, @Nullable final Range range) {
+        if (range == null) return;
+        if (range.getMin() >= 0 && range.getMax() >= 0) {
+            selects.add(String.format(Locale.getDefault(), "%s >= %d AND %s <= %d", table, range.getMin(),
+                    table, range.getMax()));
+            selectArgs.add(String.valueOf(range.getMin()));
+            selectArgs.add(String.valueOf(range.getMax()));
+        } else if (range.getMin() >= 0) {
+            selects.add(String.format(Locale.getDefault(), "%s >= %d", table, range.getMin()));
+            selectArgs.add(String.valueOf(range.getMin()));
+        } else if (range.getMax() >= 0) {
+            selects.add(String.format(Locale.getDefault(), "%s <= %d", table, range.getMax()));
+            selectArgs.add(String.valueOf(range.getMax()));
+        }
     }
 
     @NonNull
     public static Loader<Cursor> newCardLoader(@NonNull final Context context, @NonNull final String serial) {
-        return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, null,
+        return new CursorLoader(context, CardProvider.CARD_CONTENT_URI, null,
                 String.format("%s = ?", CardDatabase.Field.Serial), new String[]{serial}, null);
     }
 
@@ -108,12 +220,12 @@ public class CardRepository {
         return cards;
     }
 
-    @NonNull
-    public static Optional<Card> toCard(@NonNull final Cursor cursor) {
+    @Nullable
+    public static Card toCard(@NonNull final Cursor cursor) {
         if (cursor.moveToFirst())
-            return Optional.of(buildCard(cursor));
+            return buildCard(cursor);
         else
-            return Optional.absent();
+            return null;
     }
 
     public static int totVersion(@NonNull final Cursor cursor) {
@@ -188,6 +300,7 @@ public class CardRepository {
             this.type = type;
         }
 
+        @Nullable
         public Card.Trigger getTrigger() {
             return trigger;
         }
@@ -241,5 +354,4 @@ public class CardRepository {
             this.expansion = expansion;
         }
     }
-
 }
