@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         NavigationView.OnNavigationItemSelectedListener {
+    private static final String INITIAL_STACK = "com.joshuaavalon.wsdeckeditor.MainActivity.InitialStack";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
             //TODO
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment, CardDetailFragment.newInstance("DC/W01-001"), null)
+                    .addToBackStack(INITIAL_STACK)
                     .commit();
         }
     }
@@ -56,6 +59,16 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         final int id = item.getItemId();
         Fragment fragment = null;
         switch (id) {
+            case R.id.nav_card_list:
+                fragment = new ExpansionFragment();
+                break;
+        }
+        if (fragment != null) {
+            getSupportFragmentManager().popBackStack(INITIAL_STACK, 0);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, fragment, null)
+                    .addToBackStack(null)
+                    .commit();
         }
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

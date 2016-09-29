@@ -20,8 +20,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.R;
-import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VolleyLoader;
 import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VersionRequestBuilder;
+import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VolleyLoader;
 import com.joshuaavalon.wsdeckeditor.sdk.util.Range;
 
 import java.io.File;
@@ -226,6 +226,16 @@ public class CardRepository {
         builder.setImage(URLUtil.guessFileName(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Image))
                 , null, null));
         return builder.build();
+    }
+
+    @NonNull
+    public static List<String> toExpansions(@NonNull final Cursor cursor) {
+        final List<String> expansions = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                expansions.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        return expansions;
     }
 
     @NonNull
