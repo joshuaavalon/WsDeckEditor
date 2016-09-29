@@ -1,20 +1,30 @@
-package com.joshuaavalon.wsdeckeditor.sdk.database;
+package com.joshuaavalon.wsdeckeditor.sdk.data;
 
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.webkit.URLUtil;
 
+import com.android.volley.toolbox.Volley;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.R;
+import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VolleyLoader;
+import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VersionRequestBuilder;
 import com.joshuaavalon.wsdeckeditor.sdk.util.Range;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,7 +46,14 @@ public class CardRepository {
     }
 
     @NonNull
-    public static Loader<Cursor> newVersionLoader(@NonNull final Context context) {
+    public static Loader<VolleyLoader.Result<Integer>> newVersionLoader(@NonNull final Context context) {
+        return new VolleyLoader<>(context, Volley.newRequestQueue(context),
+                new VersionRequestBuilder(ConfigConstant.URL_VERSION));
+    }
+
+
+    @NonNull
+    public static Loader<Cursor> newNetworkVersionLoader(@NonNull final Context context) {
         return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, new String[]{CardDatabase.Field.Version},
                 null, null, null);
     }
@@ -206,7 +223,8 @@ public class CardRepository {
         builder.setText(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Text)));
         builder.setFlavor(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Flavor)));
         builder.setTrigger(Card.Trigger.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Trigger))));
-        builder.setImage(Utils.getImageNameFromUrl(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Image))));
+        builder.setImage(URLUtil.guessFileName(cursor.getString(cursor.getColumnIndexOrThrow(CardDatabase.Field.Image))
+                , null, null));
         return builder.build();
     }
 
@@ -231,6 +249,27 @@ public class CardRepository {
     public static int totVersion(@NonNull final Cursor cursor) {
         final int index = cursor.getColumnIndexOrThrow(CardDatabase.Field.Version);
         return cursor.getInt(index);
+    }
+
+    @NonNull
+    public static Bitmap getImage(@NonNull final Context context, @NonNull final Card card) {
+        Bitmap bitmap = getImage(context, URLUtil.guessFileName(card.getImage(), null, null));
+        if (bitmap == null)
+            bitmap = BitmapFactory.decodeResource(context.getResources(),
+                    card.getType() != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
+        return bitmap;
+    }
+
+    @Nullable
+    private static Bitmap getImage(@NonNull final Context context, @NonNull final String imageName) {
+        Bitmap bitmap = null;
+        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageName);
+        if (image.exists()) {
+            final BitmapFactory.Options option = new BitmapFactory.Options();
+            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
+            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
+        }
+        return bitmap;
     }
 
     public static class Filter {

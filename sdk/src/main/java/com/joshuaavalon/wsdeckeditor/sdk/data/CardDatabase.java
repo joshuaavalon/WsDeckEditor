@@ -1,4 +1,4 @@
-package com.joshuaavalon.wsdeckeditor.sdk.database;
+package com.joshuaavalon.wsdeckeditor.sdk.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 class CardDatabase extends SQLiteOpenHelper {
     @NonNull
-    public static final String DATABASE_NAME = "wsdb.db";
+    static final String DATABASE_NAME = "wsdb.db";
     private static final int VERSION = 1;
     @NonNull
     private final Context context;

@@ -1,14 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joshuaavalon.wsdeckeditor.sdk">
 
     <application>
         <provider
-            android:name=".database.DeckProvider"
+            android:name=".data.DeckProvider"
             android:authorities="com.joshuaavalon.wsdeckeditor.sdk.Deck"
             android:exported="false" />
         <provider
-            android:name=".database.CardProvider"
+            android:name=".data.CardProvider"
             android:authorities="com.joshuaavalon.wsdeckeditor.sdk.Card"
             android:exported="false" />
+
+        <service
+            android:name=".data.DownloadService"
+            android:exported="false"></service>
     </application>
+
 </manifest>

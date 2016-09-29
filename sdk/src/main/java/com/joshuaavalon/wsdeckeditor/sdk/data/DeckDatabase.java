@@ -1,4 +1,4 @@
-package com.joshuaavalon.wsdeckeditor.sdk.database;
+package com.joshuaavalon.wsdeckeditor.sdk.data;
 
 
 import android.content.Context;
