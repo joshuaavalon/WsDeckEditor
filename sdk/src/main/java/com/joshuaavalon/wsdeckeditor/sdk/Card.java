@@ -1,15 +1,18 @@
 package com.joshuaavalon.wsdeckeditor.sdk;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.webkit.URLUtil;
 
 import com.google.common.collect.ComparisonChain;
 
-public class Card implements Comparable<Card> {
+public class Card implements Comparable<Card>, Parcelable {
     @NonNull
     private final String name, serial, rarity, expansion, attribute1, attribute2, text, flavor, image;
     @IntRange(from = 0)
@@ -129,6 +132,11 @@ public class Card implements Comparable<Card> {
         return trigger;
     }
 
+    @NonNull
+    public String getImageName() {
+        return URLUtil.guessFileName(getImage(), null, null);
+    }
+
     @Override
     public int hashCode() {
         return serial.hashCode();
@@ -141,6 +149,13 @@ public class Card implements Comparable<Card> {
                 .compare(name, other.name)
                 .result();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Card && (obj == this || compareTo((Card) obj) == 0);
+    }
+
+
 
     public enum Type {
         Character(R.string.type_chara),
@@ -374,4 +389,66 @@ public class Card implements Comparable<Card> {
                     power, soul, trigger, attribute1, attribute2, text, flavor, image);
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.serial);
+        dest.writeString(this.rarity);
+        dest.writeString(this.expansion);
+        dest.writeString(this.attribute1);
+        dest.writeString(this.attribute2);
+        dest.writeString(this.text);
+        dest.writeString(this.flavor);
+        dest.writeString(this.image);
+        dest.writeInt(this.level);
+        dest.writeInt(this.cost);
+        dest.writeInt(this.power);
+        dest.writeInt(this.soul);
+        dest.writeInt( this.side.ordinal());
+        dest.writeInt(this.type.ordinal());
+        dest.writeInt(this.color.ordinal());
+        dest.writeInt( this.trigger.ordinal());
+    }
+
+    protected Card(Parcel in) {
+        this.name = in.readString();
+        this.serial = in.readString();
+        this.rarity = in.readString();
+        this.expansion = in.readString();
+        this.attribute1 = in.readString();
+        this.attribute2 = in.readString();
+        this.text = in.readString();
+        this.flavor = in.readString();
+        this.image = in.readString();
+        this.level = in.readInt();
+        this.cost = in.readInt();
+        this.power = in.readInt();
+        this.soul = in.readInt();
+        int tmpSide = in.readInt();
+        this.side = Side.values()[tmpSide];
+        int tmpType = in.readInt();
+        this.type =  Type.values()[tmpType];
+        int tmpColor = in.readInt();
+        this.color = Color.values()[tmpColor];
+        int tmpTrigger = in.readInt();
+        this.trigger = Trigger.values()[tmpTrigger];
+    }
+
+    public static final Creator<Card> CREATOR = new Creator<Card>() {
+        @Override
+        public Card createFromParcel(Parcel source) {
+            return new Card(source);
+        }
+
+        @Override
+        public Card[] newArray(int size) {
+            return new Card[size];
+        }
+    };
 }

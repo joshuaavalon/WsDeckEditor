@@ -42,11 +42,6 @@ public class VolleyLoader<T> extends Loader<VolleyLoader.Result<T>> {
     }
 
     @Override
-    public boolean cancelLoad() {
-        return false;
-    }
-
-    @Override
     protected void onStartLoading() {
         forceLoad();
     }

@@ -1,12 +1,12 @@
 package com.joshuaavalon.wsdeckeditor;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,7 +17,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         NavigationView.OnNavigationItemSelectedListener {
-    private static final String INITIAL_STACK = "com.joshuaavalon.wsdeckeditor.MainActivity.InitialStack";
+    private static final String INITIAL_STACK = "MainActivity.InitialStack";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +27,6 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         if (savedInstanceState == null && findViewById(R.id.fragment) != null) {
             //transactTo(new DeckInfoFragment(), false);
             //TODO
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, CardDetailFragment.newInstance("DC/W01-001"), null)
-                    .addToBackStack(INITIAL_STACK)
-                    .commit();
         }
     }
 

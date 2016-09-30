@@ -13,4 +13,5 @@
     <dimen name="detail_item_subtitle_width">56dp</dimen>
     <dimen name="single_line_list_item_height">48dp</dimen>
     <dimen name="double_line_list_item_height_dense">60dp</dimen>
+    <dimen name="vertical_color_bar_width">8dp</dimen>
 </resources>

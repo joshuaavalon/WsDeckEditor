@@ -1,13 +1,10 @@
 package com.joshuaavalon.wsdeckeditor;
 
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -28,12 +25,13 @@ import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String ARG_SERIAL = "com.joshuaavalon.wsdeckeditor.CardDetailFragment.arg.Serial";
+public class CardDetailFragment extends Fragment implements CardImageHolder{
+    private static final String ARG_CARD = "CardDetailFragment.arg.Card";
     private ImageView imageView;
     private TextView nameTextView, serialTextView, expansionTextView, rarityTextView, sideImageView,
             typeTextView, colorTextView, levelTextView, costTextView, powerTextView, soulTextView,
             triggerTextView, attributeTextView, textTextView, flavorTextView;
+    private Card card;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,36 +53,21 @@ public class CardDetailFragment extends Fragment implements LoaderManager.Loader
         attributeTextView = (TextView) rootView.findViewById(R.id.card_detail_attribute);
         textTextView = (TextView) rootView.findViewById(R.id.card_detail_text);
         flavorTextView = (TextView) rootView.findViewById(R.id.card_detail_flavor_text);
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardLoader, getArguments(), this);
+        final Bundle args = getArguments();
+        card = args.getParcelable(ARG_CARD);
+        if (card == null) throw new IllegalArgumentException();
+        bind(card);
         return rootView;
     }
 
+
     @NonNull
-    public static CardDetailFragment newInstance(@NonNull final String serial) {
+    public static CardDetailFragment newInstance(@NonNull final Card card) {
         final CardDetailFragment fragment = new CardDetailFragment();
         final Bundle args = new Bundle();
-        args.putString(ARG_SERIAL, serial);
+        args.putParcelable(ARG_CARD, card);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final String serial = args.getString(ARG_SERIAL);
-        if (serial == null) throw new IllegalArgumentException("Serial is null");
-        return CardRepository.newCardLoader(getContext(), serial);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        final Card card = CardRepository.toCard(data);
-        if (card == null) throw new UnsupportedOperationException("Invalid Serial");
-        bind(card);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        //no-ops
     }
 
     public void bind(@NonNull final Card card) {
@@ -199,5 +182,17 @@ public class CardDetailFragment extends Fragment implements LoaderManager.Loader
             spannableStringBuilder.setSpan(clickableSpan, start, end, 0);
         }
         return spannableStringBuilder;
+    }
+
+    @NonNull
+    @Override
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    @NonNull
+    @Override
+    public String getImageName() {
+        return card.getImageName();
     }
 }

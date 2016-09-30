@@ -3,10 +3,14 @@ package com.joshuaavalon.wsdeckeditor.sdk.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.CursorLoader;
@@ -204,6 +208,12 @@ public class CardRepository {
                 String.format("%s = ?", CardDatabase.Field.Serial), new String[]{serial}, null);
     }
 
+    public static long getCardsCount(@NonNull final Context context, @NonNull final String expansion) {
+        final SQLiteOpenHelper helper = new CardDatabase(context);
+        return DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), CardDatabase.Table.Card,
+                String.format("%s = ?", CardDatabase.Field.Expansion), new String[]{expansion});
+    }
+
     @NonNull
     private static Card buildCard(@NonNull final Cursor cursor) {
         final Card.Builder builder = new Card.Builder();
@@ -263,7 +273,7 @@ public class CardRepository {
 
     @NonNull
     public static Bitmap getImage(@NonNull final Context context, @NonNull final Card card) {
-        Bitmap bitmap = getImage(context, URLUtil.guessFileName(card.getImage(), null, null));
+        Bitmap bitmap = getImage(context, card.getImageName());
         if (bitmap == null)
             bitmap = BitmapFactory.decodeResource(context.getResources(),
                     card.getType() != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
@@ -282,7 +292,7 @@ public class CardRepository {
         return bitmap;
     }
 
-    public static class Filter {
+    public static class Filter implements Parcelable {
         @NonNull
         private Set<String> keyword;
         private boolean hasName, hasChara, hasText, hasSerial;
@@ -402,5 +412,58 @@ public class CardRepository {
         public void setExpansion(@Nullable final String expansion) {
             this.expansion = expansion;
         }
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeStringList(new ArrayList<>(this.keyword));
+            dest.writeByte(this.hasName ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.hasChara ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.hasText ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.hasSerial ? (byte) 1 : (byte) 0);
+            dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+            dest.writeInt(this.trigger == null ? -1 : this.trigger.ordinal());
+            dest.writeParcelable(this.level, flags);
+            dest.writeParcelable(this.cost, flags);
+            dest.writeParcelable(this.power, flags);
+            dest.writeParcelable(this.soul, flags);
+            dest.writeString(this.expansion);
+        }
+
+        protected Filter(Parcel in) {
+            final List<String> keywords = new ArrayList<>();
+            in.readStringList(keywords);
+            this.keyword = new HashSet<>(keywords);
+            this.hasName = in.readByte() != 0;
+            this.hasChara = in.readByte() != 0;
+            this.hasText = in.readByte() != 0;
+            this.hasSerial = in.readByte() != 0;
+            int tmpType = in.readInt();
+            this.type = tmpType == -1 ? null : Card.Type.values()[tmpType];
+            int tmpTrigger = in.readInt();
+            this.trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
+            this.level = in.readParcelable(Range.class.getClassLoader());
+            this.cost = in.readParcelable(Range.class.getClassLoader());
+            this.power = in.readParcelable(Range.class.getClassLoader());
+            this.soul = in.readParcelable(Range.class.getClassLoader());
+            this.expansion = in.readString();
+        }
+
+        public static final Creator<Filter> CREATOR = new Creator<Filter>() {
+            @Override
+            public Filter createFromParcel(Parcel source) {
+                return new Filter(source);
+            }
+
+            @Override
+            public Filter[] newArray(int size) {
+                return new Filter[size];
+            }
+        };
     }
 }

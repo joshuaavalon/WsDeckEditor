@@ -1,6 +1,9 @@
 package com.joshuaavalon.wsdeckeditor.sdk.util;
 
-public class Range {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Range implements Parcelable{
     private int max;
     private int min;
 
@@ -24,4 +27,33 @@ public class Range {
     public void setMin(int min) {
         this.min = min;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.max);
+        dest.writeInt(this.min);
+    }
+
+    protected Range(Parcel in) {
+        this.max = in.readInt();
+        this.min = in.readInt();
+    }
+
+    public static final Creator<Range> CREATOR = new Creator<Range>() {
+        @Override
+        public Range createFromParcel(Parcel source) {
+            return new Range(source);
+        }
+
+        @Override
+        public Range[] newArray(int size) {
+            return new Range[size];
+        }
+    };
 }

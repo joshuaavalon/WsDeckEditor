@@ -123,7 +123,11 @@ public class ExpansionFragment extends Fragment implements SearchView.OnQueryTex
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment, CardListFragment.newInstance(title))
+                            .addToBackStack(null)
+                            .commit();
                 }
             });
         }
