@@ -1,7 +1,6 @@
 package com.joshuaavalon.wsdeckeditor;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.nav_drawer_open,
@@ -58,6 +57,12 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
             case R.id.nav_card_list:
                 fragment = new ExpansionFragment();
                 break;
+            case R.id.nav_search:
+                fragment = new SearchFragment();
+                break;
+            case R.id.nav_deck_edit:
+                fragment =  new DeckListFragment();
+                break;
         }
         if (fragment != null) {
             getSupportFragmentManager().popBackStack(INITIAL_STACK, 0);
@@ -73,7 +78,12 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        boolean finish = false;
+        if (fragment instanceof OnBackPressedListener)
+            finish = ((OnBackPressedListener) fragment).onBackPressed();
+        if (finish) return;
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -85,5 +95,21 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
     @Override
     public CoordinatorLayout getCoordinatorLayout() {
         return (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+    }
+
+    public void transactTo(@NonNull final Fragment fragment, final boolean addToBackStack) {
+        if(addToBackStack){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        else{
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .commit();
+        }
     }
 }

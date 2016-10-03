@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeckRepository {
-    public Loader<Cursor> newDecksLoader(@NonNull final Context context) {
+    public static Loader<Cursor> newDecksLoader(@NonNull final Context context) {
         return new CursorLoader(context, DeckProvider.DECK_CONTENT_URI, null, null, null, DeckDatabase.Field.Id);
     }
 
-    public Loader<Cursor> newDeckLoader(@NonNull final Context context, final long id) {
+    public static Loader<Cursor> newDeckLoader(@NonNull final Context context, final long id) {
         return new CursorLoader(context, ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI, id)
                 , null, null, null, null);
     }
 
-    public Loader<Cursor> newDeckRecordLoader(@NonNull final Context context, final long id) {
+    public static Loader<Cursor> newDeckRecordLoader(@NonNull final Context context, final long id) {
         return new CursorLoader(context, ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI, id)
                 , new String[]{DeckDatabase.Field.Serial, DeckDatabase.Field.Count}, null, null, null);
     }
@@ -48,12 +48,17 @@ public class DeckRepository {
     }
 
     public static void deleteDeck(@NonNull final Context context, @NonNull final Deck deck) {
-        if (deck.getId() == Deck.NO_ID) return;
+        deleteDeck(context, deck.getId());
+    }
+
+
+    public static void deleteDeck(@NonNull final Context context, final long id) {
+        if (id == Deck.NO_ID) return;
         final ContentResolver contentResolver = context.getContentResolver();
         contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
-                deck.getId()), null, null);
+                id), null, null);
         contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
-                deck.getId()), null, null);
+                id), null, null);
     }
 
     public static void updateDeck(@NonNull final Context context, @NonNull final Deck deck) {
@@ -66,6 +71,29 @@ public class DeckRepository {
         contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
                 deck.getId()), null, null);
         insertCard(contentResolver, deck.getId(), deck.getCardList());
+    }
+
+    public static void updateDeckCount(@NonNull final Context context, final long id,
+                                       @NonNull final String serial, final int count) {
+        if (id == Deck.NO_ID) return;
+        final ContentResolver contentResolver = context.getContentResolver();
+        final ContentValues cardValues = new ContentValues();
+        cardValues.put(DeckDatabase.Field.DeckId, id);
+        cardValues.put(DeckDatabase.Field.Serial, serial);
+        cardValues.put(DeckDatabase.Field.Count, count);
+        contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
+                id), String.format("%s = ?",DeckDatabase.Field.Serial), new String[]{serial});
+        contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
+    }
+
+
+    public static void updateDeckName(@NonNull final Context context, final long id, @NonNull final String name) {
+        if (id == Deck.NO_ID) return;
+        final ContentResolver contentResolver = context.getContentResolver();
+        final ContentValues deckValues = new ContentValues();
+        deckValues.put(DeckDatabase.Field.Name, name);
+        contentResolver.update(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
+                id), deckValues, null, null);
     }
 
     private static void insertCard(@NonNull final ContentResolver contentResolver, final long id,

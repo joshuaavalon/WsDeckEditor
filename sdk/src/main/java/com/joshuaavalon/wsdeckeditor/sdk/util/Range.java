@@ -3,13 +3,13 @@ package com.joshuaavalon.wsdeckeditor.sdk.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Range implements Parcelable{
+public class Range implements Parcelable {
     private int max;
     private int min;
 
     public Range() {
-        max = 0;
-        min = 0;
+        max = -1;
+        min = -1;
     }
 
     public int getMax() {
@@ -27,7 +27,6 @@ public class Range implements Parcelable{
     public void setMin(int min) {
         this.min = min;
     }
-
 
     @Override
     public int describeContents() {

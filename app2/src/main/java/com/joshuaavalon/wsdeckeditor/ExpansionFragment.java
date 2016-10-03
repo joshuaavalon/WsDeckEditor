@@ -3,7 +3,7 @@ package com.joshuaavalon.wsdeckeditor;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -25,7 +25,7 @@ import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpansionFragment extends Fragment implements SearchView.OnQueryTextListener,
+public class ExpansionFragment extends BaseFragment implements SearchView.OnQueryTextListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
@@ -123,14 +123,16 @@ public class ExpansionFragment extends Fragment implements SearchView.OnQueryTex
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment, CardListFragment.newInstance(title))
-                            .addToBackStack(null)
-                            .commit();
+                    ((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(title), true);
                 }
             });
         }
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.card_expansion);
     }
 }
 

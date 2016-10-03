@@ -5,4 +5,7 @@ public interface LoaderId {
     int CardLoader = 1;
     int ExpansionLoader = 2;
     int CardListLoader = 3;
+    int DeckListLoader = 4;
+    int DeckLoader = 5;
+    int DeckRecordLoader = 6;
 }

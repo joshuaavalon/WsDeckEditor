@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class CardRepository {
@@ -156,7 +155,7 @@ public class CardRepository {
                     keywords.add(String.format(likeSql, CardDatabase.Field.Serial));
                     selectArgs.add(wildCardKeyword);
                 }
-                if (filter.isHasName()) {
+                if (filter.isHasText()) {
                     keywords.add(String.format(likeSql, CardDatabase.Field.Text));
                     selectArgs.add(wildCardKeyword);
                 }
@@ -171,6 +170,11 @@ public class CardRepository {
         if (filter.getTrigger() != null) {
             selects.add(String.format(equalSql, CardDatabase.Field.Trigger));
             selectArgs.add(filter.getTrigger().toString());
+        }
+
+        if (filter.getColor() != null) {
+            selects.add(String.format(equalSql, CardDatabase.Field.Color));
+            selectArgs.add(filter.getColor().toString());
         }
 
         if (!TextUtils.isEmpty(filter.getExpansion())) {
@@ -189,15 +193,14 @@ public class CardRepository {
                                  @NonNull final String table, @Nullable final Range range) {
         if (range == null) return;
         if (range.getMin() >= 0 && range.getMax() >= 0) {
-            selects.add(String.format(Locale.getDefault(), "%s >= %d AND %s <= %d", table, range.getMin(),
-                    table, range.getMax()));
+            selects.add(String.format("%s >= ? AND %s <= ?", table, table));
             selectArgs.add(String.valueOf(range.getMin()));
             selectArgs.add(String.valueOf(range.getMax()));
         } else if (range.getMin() >= 0) {
-            selects.add(String.format(Locale.getDefault(), "%s >= %d", table, range.getMin()));
+            selects.add(String.format("%s >= ?", table));
             selectArgs.add(String.valueOf(range.getMin()));
         } else if (range.getMax() >= 0) {
-            selects.add(String.format(Locale.getDefault(), "%s <= %d", table, range.getMax()));
+            selects.add(String.format("%s <= ?", table));
             selectArgs.add(String.valueOf(range.getMax()));
         }
     }
@@ -301,6 +304,8 @@ public class CardRepository {
         @Nullable
         private Card.Trigger trigger;
         @Nullable
+        private Card.Color color;
+        @Nullable
         private Range level, cost, power, soul;
         @Nullable
         private String expansion;
@@ -357,6 +362,15 @@ public class CardRepository {
 
         public void setType(@Nullable final Card.Type type) {
             this.type = type;
+        }
+
+        @Nullable
+        public Card.Color getColor() {
+            return color;
+        }
+
+        public void setColor(@Nullable final Card.Color color) {
+            this.color = color;
         }
 
         @Nullable

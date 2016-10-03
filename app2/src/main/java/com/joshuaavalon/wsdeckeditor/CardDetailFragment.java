@@ -1,10 +1,13 @@
 package com.joshuaavalon.wsdeckeditor;
 
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -22,11 +25,16 @@ import com.google.common.base.Function;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardDetailFragment extends Fragment implements CardImageHolder{
-    private static final String ARG_CARD = "CardDetailFragment.arg.Card";
+import static android.app.Activity.RESULT_OK;
+
+public class CardDetailFragment extends Fragment implements CardImageHolder, LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String ARG_SERIAL = "CardDetailFragment.arg.Serial";
+    private static final String ARG_ID= "CardDetailFragment.arg.Id";
     private ImageView imageView;
     private TextView nameTextView, serialTextView, expansionTextView, rarityTextView, sideImageView,
             typeTextView, colorTextView, levelTextView, costTextView, powerTextView, soulTextView,
@@ -53,19 +61,16 @@ public class CardDetailFragment extends Fragment implements CardImageHolder{
         attributeTextView = (TextView) rootView.findViewById(R.id.card_detail_attribute);
         textTextView = (TextView) rootView.findViewById(R.id.card_detail_text);
         flavorTextView = (TextView) rootView.findViewById(R.id.card_detail_flavor_text);
-        final Bundle args = getArguments();
-        card = args.getParcelable(ARG_CARD);
-        if (card == null) throw new IllegalArgumentException();
-        bind(card);
+        getActivity().getSupportLoaderManager().restartLoader(getArguments().getInt(ARG_ID), getArguments(), this);
         return rootView;
     }
 
-
     @NonNull
-    public static CardDetailFragment newInstance(@NonNull final Card card) {
+    public static CardDetailFragment newInstance(final int id, @NonNull final String serial) {
         final CardDetailFragment fragment = new CardDetailFragment();
         final Bundle args = new Bundle();
-        args.putParcelable(ARG_CARD, card);
+        args.putString(ARG_SERIAL, serial);
+        args.putInt(ARG_ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -131,12 +136,15 @@ public class CardDetailFragment extends Fragment implements CardImageHolder{
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                //TODO
-                /*
-                final CardFilter cardFilter = new CardFilter();
-                cardFilter.addFilterItem(KeywordCardFilterItem.newCharInstance(chara));
+                final CardRepository.Filter cardFilter = new CardRepository.Filter();
+                cardFilter.setHasName(false);
+                cardFilter.setHasChara(true);
+                cardFilter.setHasSerial(false);
+                cardFilter.setHasText(false);
+                final Set<String> keywords = new HashSet<>();
+                keywords.add(chara);
+                cardFilter.setKeyword(keywords);
                 startSearch(cardFilter);
-                */
             }
 
             @Override
@@ -152,12 +160,15 @@ public class CardDetailFragment extends Fragment implements CardImageHolder{
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                //TODO
-                /*
-                final CardFilter cardFilter = new CardFilter();
-                cardFilter.addFilterItem(KeywordCardFilterItem.newNameInstance(name));
+                final CardRepository.Filter cardFilter = new CardRepository.Filter();
+                cardFilter.setHasName(true);
+                cardFilter.setHasChara(false);
+                cardFilter.setHasSerial(false);
+                cardFilter.setHasText(false);
+                final Set<String> keywords = new HashSet<>();
+                keywords.add(name);
+                cardFilter.setKeyword(keywords);
                 startSearch(cardFilter);
-                */
             }
 
             @Override
@@ -194,5 +205,31 @@ public class CardDetailFragment extends Fragment implements CardImageHolder{
     @Override
     public String getImageName() {
         return card.getImageName();
+    }
+
+    public void startSearch(@NonNull final CardRepository.Filter filter) {
+        final Intent resultIntent = new Intent();
+        resultIntent.putExtra(CardActivity.RESULT_FILTER, filter);
+        getActivity().setResult(RESULT_OK, resultIntent);
+        getActivity().finish();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final String serial = args.getString(ARG_SERIAL);
+        if (serial == null) throw new IllegalArgumentException();
+        return CardRepository.newCardLoader(getContext(), serial);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        card = CardRepository.toCard(data);
+        if (card == null) throw new IllegalArgumentException();
+        bind(card);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

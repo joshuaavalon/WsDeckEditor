@@ -47,14 +47,23 @@
     <!--        Data Metadata End         -->
 
     <!--      Condition Related Start     -->
+    <string name="filter_keyword">Keyword</string>
+    <string name="filter_serial">@string/card_serial</string>
+    <string name="filter_name">@string/card_name</string>
+    <string name="filter_attr">@string/card_attribute</string>
+    <string name="filter_text">@string/card_text</string>
     <string name="filter_expansion">@string/card_expansion</string>
     <string name="filter_side">@string/card_side</string>
     <string name="filter_type">@string/card_type</string>
     <string name="filter_color">@string/card_color</string>
-    <string name="filter_level">@string/card_level</string>
-    <string name="filter_cost">@string/card_cost</string>
-    <string name="filter_power">@string/card_power</string>
-    <string name="filter_soul">@string/card_soul</string>
+    <string name="filter_level_max">Max Level</string>
+    <string name="filter_level_min">Min Level</string>
+    <string name="filter_cost_max">Max Cost</string>
+    <string name="filter_cost_min">Min Cost</string>
+    <string name="filter_power_max">Max Power</string>
+    <string name="filter_power_min">Min Power</string>
+    <string name="filter_soul_max">Max Soul</string>
+    <string name="filter_soul_min">Min Soul</string>
     <string name="filter_trigger">@string/card_trigger</string>
     <string name="filter_and">And</string>
     <string name="filter_not">Not</string>
@@ -64,10 +73,10 @@
     <string name="filter_dialog_side">@string/filter_side</string>
     <string name="filter_dialog_type">@string/filter_type</string>
     <string name="filter_dialog_color">@string/filter_color</string>
-    <string name="filter_dialog_level">@string/filter_level</string>
-    <string name="filter_dialog_cost">@string/filter_cost</string>
-    <string name="filter_dialog_power">@string/filter_power</string>
-    <string name="filter_dialog_soul">@string/filter_soul</string>
+    <string name="filter_dialog_level">@string/card_level</string>
+    <string name="filter_dialog_cost">@string/card_cost</string>
+    <string name="filter_dialog_power">@string/card_power</string>
+    <string name="filter_dialog_soul">@string/card_soul</string>
     <string name="filter_dialog_trigger">@string/filter_trigger</string>
     <string name="filter_dialog_and">@string/filter_and</string>
     <string name="filter_dialog_not">@string/filter_not</string>
@@ -95,6 +104,7 @@
     <string name="menu_delete_deck">Delete Deck</string>
     <string name="menu_deck_info">Deck Info</string>
     <string name="menu_share_deck">Share Deck</string>
+    <string name="menu_add_deck">Add Deck</string>
     <!--             Menu End             -->
 
     <!--           Dialog Start           -->
@@ -192,6 +202,7 @@
     <!--          Accessibility End       -->
 
     <string name="placeholder_text">Place Holder</string>
+    <string name="search_result">Search Result</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>

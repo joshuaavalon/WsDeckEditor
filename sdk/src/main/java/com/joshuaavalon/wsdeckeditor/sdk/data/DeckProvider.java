@@ -42,7 +42,7 @@ public class DeckProvider extends ContentProvider {
     private static String addIdConstraint(@Nullable final String selection,
                                           @NonNull final String field, final long id) {
         return String.format(Locale.getDefault(), "%s = %d", field, id) +
-                (!TextUtils.isEmpty(selection) ? String.format("AND ( %s )", selection) : "");
+                (!TextUtils.isEmpty(selection) ? String.format(" AND ( %s )", selection) : "");
     }
 
     @Override

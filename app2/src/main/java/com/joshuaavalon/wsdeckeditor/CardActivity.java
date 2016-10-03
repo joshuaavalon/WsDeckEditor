@@ -16,8 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.joshuaavalon.wsdeckeditor.sdk.Card;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +24,12 @@ public class CardActivity extends AppCompatActivity implements ViewPager.OnPageC
     private static final String EXTRA_CARDS = "CardActivity.extra.Cards";
     private static final String EXTRA_POSITION = "CardActivity.extra.Position";
     public static final String RESULT_POSITION = "CardActivity.extra.Position";
-    private List<Card> cards;
+    public static final String RESULT_FILTER = "CardActivity.extra.Filter";
+    private List<String> serials;
     private int position;
 
     public static void start(@NonNull final Fragment fragment, final int requestCode,
-                             @Nullable final String title, @NonNull final ArrayList<Card> cards,
+                             @Nullable final String title, @NonNull final ArrayList<String> cards,
                              @IntRange(from = 0) final int position) {
         final Intent intent = new Intent(fragment.getContext(), CardActivity.class);
         intent.putExtra(EXTRA_TITLE, title);
@@ -45,13 +44,8 @@ public class CardActivity extends AppCompatActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_card);
         final Intent intent = getIntent();
         initToolbar(intent.getStringExtra(EXTRA_TITLE));
-        int position = 0;
-        cards = intent.getParcelableArrayListExtra(EXTRA_CARDS);
-        final int intentPosition = intent.getIntExtra(EXTRA_POSITION, 0);
-        if (intentPosition >= 0 && cards != null && intentPosition < cards.size())
-            position = intentPosition;
-        if (cards == null)
-            cards = new ArrayList<>();
+        position = intent.getIntExtra(EXTRA_POSITION, 0);
+        serials = intent.getStringArrayListExtra(EXTRA_CARDS);
         initViewPager(position);
     }
 
@@ -111,17 +105,17 @@ public class CardActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         @Override
         public Fragment getItem(int position) {
-            return CardDetailFragment.newInstance(cards.get(position));
+            return CardDetailFragment.newInstance(position, serials.get(position));
         }
 
         @Override
         public int getCount() {
-            return cards.size();
+            return serials.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return cards.get(position).getSerial();
+            return serials.get(position);
         }
     }
 
