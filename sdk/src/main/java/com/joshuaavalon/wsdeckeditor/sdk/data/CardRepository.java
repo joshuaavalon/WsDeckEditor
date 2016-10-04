@@ -58,14 +58,14 @@ public class CardRepository {
     }
 
     @NonNull
-    public static Loader<VolleyLoader.Result<Integer>> newVersionLoader(@NonNull final Context context) {
+    public static Loader<VolleyLoader.Result<Integer>> newNetworkVersionLoader(@NonNull final Context context) {
         return new VolleyLoader<>(context, Volley.newRequestQueue(context),
                 new VersionRequestBuilder(ConfigConstant.URL_VERSION));
     }
 
 
     @NonNull
-    public static Loader<Cursor> newNetworkVersionLoader(@NonNull final Context context) {
+    public static Loader<Cursor> newVersionLoader(@NonNull final Context context) {
         return new CursorLoader(context, CardProvider.VERSION_CONTENT_URI, new String[]{CardDatabase.Field.Version},
                 null, null, null);
     }
@@ -273,6 +273,16 @@ public class CardRepository {
     }
 
     @NonNull
+    public static List<String> toImages(@NonNull final Cursor cursor) {
+        final List<String> images = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                images.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        return images;
+    }
+
+    @NonNull
     public static List<Card> toCards(@NonNull final Cursor cursor) {
         final List<Card> cards = new ArrayList<>();
         if (cursor.moveToFirst())
@@ -290,14 +300,15 @@ public class CardRepository {
             return null;
     }
 
-    public static int totVersion(@NonNull final Cursor cursor) {
+    public static int toVersion(@NonNull final Cursor cursor) {
         final int index = cursor.getColumnIndexOrThrow(CardDatabase.Field.Version);
+        cursor.moveToFirst();
         return cursor.getInt(index);
     }
 
     @NonNull
     public static Bitmap getImage(@NonNull final Context context, @NonNull final Card card) {
-        Bitmap bitmap = getImage(context, card.getImageName());
+        Bitmap bitmap = getImage(context, card.getImage());
         if (bitmap == null)
             bitmap = BitmapFactory.decodeResource(context.getResources(),
                     card.getType() != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);

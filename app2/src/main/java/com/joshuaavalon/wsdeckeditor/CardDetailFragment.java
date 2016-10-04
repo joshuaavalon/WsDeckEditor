@@ -237,7 +237,7 @@ public class CardDetailFragment extends Fragment implements CardImageHolder,
     @NonNull
     @Override
     public String getImageName() {
-        return card.getImageName();
+        return card.getImage();
     }
 
     public void startSearch(@NonNull final String title, @NonNull final CardRepository.Filter filter) {

@@ -35,4 +35,5 @@ dependencies {
     compile 'com.google.guava:guava:19.0'
     compile project(':sdk')
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
+    compile 'com.takisoft.fix:preference-v7:24.2.0.0'
 }

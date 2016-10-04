@@ -61,7 +61,13 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
                 fragment = new SearchFragment();
                 break;
             case R.id.nav_deck_edit:
-                fragment =  new DeckListFragment();
+                fragment = new DeckListFragment();
+                break;
+            case R.id.nav_setting:
+                fragment = new SettingFragment();
+                break;
+            case R.id.nav_update:
+                fragment = new UpdateFragment();
                 break;
         }
         if (fragment != null) {
@@ -98,14 +104,13 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
     }
 
     public void transactTo(@NonNull final Fragment fragment, final boolean addToBackStack) {
-        if(addToBackStack){
+        if (addToBackStack) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment, fragment)
                     .addToBackStack(null)
                     .commit();
-        }
-        else{
+        } else {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment, fragment)

@@ -372,7 +372,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                     }
                 }
             });
-            imageName = card.getImageName();
+            imageName = card.getImage();
             final Bitmap squareBitmap = bitmapCache.get(card);
             if (squareBitmap != null) {
                 imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));

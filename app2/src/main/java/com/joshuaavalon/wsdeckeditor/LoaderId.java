@@ -8,4 +8,6 @@ public interface LoaderId {
     int DeckListLoader = 4;
     int DeckLoader = 5;
     int DeckRecordLoader = 6;
+    int VersionLoader = 7;
+    int NetworkVersionLoader = 8;
 }

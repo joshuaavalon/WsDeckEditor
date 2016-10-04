@@ -44,7 +44,7 @@ public class LoadCircularCardImageTask extends AsyncTask<Void, Void, Drawable> {
 
     @Override
     protected void onPostExecute(@NonNull final Drawable drawable) {
-        if (card.getImageName().equals(viewHolder.getImageName()))
+        if (card.getImage().equals(viewHolder.getImageName()))
             viewHolder.getImageView().setImageDrawable(drawable);
     }
 }

@@ -14,7 +14,7 @@
 
         <service
             android:name=".data.DownloadService"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

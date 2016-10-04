@@ -1,17 +1,19 @@
 package com.joshuaavalon.wsdeckeditor.sdk.data;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.webkit.URLUtil;
-
-import com.google.common.collect.Lists;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -23,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadService extends IntentService {
@@ -36,30 +37,30 @@ public class DownloadService extends IntentService {
     private static final String EXTRA_FORCED = "com.joshuaavalon.wsdeckeditor.sdk.data.extra.Forced";
 
     public static final String ARG_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Progress";
+    public static final String ARG_MAX_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.MaxProgress";
+    public static final String ARG_RESULT = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Result";
 
     public DownloadService() {
         super("DownloadService");
     }
 
     public static void startDownloadImages(@NonNull final Context context, @NonNull final ResultReceiver receiver,
-                                           final int requestCode, @NonNull final Iterable<String> urls,
-                                           final boolean forced) {
+                                           final int requestCode, final boolean forced) {
         final Intent intent = new Intent(context, DownloadService.class);
         intent.setAction(ACTION_DOWNLOAD_IMAGE);
         intent.putExtra(EXTRA_RECEIVER, receiver);
         intent.putExtra(EXTRA_REQUEST_CODE, requestCode);
-        intent.putExtra(EXTRA_URLS, Lists.newArrayList(urls));
         intent.putExtra(EXTRA_FORCED, forced);
         context.startService(intent);
     }
 
     public static void startDownloadCardDatabase(@NonNull final Context context, @NonNull final ResultReceiver receiver,
-                                                 final int requestCode, @NonNull final String url) {
+                                                 final int requestCode) {
         final Intent intent = new Intent(context, DownloadService.class);
         intent.setAction(ACTION_DOWNLOAD_DB);
         intent.putExtra(EXTRA_RECEIVER, receiver);
         intent.putExtra(EXTRA_REQUEST_CODE, requestCode);
-        intent.putExtra(EXTRA_URLS, url);
+        intent.putExtra(EXTRA_URLS, ConfigConstant.URL_DATABASE);
         context.startService(intent);
     }
 
@@ -70,9 +71,14 @@ public class DownloadService extends IntentService {
         if (ACTION_DOWNLOAD_IMAGE.equals(action)) {
             final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
             final int requestCode = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
-            final ArrayList<String> urls = intent.getStringArrayListExtra(EXTRA_URLS);
             final boolean forced = intent.getBooleanExtra(EXTRA_FORCED, false);
+            final Cursor cursor = getContentResolver().query(CardProvider.CARD_CONTENT_URI, new String[]{"Distinct " +
+                    CardDatabase.Field.Image}, null, null, null);
+            if(cursor  == null) return;
+            final List<String> urls = CardRepository.toImages(cursor);
+            cursor.close();
             handleDownloadImages(receiver, requestCode, urls, forced);
+
         } else if (ACTION_DOWNLOAD_DB.equals(action)) {
             final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
             final int requestCode = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
@@ -84,35 +90,46 @@ public class DownloadService extends IntentService {
     private void handleDownloadImages(@NonNull final ResultReceiver receiver, final int requestCode,
                                       @NonNull final List<String> urls, final boolean forced) {
         int finishCount = 0;
+        final Bundle resultData = new Bundle();
+        resultData.putInt(ARG_PROGRESS, finishCount);
+        resultData.putInt(ARG_MAX_PROGRESS, urls.size());
+        receiver.send(requestCode, resultData);
         for (String urlToDownload : urls) {
             try {
-                final URL url = new URL(urlToDownload);
+                final URL url = new URL(urlToDownload); //TODO
                 final URLConnection connection = url.openConnection();
                 connection.connect();
 
                 final InputStream input = new BufferedInputStream(connection.getInputStream());
                 final File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                         URLUtil.guessFileName(urlToDownload, null, null));
-                final OutputStream output = new FileOutputStream(file);
+                if (!file.exists() || forced) {
+                    final OutputStream output = new FileOutputStream(file);
 
-                final byte data[] = new byte[1024];
-                int count;
-                while ((count = input.read(data)) != -1) {
-                    output.write(data, 0, count);
+                    final byte data[] = new byte[1024];
+                    int count;
+                    while ((count = input.read(data)) != -1) {
+                        output.write(data, 0, count);
+                    }
+
+                    output.flush();
+                    output.close();
+                    input.close();
                 }
-
-                output.flush();
-                output.close();
-                input.close();
+                finishCount++;
+                resultData.putInt(ARG_PROGRESS, finishCount);
+                receiver.send(requestCode, resultData);
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                finishCount++;
+                resultData.putInt(ARG_PROGRESS, finishCount);
+                resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
+                receiver.send(requestCode, resultData);
+                return;
             }
-            final Bundle resultData = new Bundle();
-            resultData.putInt(ARG_PROGRESS, finishCount);
-            receiver.send(requestCode, resultData);
         }
+        resultData.putInt(ARG_PROGRESS, finishCount);
+        resultData.putInt(ARG_RESULT, Activity.RESULT_OK);
+        receiver.send(requestCode, resultData);
     }
 
 
@@ -134,11 +151,11 @@ public class DownloadService extends IntentService {
             while ((count = input.read(data)) != -1) {
                 total += count;
                 final Bundle resultData = new Bundle();
-                resultData.putInt(ARG_PROGRESS, (int) (total * 100 / fileLength));
+                resultData.putLong(ARG_PROGRESS, total);
+                resultData.putLong(ARG_MAX_PROGRESS, fileLength);
                 receiver.send(requestCode, resultData);
                 output.write(data, 0, count);
             }
-
             output.flush();
             output.close();
             input.close();
@@ -149,11 +166,17 @@ public class DownloadService extends IntentService {
             }
             if (!file.delete())
                 Log.e("DownloadService", "Failed to clear db cache");
+            final Bundle resultData = new Bundle();
+            resultData.putInt(ARG_PROGRESS, 100);
+            receiver.send(requestCode, resultData);
         } catch (IOException e) {
             e.printStackTrace();
+            final Bundle resultData = new Bundle();
+            resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
+            receiver.send(requestCode, resultData);
         }
         final Bundle resultData = new Bundle();
-        resultData.putInt(ARG_PROGRESS, 100);
+        resultData.putInt(ARG_RESULT, Activity.RESULT_OK);
         receiver.send(requestCode, resultData);
     }
 }

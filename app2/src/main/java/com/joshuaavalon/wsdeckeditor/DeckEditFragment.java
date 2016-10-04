@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
 import com.google.common.collect.ComparisonChain;
@@ -124,8 +126,26 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
             case R.id.action_share:
                 return true;
             case R.id.action_delete:
-                if (deck != null)
-                    DeckRepository.deleteDeck(getContext(), deck);
+                if (deck == null) return true;
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.dialog_delete_deck)
+                        .positiveText(R.string.dialog_delete_button)
+                        .negativeText(R.string.dialog_cancel_button)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                DeckRepository.deleteDeck(getContext(), deck);
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        })
+                        .show();
+                return true;
+            case R.id.action_copy:
+                if (deck != null) {
+                    DeckRepository.createDeck(getContext(), deck);
+                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                            R.string.msg_deck_duplicated, Snackbar.LENGTH_LONG).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -171,6 +191,7 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                 combineDeck();
                 break;
             case LoaderId.CardLoader:
+                if (abstractDeck == null) return;
                 deck = new Deck();
                 deck.setId(abstractDeck.getId());
                 deck.setName(abstractDeck.getName());
@@ -268,7 +289,7 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                     ((MainActivity) getActivity()).transactTo(fragment, true);
                 }
             });
-            imageName = card.getImageName();
+            imageName = card.getImage();
             final Bitmap squareBitmap = bitmapCache.get(card);
             if (squareBitmap != null) {
                 imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));

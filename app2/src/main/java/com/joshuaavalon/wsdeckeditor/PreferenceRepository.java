@@ -13,7 +13,7 @@ public class PreferenceRepository {
     }
 
     public static int getShowLimit(@NonNull final Context context) {
-        return getSharedPreferences(context).getInt(context.getString(R.string.pref_show_limit), 200);
+        return Integer.valueOf(getSharedPreferences(context).getString(context.getString(R.string.pref_show_limit), "200"));
     }
 
     public static boolean getAutoClose(@NonNull final Context context) {

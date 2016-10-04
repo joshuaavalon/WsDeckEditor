@@ -132,11 +132,6 @@ public class Card implements Comparable<Card>, Parcelable {
         return trigger;
     }
 
-    @NonNull
-    public String getImageName() {
-        return URLUtil.guessFileName(getImage(), null, null);
-    }
-
     @Override
     public int hashCode() {
         return serial.hashCode();
