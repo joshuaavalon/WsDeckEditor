@@ -361,6 +361,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
         </LinearLayout>
+
         <Button
             android:id="@+id/search_button"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"

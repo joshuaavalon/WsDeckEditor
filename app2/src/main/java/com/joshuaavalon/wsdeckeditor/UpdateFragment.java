@@ -142,17 +142,17 @@ public class UpdateFragment extends BaseFragment {
             }
             if (resultData.getInt(DownloadService.ARG_RESULT, Activity.RESULT_CANCELED) == Activity.RESULT_CANCELED)
                 Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                        R.string.msg_network_err, Snackbar.LENGTH_LONG);
+                        R.string.msg_network_err, Snackbar.LENGTH_LONG).show();
             else
                 switch (resultCode) {
                     case CODE_CARD_DATABASE:
                         Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                R.string.msg_update_database, Snackbar.LENGTH_LONG);
+                                R.string.msg_update_database, Snackbar.LENGTH_LONG).show();
                         getActivity().getSupportLoaderManager().restartLoader(LoaderId.VersionLoader, null, new VersionLoaderCallBack());
                         break;
                     case CODE_CARD_IMAGE:
                         Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                R.string.msg_update_image, Snackbar.LENGTH_LONG);
+                                R.string.msg_update_image, Snackbar.LENGTH_LONG).show();
                         break;
                 }
             progressDialog.dismiss();

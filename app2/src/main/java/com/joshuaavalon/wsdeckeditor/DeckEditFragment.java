@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -134,8 +135,9 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                DeckRepository.deleteDeck(getContext(), deck);
+                                final Context context = getActivity().getApplicationContext();
                                 getActivity().getSupportFragmentManager().popBackStack();
+                                DeckRepository.deleteDeck(context, deck);
                             }
                         })
                         .show();

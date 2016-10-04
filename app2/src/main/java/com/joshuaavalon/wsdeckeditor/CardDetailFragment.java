@@ -241,11 +241,12 @@ public class CardDetailFragment extends Fragment implements CardImageHolder,
     }
 
     public void startSearch(@NonNull final String title, @NonNull final CardRepository.Filter filter) {
+        final boolean normalOnly = PreferenceRepository.getHideNormal(getContext());
         getFragmentManager().popBackStackImmediate();
         final Fragment target = getTargetFragment();
         if (target == null) return;
         final Intent resultIntent = new Intent();
-        filter.setNormalOnly(PreferenceRepository.getHideNormal(getContext()));
+        filter.setNormalOnly(normalOnly);
         resultIntent.putExtra(RESULT_FILTER, filter);
         resultIntent.putExtra(RESULT_TITLE, title);
         target.onActivityResult(getTargetRequestCode(), RESULT_OK, resultIntent);

@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -74,7 +72,7 @@ public class DownloadService extends IntentService {
             final boolean forced = intent.getBooleanExtra(EXTRA_FORCED, false);
             final Cursor cursor = getContentResolver().query(CardProvider.CARD_CONTENT_URI, new String[]{"Distinct " +
                     CardDatabase.Field.Image}, null, null, null);
-            if(cursor  == null) return;
+            if (cursor == null) return;
             final List<String> urls = CardRepository.toImages(cursor);
             cursor.close();
             handleDownloadImages(receiver, requestCode, urls, forced);
@@ -96,7 +94,7 @@ public class DownloadService extends IntentService {
         receiver.send(requestCode, resultData);
         for (String urlToDownload : urls) {
             try {
-                final URL url = new URL(urlToDownload); //TODO
+                final URL url = new URL(urlToDownload);
                 final URLConnection connection = url.openConnection();
                 connection.connect();
 
@@ -151,8 +149,8 @@ public class DownloadService extends IntentService {
             while ((count = input.read(data)) != -1) {
                 total += count;
                 final Bundle resultData = new Bundle();
-                resultData.putLong(ARG_PROGRESS, total);
-                resultData.putLong(ARG_MAX_PROGRESS, fileLength);
+                resultData.putInt(ARG_PROGRESS, (int) (total * 100 / fileLength));
+                resultData.putInt(ARG_MAX_PROGRESS, 100);
                 receiver.send(requestCode, resultData);
                 output.write(data, 0, count);
             }
@@ -167,7 +165,7 @@ public class DownloadService extends IntentService {
             if (!file.delete())
                 Log.e("DownloadService", "Failed to clear db cache");
             final Bundle resultData = new Bundle();
-            resultData.putInt(ARG_PROGRESS, 100);
+            resultData.putInt(ARG_RESULT, Activity.RESULT_OK);
             receiver.send(requestCode, resultData);
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,8 +173,5 @@ public class DownloadService extends IntentService {
             resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
             receiver.send(requestCode, resultData);
         }
-        final Bundle resultData = new Bundle();
-        resultData.putInt(ARG_RESULT, Activity.RESULT_OK);
-        receiver.send(requestCode, resultData);
     }
 }
