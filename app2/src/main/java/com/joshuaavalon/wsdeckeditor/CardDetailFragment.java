@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -16,25 +18,36 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.app.Activity.RESULT_OK;
 
-public class CardDetailFragment extends Fragment implements CardImageHolder, LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String ARG_SERIAL = "CardDetailFragment.arg.Serial";
-    private static final String ARG_ID= "CardDetailFragment.arg.Id";
+public class CardDetailFragment extends Fragment implements CardImageHolder,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String ARG_CARD = "CardDetailFragment.arg.Card";
+    public static final String RESULT_FILTER = "CardDetailFragment.extra.Filter";
+    public static final String RESULT_TITLE = "CardDetailFragment.extra.Title";
     private ImageView imageView;
     private TextView nameTextView, serialTextView, expansionTextView, rarityTextView, sideImageView,
             typeTextView, colorTextView, levelTextView, costTextView, powerTextView, soulTextView,
@@ -61,16 +74,36 @@ public class CardDetailFragment extends Fragment implements CardImageHolder, Loa
         attributeTextView = (TextView) rootView.findViewById(R.id.card_detail_attribute);
         textTextView = (TextView) rootView.findViewById(R.id.card_detail_text);
         flavorTextView = (TextView) rootView.findViewById(R.id.card_detail_flavor_text);
-        getActivity().getSupportLoaderManager().restartLoader(getArguments().getInt(ARG_ID), getArguments(), this);
+        card = getArguments().getParcelable(ARG_CARD);
+        if (card == null) throw new IllegalArgumentException();
+        bind(card);
+        setHasOptionsMenu(true);
         return rootView;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case R.id.action_add:
+                getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_card_detail, menu);
+    }
+
     @NonNull
-    public static CardDetailFragment newInstance(final int id, @NonNull final String serial) {
+    public static CardDetailFragment newInstance(@NonNull final Card card) {
         final CardDetailFragment fragment = new CardDetailFragment();
         final Bundle args = new Bundle();
-        args.putString(ARG_SERIAL, serial);
-        args.putInt(ARG_ID, id);
+        args.putParcelable(ARG_CARD, card);
         fragment.setArguments(args);
         return fragment;
     }
@@ -144,7 +177,7 @@ public class CardDetailFragment extends Fragment implements CardImageHolder, Loa
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(chara);
                 cardFilter.setKeyword(keywords);
-                startSearch(cardFilter);
+                startSearch(chara, cardFilter);
             }
 
             @Override
@@ -168,7 +201,7 @@ public class CardDetailFragment extends Fragment implements CardImageHolder, Loa
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(name);
                 cardFilter.setKeyword(keywords);
-                startSearch(cardFilter);
+                startSearch(name, cardFilter);
             }
 
             @Override
@@ -207,29 +240,53 @@ public class CardDetailFragment extends Fragment implements CardImageHolder, Loa
         return card.getImageName();
     }
 
-    public void startSearch(@NonNull final CardRepository.Filter filter) {
+    public void startSearch(@NonNull final String title, @NonNull final CardRepository.Filter filter) {
+        getFragmentManager().popBackStackImmediate();
+        final Fragment target = getTargetFragment();
+        if (target == null) return;
         final Intent resultIntent = new Intent();
-        resultIntent.putExtra(CardActivity.RESULT_FILTER, filter);
-        getActivity().setResult(RESULT_OK, resultIntent);
-        getActivity().finish();
+        filter.setNormalOnly(PreferenceRepository.getHideNormal(getContext()));
+        resultIntent.putExtra(RESULT_FILTER, filter);
+        resultIntent.putExtra(RESULT_TITLE, title);
+        target.onActivityResult(getTargetRequestCode(), RESULT_OK, resultIntent);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final String serial = args.getString(ARG_SERIAL);
-        if (serial == null) throw new IllegalArgumentException();
-        return CardRepository.newCardLoader(getContext(), serial);
+        return DeckRepository.newDecksLoader(getContext());
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        card = CardRepository.toCard(data);
-        if (card == null) throw new IllegalArgumentException();
-        bind(card);
+        final List<AbstractDeck> decks = DeckRepository.toDecks(data);
+        if (decks.size() > 0)
+            DialogUtils.showDeckSelectDialog(getContext(),
+                    Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
+                        @Nullable
+                        @Override
+                        public String apply(AbstractDeck input) {
+                            return input.getName();
+                        }
+                    })),
+                    new MaterialDialog.ListCallback() {
+                        @Override
+                        public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                            DeckRepository.addCardIfNotExist(getContext(), decks.get(position).getId(), card.getSerial());
+                        }
+                    });
+        else
+            Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.dialog_create_button, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogUtils.showCreateDeckDialog(getContext());
+                        }
+                    })
+                    .show();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        //no-ops
     }
 }

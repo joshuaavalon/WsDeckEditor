@@ -28,36 +28,4 @@ public class ColorUtils {
                 return R.drawable.highlight_background_yellow;
         }
     }
-
-    //TODO
-/*
-    public static void setColorView(@NonNull final Deck deck,
-                                    @NonNull final View view) {
-
-        final Multiset<Card.Color> colorCount = deck.getColor();
-        for (Card.Color color : Card.Color.values()) {
-            final View colorView = getColorView(color, view);
-            if (colorView == null) continue;
-            final LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(colorView.getLayoutParams());
-            params.weight = colorCount.count(color);
-            colorView.setLayoutParams(params);
-            colorView.setBackgroundResource(color.getColorId());
-        }
-    }
-    @Nullable
-    private static View getColorView(@NonNull final Card.Color color, @NonNull final View view) {
-        switch (color) {
-            case Yellow:
-                return view.findViewById(R.id.yellow_bar);
-            case Green:
-                return view.findViewById(R.id.green_bar);
-            case Red:
-                return view.findViewById(R.id.red_bar);
-            case Blue:
-                return view.findViewById(R.id.blue_bar);
-            default:
-                return null;
-        }
-    }*/
 }

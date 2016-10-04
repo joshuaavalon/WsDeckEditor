@@ -36,6 +36,15 @@ import java.util.List;
 import java.util.Set;
 
 public class CardRepository {
+    private static void addNormalOnly(@NonNull final List<String> selects,
+                                      @NonNull final List<String> selectArgs) {
+        selects.add(String.format("%s NOT IN (?,?,?,?)", CardDatabase.Field.Rarity));
+        selectArgs.add("SR");
+        selectArgs.add("SP");
+        selectArgs.add("RRR");
+        selectArgs.add("XR");
+    }
+
     @NonNull
     public static Loader<Cursor> newImageLoader(@NonNull final Context context) {
         return new CursorLoader(context, CardProvider.CARD_CONTENT_URI, new String[]{"Distinct " +
@@ -90,26 +99,36 @@ public class CardRepository {
 
     @NonNull
     public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final String expansion,
-                                                final int limit, final int offset) {
+                                                final int limit, final int offset,
+                                                final boolean normalOnly) {
 
         final Uri uri = CardProvider.CARD_CONTENT_URI.buildUpon()
                 .appendQueryParameter(CardProvider.ARG_LIMIT, String.valueOf(limit))
                 .appendQueryParameter(CardProvider.ARG_OFFSET, String.valueOf(offset))
                 .build();
-        return newCardsLoaderByExpansion(context, uri, expansion);
+        return newCardsLoaderByExpansion(context, uri, expansion, normalOnly);
     }
 
     @NonNull
-    public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final String expansion) {
-        return newCardsLoaderByExpansion(context, CardProvider.CARD_CONTENT_URI, expansion);
+    public static Loader<Cursor> newCardsLoader(@NonNull final Context context, @NonNull final String expansion,
+                                                final boolean normalOnly) {
+        return newCardsLoaderByExpansion(context, CardProvider.CARD_CONTENT_URI, expansion, normalOnly);
     }
 
     @NonNull
     private static Loader<Cursor> newCardsLoaderByExpansion(@NonNull final Context context,
                                                             @NonNull final Uri uri,
-                                                            @NonNull final String expansion) {
+                                                            @NonNull final String expansion,
+                                                            final boolean normalOnly) {
+
+        final List<String> selects = new ArrayList<>();
+        final List<String> selectArgs = new ArrayList<>();
+        selects.add(String.format("%s = ?", CardDatabase.Field.Expansion));
+        selectArgs.add(expansion);
+        if (normalOnly)
+            addNormalOnly(selects, selectArgs);
         return new CursorLoader(context, uri, null,
-                String.format("%s = ?", CardDatabase.Field.Expansion), new String[]{expansion}, null);
+                Joiner.on(" AND ").join(selects), selectArgs.toArray(new String[selectArgs.size()]), null);
     }
 
     @NonNull
@@ -185,6 +204,8 @@ public class CardRepository {
         addRange(selects, selectArgs, CardDatabase.Field.Cost, filter.getCost());
         addRange(selects, selectArgs, CardDatabase.Field.Power, filter.getPower());
         addRange(selects, selectArgs, CardDatabase.Field.Soul, filter.getSoul());
+        if (filter.isNormalOnly())
+            addNormalOnly(selects, selectArgs);
         return new CursorLoader(context, uri, null,
                 Joiner.on(" AND ").join(selects), selectArgs.toArray(new String[selectArgs.size()]), null);
     }
@@ -298,7 +319,7 @@ public class CardRepository {
     public static class Filter implements Parcelable {
         @NonNull
         private Set<String> keyword;
-        private boolean hasName, hasChara, hasText, hasSerial;
+        private boolean hasName, hasChara, hasText, hasSerial, normalOnly;
         @Nullable
         private Card.Type type;
         @Nullable
@@ -321,6 +342,14 @@ public class CardRepository {
 
         public void setKeyword(@NonNull final Set<String> keyword) {
             this.keyword = keyword;
+        }
+
+        public boolean isNormalOnly() {
+            return normalOnly;
+        }
+
+        public void setNormalOnly(boolean normalOnly) {
+            this.normalOnly = normalOnly;
         }
 
         public boolean isHasName() {
@@ -436,6 +465,7 @@ public class CardRepository {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeStringList(new ArrayList<>(this.keyword));
+            dest.writeByte(this.normalOnly ? (byte) 1 : (byte) 0);
             dest.writeByte(this.hasName ? (byte) 1 : (byte) 0);
             dest.writeByte(this.hasChara ? (byte) 1 : (byte) 0);
             dest.writeByte(this.hasText ? (byte) 1 : (byte) 0);
@@ -453,6 +483,7 @@ public class CardRepository {
             final List<String> keywords = new ArrayList<>();
             in.readStringList(keywords);
             this.keyword = new HashSet<>(keywords);
+            this.normalOnly = in.readByte() != 0;
             this.hasName = in.readByte() != 0;
             this.hasChara = in.readByte() != 0;
             this.hasText = in.readByte() != 0;

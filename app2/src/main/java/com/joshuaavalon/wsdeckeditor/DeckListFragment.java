@@ -42,7 +42,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         decks = new ArrayList<>();
         adapter = new DeckListAdapter(new ArrayList<>(decks));
         recyclerView.setAdapter(adapter);
-
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
                     @Override

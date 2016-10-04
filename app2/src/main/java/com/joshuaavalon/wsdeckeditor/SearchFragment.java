@@ -26,7 +26,7 @@ import java.util.List;
 
 public class SearchFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         View.OnClickListener {
-    private Switch serialSwitch, nameSwtich, attributeSwitch, textSwitch;
+    private Switch serialSwitch, nameSwitch, attributeSwitch, textSwitch, normalSwitch;
     private EditText keywordEditText, minLevelEditText, maxLevelEditText, minCostEditText,
             maxCostEditText, minPowerEditText, maxPowerEditText, minSoulEditText, maxSoulEditText;
     private Spinner expansionSpinner, typeSpinner, colorSpinner, triggerSpinner;
@@ -45,9 +45,11 @@ public class SearchFragment extends BaseFragment implements LoaderManager.Loader
         minSoulEditText = (EditText) view.findViewById(R.id.search_min_soul);
         maxSoulEditText = (EditText) view.findViewById(R.id.search_max_soul);
         serialSwitch = (Switch) view.findViewById(R.id.search_serial);
-        nameSwtich = (Switch) view.findViewById(R.id.search_name);
+        nameSwitch = (Switch) view.findViewById(R.id.search_name);
         attributeSwitch = (Switch) view.findViewById(R.id.search_attr);
         textSwitch = (Switch) view.findViewById(R.id.search_text);
+        normalSwitch = (Switch) view.findViewById(R.id.search_hide);
+        normalSwitch.setChecked(PreferenceRepository.getHideNormal(getContext()));
         expansionSpinner = (Spinner) view.findViewById(R.id.search_expansion);
 
         typeSpinner = (Spinner) view.findViewById(R.id.search_type);
@@ -104,7 +106,7 @@ public class SearchFragment extends BaseFragment implements LoaderManager.Loader
         if (!TextUtils.isEmpty(keyword))
             filter.setKeyword(Sets.newHashSet(keyword.split("\\s+")));
         filter.setHasSerial(serialSwitch.isChecked());
-        filter.setHasName(nameSwtich.isChecked());
+        filter.setHasName(nameSwitch.isChecked());
         filter.setHasChara(attributeSwitch.isChecked());
         filter.setHasText(textSwitch.isChecked());
         if (expansionSpinner.getSelectedItemPosition() != 0)
@@ -119,6 +121,7 @@ public class SearchFragment extends BaseFragment implements LoaderManager.Loader
         filter.setCost(createRange(minCostEditText, maxCostEditText));
         filter.setPower(createRange(minPowerEditText, maxPowerEditText));
         filter.setSoul(createRange(minSoulEditText, maxSoulEditText));
+        filter.setNormalOnly(normalSwitch.isChecked());
         ((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(filter), true);
     }
 

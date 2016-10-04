@@ -24,4 +24,14 @@ public class PreferenceRepository {
     private static SharedPreferences getSharedPreferences(@NonNull final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
+
+    public static CardOrder getSortOrder(@NonNull final Context context) {
+        return CardOrder.values()[getSharedPreferences(context).getInt(context.getString(R.string.pref_sort_order), 0)];
+    }
+
+    public static void setSortOrder(@NonNull final Context context, @NonNull final CardOrder order) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(context.getString(R.string.pref_sort_order), order.ordinal());
+        editor.apply();
+    }
 }

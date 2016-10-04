@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
@@ -44,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class CardListFragment extends BaseFragment implements ActionMode.Callback, ActionModeListener,
@@ -57,6 +58,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     private ActionMode actionMode;
     private static final String ARG_EXPANSION = "CardListFragment.arg.Expansion";
     private static final String ARG_FILTER = "CardListFragment.arg.Filter";
+    private static final String ARG_TITLE = "CardListFragment.arg.Title";
     private static final int STACK_SIZE = 5;
     private LruCache<Card, Bitmap> bitmapCache;
     @Nullable
@@ -78,6 +80,17 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         final CardListFragment fragment = new CardListFragment();
         final Bundle args = new Bundle();
         args.putParcelable(ARG_FILTER, filter);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static CardListFragment newInstance(@NonNull final String title,
+                                               @NonNull final CardRepository.Filter filter) {
+        final CardListFragment fragment = new CardListFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_FILTER, filter);
+        args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -111,7 +124,10 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         if (args.containsKey(ARG_EXPANSION))
             title = args.getString(ARG_EXPANSION);
         else if (args.containsKey(ARG_FILTER))
-            title = getString(R.string.search_result);
+            if (args.containsKey(ARG_TITLE))
+                title = args.getString(ARG_TITLE);
+            else
+                title = getString(R.string.search_result);
         titleStack.add(getTitle());
     }
 
@@ -119,7 +135,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         if (actionMode == null) return;
         adapter.toggleSelection(position);
         final int count = adapter.getSelectedItemCount();
-        if (count == 0) { //TODO: PreferenceRepository.getAutoClose()
+        if (count == 0 && PreferenceRepository.getAutoClose(getContext())) {
             actionMode.finish();
         } else {
             actionMode.invalidate();
@@ -189,16 +205,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 adapter.selectAll();
                 return true;
             case R.id.action_add:
-                final List<String> cardsToAdd = new ArrayList<>();
-                for (int index : adapter.getSelectedItems()) {
-                    cardsToAdd.add(resultCards.get(index).getSerial());
-                }
-                //TODO
-/*                if (cardsToAdd.size() > WsApplication.CARD_TYPE_LIMIT)
-                    showMessage(R.string.msg_select_too_many);
-                else
-                    showDeckSelectDialog(cardsToAdd);*/
-                getActivity().getSupportLoaderManager().restartLoader(LoaderId.DeckListLoader, getArguments(), this);
+                getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
                 return true;
             default:
                 return false;
@@ -218,10 +225,13 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
             case LoaderId.CardListLoader:
                 final String expansion = args.getString(ARG_EXPANSION);
                 if (expansion != null)
-                    return CardRepository.newCardsLoader(getContext(), expansion, PreferenceRepository.getShowLimit(getContext()), 0);
+                    return CardRepository.newCardsLoader(getContext(), expansion,
+                            PreferenceRepository.getShowLimit(getContext()), 0,
+                            PreferenceRepository.getHideNormal(getContext()));
                 final CardRepository.Filter filter = args.getParcelable(ARG_FILTER);
                 if (filter != null)
-                    return CardRepository.newCardsLoader(getContext(), filter, PreferenceRepository.getShowLimit(getContext()), 0);
+                    return CardRepository.newCardsLoader(getContext(), filter,
+                            PreferenceRepository.getShowLimit(getContext()), 0);
             case LoaderId.DeckListLoader:
                 return DeckRepository.newDecksLoader(getContext());
         }
@@ -240,22 +250,36 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 break;
             case LoaderId.DeckListLoader:
                 final List<AbstractDeck> decks = DeckRepository.toDecks(data);
-                DialogUtils.showDeckSelectDialog(getContext(),
-                        Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
-                            @Nullable
-                            @Override
-                            public String apply(AbstractDeck input) {
-                                return input.getName();
-                            }
-                        })),
-                        new MaterialDialog.ListCallback() {
-                            @Override
-                            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                                for (int index : adapter.getSelectedItems()) {
-                                    DeckRepository.updateDeckCount(getContext(), decks.get(position).getId(), resultCards.get(index).getSerial(), 1);
+                if (decks.size() > 0)
+                    DialogUtils.showDeckSelectDialog(getContext(),
+                            Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
+                                @Nullable
+                                @Override
+                                public String apply(AbstractDeck input) {
+                                    return input.getName();
                                 }
-                            }
-                        });
+                            })),
+                            new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                    for (int index : adapter.getSelectedItems()) {
+                                        DeckRepository.addCardIfNotExist(getContext(), decks.get(position).getId(), resultCards.get(index).getSerial());
+                                    }
+                                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                                            R.string.msg_add_to_deck, Snackbar.LENGTH_LONG).show();
+                                    if (actionMode != null && PreferenceRepository.getAutoClose(getContext()))
+                                        actionMode.finish();
+                                }
+                            });
+                else
+                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.dialog_create_button, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DialogUtils.showCreateDeckDialog(getContext());
+                                }
+                            })
+                            .show();
                 break;
         }
     }
@@ -339,14 +363,9 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 @Override
                 public void onClick(View v) {
                     if (actionMode == null) {
-                        CardActivity.start(CardListFragment.this, REQUEST_CARD_DETAIL,
-                                title, Lists.newArrayList(Iterables.transform(resultCards, new Function<Card, String>() {
-                                    @Nullable
-                                    @Override
-                                    public String apply(Card input) {
-                                        return input.getSerial();
-                                    }
-                                })), resultCards.indexOf(card));
+                        final Fragment fragment = CardDetailFragment.newInstance(card);
+                        fragment.setTargetFragment(CardListFragment.this, REQUEST_CARD_DETAIL);
+                        ((MainActivity) getActivity()).transactTo(fragment, true);
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());
@@ -362,7 +381,8 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 new LoadCircularCardImageTask(getContext(), bitmapCache, this, card).execute();
             }
             nameTextView.setText(card.getName());
-            serialTextView.setText(card.getSerial());
+            serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
+                    card.getLevel(), getString(card.getType().getStringId())));
             colorView.setBackgroundResource(card.getColor().getColorId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
         }
@@ -407,23 +427,17 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != REQUEST_CARD_DETAIL) return;
-        if (resultCode == RESULT_CANCELED) {
-            final int position = data.getIntExtra(CardActivity.RESULT_POSITION, -1);
-            if (position != -1)
-                recyclerView.scrollToPosition(position);
-        } else if (resultCode == RESULT_OK) {
-            final CardRepository.Filter filter = data.getParcelableExtra(CardActivity.RESULT_FILTER);
-            if (filter != null) {
-                final Bundle args = new Bundle();
-                args.putParcelable(ARG_FILTER, filter);
-                argStack.add(args);
-                final String[] keywords = new String[filter.getKeyword().size()];
-                filter.getKeyword().toArray(keywords);
-                title = keywords[0];
-                titleStack.add(title);
-                getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
-            }
-        }
+        if (resultCode != RESULT_OK) return;
+        final CardRepository.Filter filter = data.getParcelableExtra(CardDetailFragment.RESULT_FILTER);
+        if (filter == null) return;
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_FILTER, filter);
+        argStack.add(args);
+        final String[] keywords = new String[filter.getKeyword().size()];
+        filter.getKeyword().toArray(keywords);
+        title = keywords[0];
+        titleStack.add(title);
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
     }
 
     @NonNull

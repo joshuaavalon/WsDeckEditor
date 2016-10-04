@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -340,6 +338,29 @@
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
+        <include layout="@layout/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/single_line_list_item_height"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/detail_item_padding"
+            android:paddingTop="@dimen/detail_item_padding">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_normal_only" />
+
+            <Switch
+                android:id="@+id/search_hide"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
         <Button
             android:id="@+id/search_button"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
