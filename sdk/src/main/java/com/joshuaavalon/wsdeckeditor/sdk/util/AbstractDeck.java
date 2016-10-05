@@ -21,4 +21,12 @@ public class AbstractDeck {
     public long getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AbstractDeck)) return false;
+        if (obj == this) return true;
+        final AbstractDeck that = (AbstractDeck) obj;
+        return name.equals(that.name) && id == that.id;
+    }
 }

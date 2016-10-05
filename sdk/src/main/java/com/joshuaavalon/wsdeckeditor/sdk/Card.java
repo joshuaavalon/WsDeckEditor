@@ -150,8 +150,6 @@ public class Card implements Comparable<Card>, Parcelable {
         return obj instanceof Card && (obj == this || compareTo((Card) obj) == 0);
     }
 
-
-
     public enum Type {
         Character(R.string.type_chara),
         Event(R.string.type_event),

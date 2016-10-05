@@ -10,4 +10,10 @@ public class SettingFragment extends PreferenceFragmentCompat {
     public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.setting, rootKey);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(getString(R.string.nav_setting));
+    }
 }

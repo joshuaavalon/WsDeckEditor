@@ -1,18 +1,23 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
 
-import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.util.LruCache;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,22 +28,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.joshuaavalon.wsdeckeditor.BitmapUtils;
+import com.joshuaavalon.wsdeckeditor.CardImageHolder;
+import com.joshuaavalon.wsdeckeditor.DeckUtils;
+import com.joshuaavalon.wsdeckeditor.DialogUtils;
+import com.joshuaavalon.wsdeckeditor.LoadCircularCardImageTask;
+import com.joshuaavalon.wsdeckeditor.LoaderId;
+import com.joshuaavalon.wsdeckeditor.MainActivity;
+import com.joshuaavalon.wsdeckeditor.OnBackPressedListener;
+import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.WsApplication;
-import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
-import com.joshuaavalon.wsdeckeditor.model.Card;
-import com.joshuaavalon.wsdeckeditor.model.Deck;
-import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
-import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
-import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
-import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
-import com.joshuaavalon.wsdeckeditor.repository.model.CardFilterItem;
+import com.joshuaavalon.wsdeckeditor.SizedStack;
+import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
@@ -46,36 +56,64 @@ import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
-public class CardListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
-    private static final String ARG_FILTER = "filter";
-    private List<Card> resultCards;
+import static android.app.Activity.RESULT_OK;
+
+public class CardListFragment extends BaseFragment implements ActionMode.Callback, ActionModeListener,
+        SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor>, OnBackPressedListener {
+    public static final int REQUEST_CARD_DETAIL = 1;
+    private static final String ARG_EXPANSION = "CardListFragment.arg.Expansion";
+    private static final String ARG_FILTER = "CardListFragment.arg.Filter";
+    private static final String ARG_TITLE = "CardListFragment.arg.Title";
+    private static final int STACK_SIZE = 5;
+    private static final int SELECT_CARD_LIMIT = 70;
+    private RecyclerView recyclerView;
     private CardRecyclerViewAdapter adapter;
-    private ActionModeCallback actionModeCallback;
+    private ArrayList<Card> resultCards;
     @Nullable
     private ActionMode actionMode;
-    private RecyclerView recyclerView;
+    private LruCache<Card, Bitmap> bitmapCache;
+    @Nullable
+    private String title;
+    private Stack<Bundle> argStack;
+    private Stack<String> titleStack;
 
     @NonNull
-    public static CardListFragment newInstance(@NonNull final CardFilter filter) {
+    public static CardListFragment newInstance(@NonNull final String expansion) {
         final CardListFragment fragment = new CardListFragment();
         final Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_FILTER, filter.getParcelableList());
+        args.putString(ARG_EXPANSION, expansion);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static CardListFragment newInstance(@NonNull final CardRepository.Filter filter) {
+        final CardListFragment fragment = new CardListFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_FILTER, filter);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static CardListFragment newInstance(@NonNull final String title,
+                                               @NonNull final CardRepository.Filter filter) {
+        final CardListFragment fragment = new CardListFragment();
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_FILTER, filter);
+        args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        resultCards = new ArrayList<>();
-        actionModeCallback = new ActionModeCallback();
-
-        final Bundle args = getArguments();
-        if (args == null) return;
-        final List<CardFilterItem> filters = args.getParcelableArrayList(ARG_FILTER);
-        if (filters != null)
-            resultCards.addAll(CardRepository.getCards(new CardFilter(filters)));
+        bitmapCache = BitmapUtils.createBitmapCache();
+        argStack = new SizedStack<>(STACK_SIZE);
+        titleStack = new SizedStack<>(STACK_SIZE);
     }
 
     @Override
@@ -83,30 +121,34 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_card_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        adapter = new CardRecyclerViewAdapter(resultCards, new ActionModeListener() {
-            @Override
-            public void onItemClicked(final int position) {
-                toggleSelection(position);
-            }
-
-            @Override
-            public boolean onItemLongClicked(final int position) {
-                if (!startActionMode()) return false;
-                toggleSelection(position);
-                return true;
-            }
-        });
+        resultCards = new ArrayList<>();
+        adapter = new CardRecyclerViewAdapter(new ArrayList<>(resultCards), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         setHasOptionsMenu(true);
+        argStack.add(getArguments());
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, getArguments(), this);
+        initTitle();
         return view;
+    }
+
+    private void initTitle() {
+        final Bundle args = getArguments();
+        if (args.containsKey(ARG_EXPANSION))
+            title = args.getString(ARG_EXPANSION);
+        else if (args.containsKey(ARG_FILTER))
+            if (args.containsKey(ARG_TITLE))
+                title = args.getString(ARG_TITLE);
+            else
+                title = getString(R.string.search_result);
+        titleStack.add(getTitle());
     }
 
     private void toggleSelection(final int position) {
         if (actionMode == null) return;
         adapter.toggleSelection(position);
         final int count = adapter.getSelectedItemCount();
-        if (count == 0 && PreferenceRepository.getAutoClose()) {
+        if (count == 0 && PreferenceRepository.getAutoClose(getContext())) {
             actionMode.finish();
         } else {
             actionMode.invalidate();
@@ -114,9 +156,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     }
 
     private boolean startActionMode() {
-        final Activity parentActivity = getActivity();
-        if (!(parentActivity instanceof AppCompatActivity) || actionMode != null) return false;
-        actionMode = ((AppCompatActivity) parentActivity).startSupportActionMode(actionModeCallback);
+        actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(this);
         return true;
     }
 
@@ -124,7 +164,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     public boolean onOptionsItemSelected(final MenuItem item) {
         final int id = item.getItemId();
         switch (id) {
-            case R.id.add_to_deck:
+            case R.id.action_add:
                 startActionMode();
                 return true;
             default:
@@ -135,7 +175,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.card_list, menu);
+        inflater.inflate(R.menu.menu_card_list, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
@@ -160,64 +200,172 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         return true;
     }
 
-    private void showDeckSelectDialog(@NonNull final List<String> cardsToAdd) {
-        final List<Deck> decks = DeckRepository.getDecks();
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_assignment_black_24dp)
-                .title(R.string.dialog_select_your_deck)
-                .items(Lists.newArrayList(Iterables.transform(decks,
-                        new Function<Deck, String>() {
-                            @Override
-                            public String apply(Deck input) {
-                                return input.getName();
-                            }
-                        })))
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        final Deck currentDeck = decks.get(which);
-                        if (currentDeck.getCountOfType() + cardsToAdd.size() > WsApplication.CARD_TYPE_LIMIT) {
-                            showMessage(R.string.msg_too_many_cards);
-                        } else {
-                            for (String serial : cardsToAdd)
-                                currentDeck.addIfNotExist(serial);
-                            DeckRepository.save(currentDeck);
-                            if (actionMode != null && PreferenceRepository.getAutoClose())
-                                actionMode.finish();
-                        }
-                    }
-                })
-                .positiveText(R.string.dialog_new_button)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        showCreateDeckDialog(cardsToAdd);
-                    }
-                })
-                .show();
+    @Override
+    public boolean onCreateActionMode(final ActionMode actionMode, final Menu menu) {
+        actionMode.getMenuInflater().inflate(R.menu.action_mode_card_list, menu);
+        return true;
     }
 
-    private void showCreateDeckDialog(@NonNull final List<String> cardsToAdd) {
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_add_black_24dp)
-                .title(R.string.dialog_create_a_new_deck)
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.dialog_create_button)
-                .negativeText(R.string.dialog_cancel_button)
-                .input(R.string.dialog_deck_name, 0, false, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        final Deck deck = new Deck();
-                        deck.setName(input.toString());
-                        for (String serial : cardsToAdd)
-                            deck.addIfNotExist(serial);
-                        DeckRepository.save(deck);
-                        showMessage(R.string.msg_add_to_deck);
-                        if (actionMode != null)
-                            actionMode.finish();
-                    }
-                })
-                .show();
+    @Override
+    public boolean onPrepareActionMode(final ActionMode actionMode, final Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.select_all:
+                adapter.selectAll();
+                return true;
+            case R.id.action_add:
+                if (adapter.getSelectedItemCount() <= SELECT_CARD_LIMIT)
+                    getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
+                else
+                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                            R.string.msg_select_too_many, Snackbar.LENGTH_LONG).show();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+    @Override
+    public void onDestroyActionMode(final ActionMode actionMode) {
+        adapter.clearSelection();
+        this.actionMode = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LoaderId.CardListLoader:
+                final String expansion = args.getString(ARG_EXPANSION);
+                if (expansion != null)
+                    return CardRepository.newCardsLoader(getContext(), expansion,
+                            PreferenceRepository.getShowLimit(getContext()), 0,
+                            PreferenceRepository.getHideNormal(getContext()));
+                final CardRepository.Filter filter = args.getParcelable(ARG_FILTER);
+                if (filter != null)
+                    return CardRepository.newCardsLoader(getContext(), filter,
+                            PreferenceRepository.getShowLimit(getContext()), 0);
+            case LoaderId.DeckListLoader:
+                return DeckRepository.newDecksLoader(getContext());
+        }
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        switch (loader.getId()) {
+            case LoaderId.CardListLoader:
+                resultCards.clear();
+                resultCards.addAll(CardRepository.toCards(data));
+                adapter.setModels(new ArrayList<>(resultCards));
+                recyclerView.scrollToPosition(0);
+                getActivity().setTitle(getTitle());
+                break;
+            case LoaderId.DeckListLoader:
+                final List<AbstractDeck> decks = DeckRepository.toDecks(data);
+                if (decks.size() > 0)
+                    DialogUtils.showDeckSelectDialog(getContext(),
+                            Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
+                                @Nullable
+                                @Override
+                                public String apply(AbstractDeck input) {
+                                    return input.getName();
+                                }
+                            })),
+                            new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                                    final long id = decks.get(position).getId();
+                                    if (!DeckUtils.checkDeckCards(getContext(), id)) {
+                                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                                                R.string.msg_cards_deck, Snackbar.LENGTH_LONG)
+                                                .show();
+                                        return;
+                                    }
+                                    for (int index : adapter.getSelectedItems()) {
+                                        DeckRepository.addCardIfNotExist(getContext(), id,
+                                                resultCards.get(index).getSerial());
+                                    }
+                                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                                            R.string.msg_add_to_deck, Snackbar.LENGTH_LONG).show();
+                                    if (actionMode != null && PreferenceRepository.getAutoClose(getContext()))
+                                        actionMode.finish();
+                                }
+                            });
+                else
+                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.dialog_create_button, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DialogUtils.showCreateDeckDialog(getContext());
+                                }
+                            })
+                            .show();
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //no-ops
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (argStack.size() <= 1) return false;
+        argStack.pop();
+        titleStack.pop();
+        final Bundle args = argStack.peek();
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
+        title = titleStack.peek();
+        return true;
+    }
+
+    @Override
+    public void onItemClicked(final int position) {
+        toggleSelection(position);
+    }
+
+    @Override
+    public boolean onItemLongClicked(final int position) {
+        if (!startActionMode()) return false;
+        toggleSelection(position);
+        return true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        bitmapCache.evictAll();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CARD_DETAIL) return;
+        if (resultCode != RESULT_OK) return;
+        final CardRepository.Filter filter = data.getParcelableExtra(CardDetailFragment.RESULT_FILTER);
+        if (filter == null) return;
+        filter.setNormalOnly(PreferenceRepository.getHideNormal(getContext()));
+        final Bundle args = new Bundle();
+        args.putParcelable(ARG_FILTER, filter);
+        argStack.add(args);
+        final String[] keywords = new String[filter.getKeyword().size()];
+        filter.getKeyword().toArray(keywords);
+        title = keywords[0];
+        titleStack.add(title);
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        if (title != null)
+            return title;
+        return super.getTitle();
     }
 
     private class CardRecyclerViewAdapter extends SelectableAdapter<Card, CardViewHolder> {
@@ -245,7 +393,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
     }
 
     private class CardViewHolder extends BaseRecyclerViewHolder<Card>
-            implements View.OnLongClickListener {
+            implements View.OnLongClickListener, CardImageHolder {
         @NonNull
         private final ImageView imageView;
         @NonNull
@@ -261,9 +409,7 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
         @NonNull
         private final View colorView;
         @NonNull
-        private final TextView levelTextView;
-        @NonNull
-        private final TextView typeTextView;
+        private String imageName;
 
 
         public CardViewHolder(@NonNull final View itemView, @Nullable final ActionModeListener actionModeListener) {
@@ -274,10 +420,9 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
             colorView = itemView.findViewById(R.id.color_bar);
-            levelTextView = (TextView) itemView.findViewById(R.id.card_level);
-            typeTextView = (TextView) itemView.findViewById(R.id.card_type);
             itemView.setOnLongClickListener(this);
             this.actionModeListener = actionModeListener;
+            imageName = "";
         }
 
         @Override
@@ -286,30 +431,28 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
                 @Override
                 public void onClick(View v) {
                     if (actionMode == null) {
-                        CardViewActivity.start(getActivity(), Lists.newArrayList(
-                                Iterables.transform(resultCards, new Function<Card, String>() {
-                                    @Override
-                                    public String apply(Card input) {
-                                        return input.getSerial();
-                                    }
-                                })), resultCards.indexOf(card));
+                        final Fragment fragment = CardDetailFragment.newInstance(card);
+                        fragment.setTargetFragment(CardListFragment.this, REQUEST_CARD_DETAIL);
+                        ((MainActivity) getActivity()).transactTo(fragment, true);
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());
                     }
                 }
             });
-            final Bitmap bitmap = CardRepository.getImage(card.getImage(), card.getType());
-            imageView.setImageBitmap(bitmap);
+            imageName = card.getImage();
+            final Bitmap squareBitmap = bitmapCache.get(card);
+            if (squareBitmap != null) {
+                imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
+            } else {
+                imageView.setImageDrawable(null);
+                new LoadCircularCardImageTask(getContext(), bitmapCache, this, card).execute();
+            }
             nameTextView.setText(card.getName());
-            serialTextView.setText(card.getSerial());
-            colorView.setBackgroundResource(card.getColor().getColorResId());
+            serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
+                    card.getLevel(), getString(card.getType().getStringId())));
+            colorView.setBackgroundResource(card.getColor().getColorId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
-            if (card.getType() != Card.Type.Climax)
-                levelTextView.setText(getString(R.string.format_card_level, String.valueOf(card.getLevel())));
-            else
-                levelTextView.setText(R.string.not_applicable_value);
-            typeTextView.setText(card.getType().getResId());
         }
 
         @Override
@@ -317,46 +460,17 @@ public class CardListFragment extends BaseFragment implements SearchView.OnQuery
             return actionModeListener != null &&
                     actionModeListener.onItemLongClicked(getAdapterPosition());
         }
-    }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-
+        @NonNull
         @Override
-        public boolean onCreateActionMode(final ActionMode actionMode, final Menu menu) {
-            actionMode.getMenuInflater().inflate(R.menu.card_list_action_mode, menu);
-            return true;
+        public ImageView getImageView() {
+            return imageView;
         }
 
+        @NonNull
         @Override
-        public boolean onPrepareActionMode(final ActionMode actionMode, final Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.select_all:
-                    adapter.selectAll();
-                    return true;
-                case R.id.add_to_deck:
-                    final List<String> cardsToAdd = new ArrayList<>();
-                    for (int index : adapter.getSelectedItems()) {
-                        cardsToAdd.add(resultCards.get(index).getSerial());
-                    }
-                    if (cardsToAdd.size() > WsApplication.CARD_TYPE_LIMIT)
-                        showMessage(R.string.msg_select_too_many);
-                    else
-                        showDeckSelectDialog(cardsToAdd);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(final ActionMode actionMode) {
-            adapter.clearSelection();
-            CardListFragment.this.actionMode = null;
+        public String getImageName() {
+            return imageName;
         }
     }
 }

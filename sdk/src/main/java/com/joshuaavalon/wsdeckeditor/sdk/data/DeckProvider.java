@@ -19,9 +19,9 @@ import java.util.Locale;
 public class DeckProvider extends ContentProvider {
     private static final String PROVIDER_NAME = "com.joshuaavalon.wsdeckeditor.sdk.Deck";
     private static final String DECK_URL = String.format("content://%s/%s", PROVIDER_NAME, DeckDatabase.Table.Deck);
-    static final Uri DECK_CONTENT_URI = Uri.parse(DECK_URL);
+    public static final Uri DECK_CONTENT_URI = Uri.parse(DECK_URL);
     private static final String DECK_RECORD_URL = String.format("content://%s/%s", PROVIDER_NAME, DeckDatabase.Table.DeckRecord);
-    static final Uri DECK_RECORD_CONTENT_URI = Uri.parse(DECK_RECORD_URL);
+    public static final Uri DECK_RECORD_CONTENT_URI = Uri.parse(DECK_RECORD_URL);
     private static final UriMatcher uriMatcher;
     private static final int CODE_DECK = 1;
     private static final int CODE_DECK_ID = 2;

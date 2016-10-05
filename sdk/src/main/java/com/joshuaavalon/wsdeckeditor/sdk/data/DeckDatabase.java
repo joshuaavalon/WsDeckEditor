@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
-class DeckDatabase extends SQLiteOpenHelper {
+public class DeckDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "deck.db";
     private static final int VERSION = 1;
 
@@ -33,12 +33,12 @@ class DeckDatabase extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    interface Table {
+    public interface Table {
         String Deck = "deck";
         String DeckRecord = "deck_record";
     }
 
-    interface Field {
+    public interface Field {
         String Id = "Id";
         String Name = "Name";
         String Count = "Count";

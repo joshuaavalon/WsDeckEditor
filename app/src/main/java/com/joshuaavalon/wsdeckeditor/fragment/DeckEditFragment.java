@@ -1,12 +1,18 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-import android.app.Activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.util.LruCache;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -18,257 +24,81 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.collect.HashMultiset;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Ordering;
+import com.joshuaavalon.wsdeckeditor.BitmapUtils;
+import com.joshuaavalon.wsdeckeditor.CardImageHolder;
+import com.joshuaavalon.wsdeckeditor.CardOrder;
+import com.joshuaavalon.wsdeckeditor.DialogUtils;
+import com.joshuaavalon.wsdeckeditor.LoadCircularCardImageTask;
+import com.joshuaavalon.wsdeckeditor.LoaderId;
+import com.joshuaavalon.wsdeckeditor.MainActivity;
+import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.Utility;
-import com.joshuaavalon.wsdeckeditor.activity.CardViewActivity;
-import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
-import com.joshuaavalon.wsdeckeditor.model.Card;
-import com.joshuaavalon.wsdeckeditor.model.Deck;
-import com.joshuaavalon.wsdeckeditor.model.DeckUtils;
-import com.joshuaavalon.wsdeckeditor.model.QRCode;
-import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
-import com.joshuaavalon.wsdeckeditor.repository.DeckRepository;
-import com.joshuaavalon.wsdeckeditor.repository.PreferenceRepository;
+import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.Deck;
+import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
+import com.joshuaavalon.wsdeckeditor.sdk.util.DeckRecord;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
-import com.joshuaavalon.wsdeckeditor.view.ColorUtils;
 import com.joshuaavalon.wsdeckeditor.view.SelectableAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
-public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
-    private static final String ARG_DECK_ID = "deckId";
-    private static final String INFO_DIALOG_SEPARATOR = "\n";
-    private static final int QR_SIZE = 1000;
-    private final int CARDS_LIMIT = 50;
+import static android.app.Activity.RESULT_OK;
+
+public class DeckEditFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static final int REQUEST_CARD_DETAIL = 1;
+    private static final String ARG_ID = "DeckEditFragment.arg.Id";
+    private static final String ARG_SERIALS = "DeckEditFragment.arg.Serials";
+    private RecyclerView recyclerView;
     private CardRecyclerViewAdapter adapter;
+    private LruCache<Card, Bitmap> bitmapCache;
+    @Nullable
+    private String title;
+    private AbstractDeck abstractDeck;
+    private List<DeckRecord> records;
     private Deck deck;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private Uri qrUri = null;
-    private boolean isChanged = false;
+    private Comparator<Multiset.Entry<Card>> comparator;
 
-    public static DeckEditFragment newInstance(final long deckId) {
+    @NonNull
+    public static DeckEditFragment newInstance(final long id) {
         final DeckEditFragment fragment = new DeckEditFragment();
         final Bundle args = new Bundle();
-        args.putLong(ARG_DECK_ID, deckId);
+        args.putLong(ARG_ID, id);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private static Comparator<Multiset.Entry<Card>> transformComparator(
-            @NonNull final Comparator<Card> comparator) {
-        return new Comparator<Multiset.Entry<Card>>() {
-            @Override
-            public int compare(Multiset.Entry<Card> left, Multiset.Entry<Card> right1) {
-                return comparator.compare(left.getElement(), right1.getElement());
-            }
-        };
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Bundle args = getArguments();
-        if (args == null) return;
-        final Optional<Deck> deckOptional = DeckRepository.getDeckById(args.getLong(ARG_DECK_ID));
-        if (deckOptional.isPresent())
-            deck = deckOptional.get();
-        else
-            deck = new Deck();
+        bitmapCache = BitmapUtils.createBitmapCache();
+        comparator = new SerialComparator();
     }
-
-    private void showSortDialog() {
-        new MaterialDialog.Builder(getContext())
-                .title(R.string.dialog_sort_by)
-                .iconRes(R.drawable.ic_sort_black_24dp)
-                .items(R.array.sort_type)
-                .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder().toInt(),
-                        new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog,
-                                                       View itemView,
-                                                       int which,
-                                                       CharSequence text) {
-                                final Card.SortOrder order = Card.SortOrder.fromInt(which);
-                                PreferenceRepository.setSortOrder(order);
-                                sort(order);
-                                return true;
-                            }
-                        })
-                .positiveText(R.string.dialog_select_button)
-                .negativeText(R.string.dialog_cancel_button)
-                .show();
-    }
-
-    private void showRenameDialog(@NonNull final Deck deck) {
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_edit_black_24dp)
-                .title(R.string.dialog_rename_deck)
-                .content(deck.getName())
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(R.string.dialog_rename_button)
-                .negativeText(R.string.dialog_cancel_button)
-                .input(getString(R.string.dialog_deck_name), deck.getName(), false,
-                        new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                deck.setName(input.toString());
-                                isChanged = true;
-                                refresh();
-                            }
-                        })
-                .show();
-    }
-
-    private void showChangeCardCountDialog(@NonNull final Multiset.Entry<Card> entry) {
-        final Card card = entry.getElement();
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_edit_black_24dp)
-                .title(R.string.dialog_change_card_count)
-                .content(card.getSerial() + " " + card.getName())
-                .inputType(InputType.TYPE_CLASS_NUMBER)
-                .positiveText(R.string.dialog_apply_button)
-                .negativeText(R.string.dialog_cancel_button)
-                .input(getString(R.string.dialog_count), String.valueOf(entry.getCount()), false,
-                        new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                final int count = Integer.valueOf(input.toString());
-                                if (count > CARDS_LIMIT) {
-                                    showMessage(R.string.msg_high_card_count);
-                                    return;
-                                }
-                                deck.setCount(card.getSerial(), count);
-                                isChanged = true;
-                                refresh();
-                            }
-                        })
-                .show();
-    }
-
-    private void showDeckInfoDialog() {
-        final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
-                .title(R.string.dialog_deck_info)
-                .iconRes(R.drawable.ic_info_outline_black_24dp)
-                .customView(R.layout.dialog_deck_info, true)
-                .show();
-        final View view = dialog.getCustomView();
-        if (view == null) return;
-        final TextView expansionTextView = (TextView) view.findViewById(R.id.expansion_content_text_view);
-        expansionTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(deck.getExpansions()));
-        final Multiset<Card.Color> colorCount = HashMultiset.create();
-        final Multiset<Card.Type> typeCount = HashMultiset.create();
-        final Multiset<Integer> levelCount = HashMultiset.create();
-        for (Card card : deck.getList()) {
-            colorCount.add(card.getColor());
-            typeCount.add(card.getType());
-            levelCount.add(card.getLevel());
-        }
-        final TextView totalTextView = (TextView) view.findViewById(R.id.total_content_text_view);
-        totalTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
-        final List<String> tempList = new ArrayList<>();
-        final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
-        for (Card.Color color : Card.Color.values()) {
-            if (colorCount.contains(color))
-                tempList.add(getString(R.string.format_info_string, getString(color.getResId()), colorCount.count(color)));
-        }
-        colorTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
-        tempList.clear();
-        final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
-        for (Card.Type type : Card.Type.values()) {
-            if (typeCount.contains(type))
-                tempList.add(getString(R.string.format_info_string, getString(type.getResId()), typeCount.count(type)));
-        }
-        typeTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
-        tempList.clear();
-        final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
-        for (Integer level : Ordering.natural().sortedCopy(levelCount.elementSet())) {
-            tempList.add(getString(R.string.format_info_string_lvl, String.valueOf(level), levelCount.count(level)));
-        }
-        levelTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
-    }
-
-    private void showDeckShareDialog() {
-        if (deck.size() != CARDS_LIMIT) {
-            showMessage(R.string.msg_invalid_deck);
-            return;
-        }
-        final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
-                .title(R.string.dialog_share_deck)
-                .iconRes(R.drawable.ic_share_black_24dp)
-                .customView(R.layout.dialog_share, false)
-                .positiveText(R.string.dialog_share_button)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (qrUri == null) return;
-                        Utility.sharePublicBitmap(getActivity(), qrUri);
-                        qrUri = null;
-                    }
-                })
-                .show();
-        final View view = dialog.getCustomView();
-        if (view == null) return;
-        final ImageView qrImageView = (ImageView) view.findViewById(R.id.image_view);
-        final Bitmap qrBitmap = QRCode.encodeWithLogo(DeckUtils.encodeDeck(deck), QR_SIZE, QR_SIZE);
-        qrImageView.setImageBitmap(qrBitmap);
-        final Optional<Uri> uriOptional = Utility.savePublicBitmap(qrBitmap, "QR");
-        if (uriOptional.isPresent())
-            qrUri = uriOptional.get();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.menu_sort:
-                showSortDialog();
-                return true;
-            case R.id.menu_delete:
-                DeckRepository.delete(deck);
-                getFragmentManager().popBackStack();
-                return true;
-            case R.id.menu_info:
-                showDeckInfoDialog();
-                return true;
-            case R.id.menu_share:
-                showDeckShareDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.deck_edit, menu);
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_deck_edit, container, false);
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        adapter = new CardRecyclerViewAdapter(deck.getList());
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        adapter = new CardRecyclerViewAdapter(new ArrayList<Multiset.Entry<Card>>());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
                     @Override
@@ -282,130 +112,252 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
                     public void onSwiped(final RecyclerView.ViewHolder viewHolder,
                                          final int direction) {
                         if (!(viewHolder instanceof CardViewHolder)) return;
-                        deck.setCount(adapter.getCards().get(viewHolder.getAdapterPosition()), 0);
-                        isChanged = true;
-                        refresh();
+                        final Multiset.Entry<Card> entry = adapter.getModels().get(viewHolder.getAdapterPosition());
+                        DeckRepository.updateDeckCount(getActivity(), deck.getId(), entry.getElement().getSerial(), 0);
                     }
                 });
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
         setHasOptionsMenu(true);
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.DeckLoader, getArguments(), this);
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.DeckRecordLoader, getArguments(), this);
         return view;
     }
 
-    private void refresh() {
-        final Activity activity = getActivity();
-        if (activity instanceof MainActivity)
-            ((MainActivity) activity).setTitle(deck.getName());
-        sort(PreferenceRepository.getSortOrder());
-        if (PreferenceRepository.getAutoSave() && isChanged)
-            DeckRepository.save(deck);
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
-        final Activity activity = getActivity();
-        if (!(activity instanceof MainActivity)) return;
-        final MainActivity mainActivity = (MainActivity) activity;
-        final FloatingActionButton fab = (FloatingActionButton) mainActivity.findViewById(R.id.fab);
-        if (!PreferenceRepository.getAutoSave()) {
-            fab.show();
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DeckRepository.save(deck);
-                    showMessage(R.string.msg_deck_saved);
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case R.id.action_info:
+                if (deck != null)
+                    DialogUtils.showDeckInfoDialog(getContext(), deck);
+                return true;
+            case R.id.action_sort:
+                showSortDialog();
+                return true;
+            case R.id.action_delete:
+                if (deck == null) return true;
+                new MaterialDialog.Builder(getContext())
+                        .title(R.string.dialog_delete_deck)
+                        .positiveText(R.string.dialog_delete_button)
+                        .negativeText(R.string.dialog_cancel_button)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                final Context context = getActivity().getApplicationContext();
+                                getActivity().getSupportFragmentManager().popBackStack();
+                                DeckRepository.deleteDeck(context, deck);
+                            }
+                        })
+                        .show();
+                return true;
+            case R.id.action_copy:
+                if (deck != null) {
+                    DeckRepository.createDeck(getContext(), deck);
+                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                            R.string.msg_deck_duplicated, Snackbar.LENGTH_LONG).show();
                 }
-            });
-            fab.setImageResource(R.drawable.ic_save_white_24dp);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        mainActivity.setToolbarOnClick(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showRenameDialog(deck);
-            }
-        });
-        refresh();
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        final Activity activity = getActivity();
-        if (!(activity instanceof MainActivity)) return;
-        final MainActivity mainActivity = (MainActivity) activity;
-        final FloatingActionButton fab = (FloatingActionButton) mainActivity.findViewById(R.id.fab);
-        fab.hide();
-        mainActivity.removeTitle();
-        mainActivity.setToolbarOnClick(null);
-    }
-
-    private void sort(Card.SortOrder order) {
-        final List<Multiset.Entry<Card>> lists = Lists.newArrayList(deck.getList().entrySet());
-        Collections.sort(lists, transformComparator(Card.Comparator(order)));
-        adapter.setModels(lists);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_deck_edit, menu);
     }
 
     @Override
-    public void onRefresh() {
-        final Optional<Deck> deckOptional = DeckRepository.getDeckById(this.deck.getId());
-        if (deckOptional.isPresent())
-            this.deck = deckOptional.get();
-        else
-            this.deck.setId(Deck.NO_ID);
-        refresh();
-        swipeRefreshLayout.setRefreshing(false);
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LoaderId.DeckLoader:
+                abstractDeck = null;
+                return DeckRepository.newDeckLoader(getContext(), args.getLong(ARG_ID));
+            case LoaderId.DeckRecordLoader:
+                records = null;
+                return DeckRepository.newDeckRecordLoader(getContext(), args.getLong(ARG_ID));
+            case LoaderId.CardLoader:
+                final List<String> serials = args.getStringArrayList(ARG_SERIALS);
+                if (serials != null)
+                    return CardRepository.newCardsLoader(getContext(), serials);
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        switch (loader.getId()) {
+            case LoaderId.DeckLoader:
+                abstractDeck = DeckRepository.toDeck(data);
+                if (abstractDeck == null) return;
+                title = abstractDeck.getName();
+                getActivity().setTitle(getTitle());
+                combineDeck();
+                break;
+            case LoaderId.DeckRecordLoader:
+                records = DeckRepository.toDeckRecords(data);
+                combineDeck();
+                break;
+            case LoaderId.CardLoader:
+                if (abstractDeck == null) return;
+                deck = new Deck();
+                deck.setId(abstractDeck.getId());
+                deck.setName(abstractDeck.getName());
+                final List<Card> cards = CardRepository.toCards(data);
+                for (DeckRecord record : records) {
+                    for (Card card : cards) {
+                        if (!Objects.equals(card.getSerial(), record.getSerial())) continue;
+                        deck.setCardCount(card, record.getCount());
+                        break;
+                    }
+                }
+                resetDeck();
+                break;
+        }
+    }
+
+    private void resetDeck() {
+        final List<Multiset.Entry<Card>> cardEntries = Lists.newArrayList(deck.getCardList().entrySet());
+        Collections.sort(cardEntries, comparator);
+        adapter.setModels(cardEntries);
+        recyclerView.scrollToPosition(0);
+    }
+
+    private void changeComparator(@NonNull final Comparator<Multiset.Entry<Card>> comparator) {
+        this.comparator = comparator;
+        resetDeck();
+    }
+
+    private void combineDeck() {
+        if (abstractDeck == null || records == null) return;
+        final Bundle args = new Bundle();
+        args.putStringArrayList(ARG_SERIALS, Lists.newArrayList(Iterables.transform(records,
+                new Function<DeckRecord, String>() {
+                    @Nullable
+                    @Override
+                    public String apply(DeckRecord input) {
+                        return input.getSerial();
+                    }
+                })));
+        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardLoader, args, this);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //no-ops
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        bitmapCache.evictAll();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CARD_DETAIL) return;
+        if (resultCode != RESULT_OK) return;
+        final CardRepository.Filter filter = data.getParcelableExtra(CardDetailFragment.RESULT_FILTER);
+        final String title = data.getStringExtra(CardDetailFragment.RESULT_TITLE);
+        ((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(title, filter), true);
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        if (title != null)
+            return title;
+        return super.getTitle();
+    }
+
+    private void showSortDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.dialog_sort_by)
+                .items(R.array.sort_type)
+                .itemsCallbackSingleChoice(PreferenceRepository.getSortOrder(getContext()).ordinal(),
+                        new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog,
+                                                       View itemView,
+                                                       int which,
+                                                       CharSequence text) {
+                                final CardOrder order = CardOrder.values()[which];
+                                PreferenceRepository.setSortOrder(getContext(), order);
+                                switch (order) {
+                                    case Serial:
+                                        changeComparator(new SerialComparator());
+                                        break;
+                                    case Level:
+                                        changeComparator(new LevelComparator());
+                                        break;
+                                    case Detail:
+                                        changeComparator(new DetailComparator());
+                                        break;
+                                }
+                                return true;
+                            }
+                        })
+                .positiveText(R.string.dialog_select_button)
+                .show();
+    }
+
+    private static class SerialComparator implements Comparator<Multiset.Entry<Card>> {
+        @Override
+        public int compare(Multiset.Entry<Card> o1, Multiset.Entry<Card> o2) {
+            return o1.getElement().getSerial().compareTo(o2.getElement().getSerial());
+        }
+    }
+
+    private static class LevelComparator implements Comparator<Multiset.Entry<Card>> {
+        @Override
+        public int compare(Multiset.Entry<Card> o1, Multiset.Entry<Card> o2) {
+            return o1.getElement().getLevel() - o2.getElement().getLevel();
+        }
+    }
+
+    private static class DetailComparator implements Comparator<Multiset.Entry<Card>> {
+        @Override
+        public int compare(Multiset.Entry<Card> o1, Multiset.Entry<Card> o2) {
+            final Card left = o1.getElement();
+            final Card right = o2.getElement();
+            return ComparisonChain.start()
+                    .compare(left.getColor().ordinal(), right.getColor().ordinal())
+                    .compare(left.getType().ordinal(), right.getType().ordinal())
+                    .compare(left.getLevel(), right.getLevel())
+                    .compare(left.getSerial(), right.getSerial())
+                    .result();
+        }
     }
 
     private class CardRecyclerViewAdapter extends SelectableAdapter<Multiset.Entry<Card>, CardViewHolder> {
-        public CardRecyclerViewAdapter(@NonNull final Multiset<Card> items) {
-            super(Lists.newArrayList(items.entrySet()));
+        public CardRecyclerViewAdapter(@NonNull final List<Multiset.Entry<Card>> items) {
+            super(items);
         }
 
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_edit, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_deck_edit, parent, false);
             return new CardViewHolder(view);
         }
 
-        @Override
-        public void onBindViewHolder(CardViewHolder holder, int position) {
-            super.onBindViewHolder(holder, position);
-            holder.linearLayout.setActivated(isSelected(position));
-        }
-
-        @NonNull
-        public List<Card> getCards() {
-            return Lists.newArrayList(
-                    Iterables.transform(models, new Function<Multiset.Entry<Card>, Card>() {
-                        @Override
-                        public Card apply(Multiset.Entry<Card> input) {
-                            return input.getElement();
-                        }
-                    }));
+        public List<Multiset.Entry<Card>> getModels() {
+            return models;
         }
     }
 
-    private class CardViewHolder extends BaseRecyclerViewHolder<Multiset.Entry<Card>> {
+    private class CardViewHolder extends BaseRecyclerViewHolder<Multiset.Entry<Card>> implements CardImageHolder {
         @NonNull
         private final ImageView imageView;
         @NonNull
-        private final TextView nameTextView;
+        private final TextView nameTextView, serialTextView, countTextView;
         @NonNull
-        private final TextView serialTextView;
+        private final View itemView, colorView;
         @NonNull
-        private final View itemView;
-        @NonNull
-        private final LinearLayout linearLayout;
-        @NonNull
-        private final View colorView;
-        @NonNull
-        private final TextView countTextView;
-        @NonNull
-        private final TextView typeTextView;
+        private String imageName;
+
 
         public CardViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -413,10 +365,9 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             imageView = (ImageView) itemView.findViewById(R.id.card_image);
             nameTextView = (TextView) itemView.findViewById(R.id.card_name);
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
+            countTextView = (TextView) itemView.findViewById(R.id.card_count);
             colorView = itemView.findViewById(R.id.color_bar);
-            countTextView = (TextView) itemView.findViewById(R.id.card_level);
-            typeTextView = (TextView) itemView.findViewById(R.id.card_type);
+            imageName = "";
         }
 
         @Override
@@ -425,37 +376,60 @@ public class DeckEditFragment extends BaseFragment implements SwipeRefreshLayout
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final List<String> cards = Lists.newArrayList(deck.getSerialList());
-                    CardViewActivity.start(getActivity(), Lists.newArrayList(deck.getSerialList()),
-                            cards.indexOf(card.getSerial()));
+                    final Fragment fragment = CardDetailFragment.newInstance(card);
+                    fragment.setTargetFragment(DeckEditFragment.this, REQUEST_CARD_DETAIL);
+                    ((MainActivity) getActivity()).transactTo(fragment, true);
                 }
             });
-            final Bitmap bitmap = CardRepository.getImage(card.getImage(), card.getType());
-            imageView.setImageBitmap(bitmap);
+            imageName = card.getImage();
+            final Bitmap squareBitmap = bitmapCache.get(card);
+            if (squareBitmap != null) {
+                imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
+            } else {
+                imageView.setImageDrawable(null);
+                new LoadCircularCardImageTask(getContext(), bitmapCache, this, card).execute();
+            }
             nameTextView.setText(card.getName());
-            serialTextView.setText(card.getSerial());
-            colorView.setBackgroundResource(card.getColor().getColorResId());
-            linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
+            serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
+                    card.getLevel(), getString(card.getType().getStringId())));
+            colorView.setBackgroundResource(card.getColor().getColorId());
             countTextView.setText(String.valueOf(entry.getCount()));
             countTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    showChangeCardCountDialog(entry);
-                }
-            });
-            if (card.getType() != Card.Type.Climax)
-                typeTextView.setText(getString(R.string.format_card_detail, card.getLevel(),
-                        getString(card.getType().getResId())));
-            else
-                typeTextView.setText(getString(R.string.format_card_detail_cx,
-                        getString(card.getType().getResId())));
-            typeTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     showChangeCardCountDialog(entry);
                 }
             });
         }
+
+        private void showChangeCardCountDialog(@NonNull final Multiset.Entry<Card> entry) {
+            final Card card = entry.getElement();
+            new MaterialDialog.Builder(getContext())
+                    .title(R.string.dialog_change_card_count)
+                    .content(card.getSerial() + " " + card.getName())
+                    .inputType(InputType.TYPE_CLASS_NUMBER)
+                    .positiveText(R.string.dialog_apply_button)
+                    .input(getString(R.string.dialog_count), String.valueOf(entry.getCount()), false,
+                            new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                    final int count = Integer.valueOf(input.toString());
+                                    DeckRepository.updateDeckCount(getActivity(), deck.getId(), card.getSerial(), count);
+                                }
+                            })
+                    .show();
+        }
+
+        @NonNull
+        @Override
+        public ImageView getImageView() {
+            return imageView;
+        }
+
+        @NonNull
+        @Override
+        public String getImageName() {
+            return imageName;
+        }
     }
 }
-

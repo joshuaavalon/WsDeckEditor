@@ -1,19 +1,17 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-import android.app.Activity;
-import android.support.annotation.StringRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.widget.Toast;
-
-import com.joshuaavalon.wsdeckeditor.activity.BaseActivity;
 
 public abstract class BaseFragment extends Fragment {
+    @NonNull
+    public String getTitle() {
+        return "";
+    }
 
-    public void showMessage(@StringRes final int resId) {
-        final Activity parentActivity = getActivity();
-        if (parentActivity instanceof BaseActivity)
-            ((BaseActivity) parentActivity).showMessage(resId);
-        else
-            Toast.makeText(getContext(), resId, Toast.LENGTH_LONG).show();
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(getTitle());
     }
 }
