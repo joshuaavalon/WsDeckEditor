@@ -78,8 +78,6 @@
     <string name="nav_drawer_open">Open Navigation Drawer</string>
     <string name="nav_drawer_close">Close Navigation Drawer</string>
 
-    <string name="nav_cat_system">System</string>
-
     <string name="menu_filter_exp">Filter Expansions</string>
     <string name="menu_select_all">Select All</string>
     <string name="menu_filter_cards">Filter Cards</string>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_card_list"
@@ -14,24 +13,17 @@
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/nav_search" />
+        <item
+            android:id="@+id/nav_update"
+            android:icon="@drawable/ic_autorenew_black_24dp"
+            android:title="@string/nav_update" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/nav_setting" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:title="@string/nav_about" />
     </group>
-
-    <item android:title="@string/nav_cat_system">
-        <menu>
-            <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_update"
-                android:icon="@drawable/ic_autorenew_black_24dp"
-                android:title="@string/nav_update" />
-                <item
-                    android:id="@+id/nav_setting"
-                    android:icon="@drawable/ic_settings_black_24dp"
-                    android:title="@string/nav_setting" />
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_info_outline_black_24dp"
-                android:title="@string/nav_about" />
-            </group>
-        </menu>
-    </item>
 </menu>
