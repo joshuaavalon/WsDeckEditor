@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/single_line_list_item_height">
+
+    <View
+        android:id="@+id/color_bar"
+        android:layout_width="@dimen/vertical_color_bar_width"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:background="@color/card_yellow" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="@dimen/detail_item_icon_size"
+            android:layout_height="@dimen/detail_item_icon_size"
+            android:layout_marginEnd="@dimen/detail_item_icon_margin_right"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/acb_card_image"
+            android:scaleType="centerInside"
+            android:src="@drawable/dc_w00_00" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/card_name"
+                style="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/placeholder_text"
+                android:textColor="@color/highlight_text_subhead" />
+
+            <TextView
+                android:id="@+id/card_serial"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_text"
+                android:textColor="@color/highlight_text_small" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/card_count"
+            style="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_width="@dimen/detail_item_icon_size"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="0" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,97 @@
+package com.joshuaavalon.wsdeckeditor;
+
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.InputType;
+import android.view.View;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.Deck;
+import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
+import com.joshuaavalon.wsdeckeditor.sdk.util.DeckUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DialogUtils {
+    private static final String INFO_DIALOG_SEPARATOR = "\n";
+
+    public static void showCreateDeckDialog(@NonNull final Context context) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_create_a_new_deck)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(R.string.dialog_deck_name, 0, false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        final Deck deck = new Deck();
+                        deck.setName(input.toString());
+                        DeckRepository.createDeck(context, deck);
+                    }
+                }).show();
+    }
+
+    public static void showRenameDeckDialog(@NonNull final Context context, @NonNull final AbstractDeck absDeck) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_rename_deck)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(context.getString(R.string.dialog_deck_name), absDeck.getName(), false,
+                        new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                DeckRepository.updateDeckName(context, absDeck.getId(), input.toString());
+                            }
+                        }).show();
+    }
+
+    public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,
+                                            @NonNull final MaterialDialog.ListCallback callback) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_select_your_deck)
+                .items(deckNames)
+                .itemsCallback(callback)
+                .show();
+    }
+
+    public static void showDeckInfoDialog(@NonNull final Context context, @NonNull final Deck deck) {
+        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title(R.string.dialog_deck_info)
+                .customView(R.layout.dialog_deck_info, true)
+                .show();
+        final View view = dialog.getCustomView();
+        if (view == null) return;
+        final TextView expansionTextView = (TextView) view.findViewById(R.id.expansion_content_text_view);
+        expansionTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(deck.getExpansion()));
+        final Multiset<Card.Color> colorCount = deck.getColor();
+        final Multiset<Card.Type> typeCount = deck.getType();
+        final Multiset<Integer> levelCount = deck.getLevel();
+        final TextView totalTextView = (TextView) view.findViewById(R.id.total_content_text_view);
+        totalTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
+        final List<String> tempList = new ArrayList<>();
+        final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
+        for (Card.Color color : Card.Color.values()) {
+            if (colorCount.contains(color))
+                tempList.add(context.getString(R.string.format_info_string, context.getString(color.getStringId()), colorCount.count(color)));
+        }
+        colorTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+        tempList.clear();
+        final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
+        for (Card.Type type : Card.Type.values()) {
+            if (typeCount.contains(type))
+                tempList.add(context.getString(R.string.format_info_string, context.getString(type.getStringId()), typeCount.count(type)));
+        }
+        typeTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+        tempList.clear();
+        final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
+        for (Integer level : Ordering.natural().sortedCopy(levelCount.elementSet())) {
+            tempList.add(context.getString(R.string.format_info_string_lvl, String.valueOf(level), levelCount.count(level)));
+        }
+        levelTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+    }
+}

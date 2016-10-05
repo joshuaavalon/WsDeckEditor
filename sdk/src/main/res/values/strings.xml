@@ -1,0 +1,43 @@
+<resources>
+    <!--        Data Related Start       -->
+    <string name="card_name">Name</string>
+    <string name="card_serial">Serial</string>
+    <string name="card_expansion">Expansion</string>
+    <string name="card_rarity">Rarity</string>
+    <string name="card_side">Side</string>
+    <string name="card_type">Type</string>
+    <string name="card_color">Color</string>
+    <string name="card_level">Level</string>
+    <string name="card_cost">Cost</string>
+    <string name="card_power">Power</string>
+    <string name="card_soul">Soul</string>
+    <string name="card_trigger">Trigger</string>
+    <string name="card_attribute">Attribute</string>
+    <string name="card_text">Text</string>
+    <string name="card_flavor_text">Flavor Text</string>
+    <string name="card_total">Total</string>
+
+    <string name="type_chara">Character</string>
+    <string name="type_climax">Climax</string>
+    <string name="type_event">Event</string>
+
+    <string name="color_yellow">Yellow</string>
+    <string name="color_green">Green</string>
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+
+    <string name="trigger_none">None</string>
+    <string name="trigger_1s">One Soul</string>
+    <string name="trigger_2s">Two Soul</string>
+    <string name="trigger_wind">Wind</string>
+    <string name="trigger_fire">Fire</string>
+    <string name="trigger_bag">Bag</string>
+    <string name="trigger_gold">Gold</string>
+    <string name="trigger_door">Door</string>
+    <string name="trigger_book">Book</string>
+    <string name="trigger_gate">Gate</string>
+
+    <string name="side_w">Weib</string>
+    <string name="side_s">Schwarz</string>
+    <!--        Data Metadata End         -->
+</resources>

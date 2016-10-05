@@ -16,16 +16,12 @@
 #   public *;
 #}
 
-##---------------Begin: proguard configuration for Guava  ----------
+-dontwarn sun.misc.Unsafe
 -keep class com.google.j2objc.annotations.** { *; }
 -dontwarn   com.google.j2objc.annotations.**
 -keep class java.lang.ClassValue { *; }
 -dontwarn   java.lang.ClassValue
 -keep class org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement { *; }
 -dontwarn   org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
--dontwarn javax.annotation.**
--dontwarn javax.inject.**
--dontwarn sun.misc.Unsafe
-##---------------End: proguard configuration for Guava  ----------
-
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod

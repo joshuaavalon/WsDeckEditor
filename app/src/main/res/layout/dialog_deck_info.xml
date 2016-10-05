@@ -3,83 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/dialog_horizontal_margin"
-    android:paddingStart="@dimen/dialog_horizontal_margin">
+    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_vertical_margin">
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/expansion_content_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder_text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/card_expansion" />
 
-    <TextView
-        android:id="@+id/expansion_content_text_view"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/standard_spacing" />
+        android:layout_height="@dimen/detail_item_padding" />
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/total_content_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder_text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/card_total" />
 
-    <TextView
-        android:id="@+id/total_content_text_view"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/standard_spacing" />
+        android:layout_height="@dimen/detail_item_padding" />
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/color_content_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder_text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/card_color" />
 
-    <TextView
-        android:id="@+id/color_content_text_view"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/standard_spacing" />
+        android:layout_height="@dimen/detail_item_padding" />
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/type_content_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder_text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/card_type" />
 
-    <TextView
-        android:id="@+id/type_content_text_view"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Space
         android:layout_width="match_parent"
-        android:layout_height="@dimen/standard_spacing" />
-
-    <TextView
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/card_level" />
+        android:layout_height="@dimen/detail_item_padding" />
 
     <TextView
         android:id="@+id/level_content_text_view"
-        style="@style/TextAppearance.AppCompat.Medium"
+        style="@style/Base.TextAppearance.AppCompat.Subhead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="a" />
+        android:text="@string/placeholder_text" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/card_level" />
 </LinearLayout>

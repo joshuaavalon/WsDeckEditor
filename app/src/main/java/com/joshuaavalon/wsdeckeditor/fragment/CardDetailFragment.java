@@ -1,10 +1,16 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-import android.app.Activity;
+
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -13,75 +19,67 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.joshuaavalon.wsdeckeditor.CardImageHolder;
+import com.joshuaavalon.wsdeckeditor.DeckUtils;
+import com.joshuaavalon.wsdeckeditor.DialogUtils;
+import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.activity.MainActivity;
-import com.joshuaavalon.wsdeckeditor.model.Card;
-import com.joshuaavalon.wsdeckeditor.repository.CardRepository;
-import com.joshuaavalon.wsdeckeditor.repository.model.CardFilter;
-import com.joshuaavalon.wsdeckeditor.repository.model.KeywordCardFilterItem;
+import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardDetailFragment extends BaseFragment {
-    private static final String CARD_SERIAL = "card_serial";
+import static android.app.Activity.RESULT_OK;
+
+public class CardDetailFragment extends BaseFragment implements CardImageHolder,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String RESULT_FILTER = "CardDetailFragment.extra.Filter";
+    public static final String RESULT_TITLE = "CardDetailFragment.extra.Title";
+    private static final String ARG_CARD = "CardDetailFragment.arg.Card";
     private ImageView imageView;
-    private TextView nameTextView;
-    private TextView serialTextView;
-    private TextView expansionTextView;
-    private TextView rarityTextView;
-    private ImageView sideImageView;
-    private TextView typeTextView;
-    private TextView colorTextView;
-    private TextView levelTextView;
-    private TextView costTextView;
-    private TextView powerTextView;
-    private TextView soulTextView;
-    private TextView triggerTextView;
-    private TextView attributeTextView;
-    private TextView textTextView;
-    private TextView flavorTextView;
+    private TextView nameTextView, serialTextView, expansionTextView, rarityTextView, sideImageView,
+            typeTextView, colorTextView, levelTextView, costTextView, powerTextView, soulTextView,
+            triggerTextView, attributeTextView, textTextView, flavorTextView;
     private Card card;
 
     @NonNull
-    public static CardDetailFragment newInstance(@NonNull final String serial) {
+    public static CardDetailFragment newInstance(@NonNull final Card card) {
         final CardDetailFragment fragment = new CardDetailFragment();
         final Bundle args = new Bundle();
-        args.putString(CARD_SERIAL, serial);
+        args.putParcelable(ARG_CARD, card);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (!getArguments().containsKey(CARD_SERIAL)) return;
-        final String serial = getArguments().getString(CARD_SERIAL);
-        if (serial == null) return;
-        final Optional<Card> cardOptional = CardRepository.getCardBySerial(serial);
-        if (cardOptional.isPresent())
-            card = cardOptional.get();
-        else
-            card = new Card.Builder().build();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_card_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_card_detail, container, false);
         imageView = (ImageView) rootView.findViewById(R.id.card_detail_image);
         nameTextView = (TextView) rootView.findViewById(R.id.card_detail_name);
         serialTextView = (TextView) rootView.findViewById(R.id.card_detail_serial);
         expansionTextView = (TextView) rootView.findViewById(R.id.card_detail_expansion);
         rarityTextView = (TextView) rootView.findViewById(R.id.card_detail_rarity);
-        sideImageView = (ImageView) rootView.findViewById(R.id.card_detail_side);
+        sideImageView = (TextView) rootView.findViewById(R.id.card_detail_side);
         typeTextView = (TextView) rootView.findViewById(R.id.card_detail_type);
         colorTextView = (TextView) rootView.findViewById(R.id.card_detail_color);
         levelTextView = (TextView) rootView.findViewById(R.id.card_detail_level);
@@ -92,19 +90,40 @@ public class CardDetailFragment extends BaseFragment {
         attributeTextView = (TextView) rootView.findViewById(R.id.card_detail_attribute);
         textTextView = (TextView) rootView.findViewById(R.id.card_detail_text);
         flavorTextView = (TextView) rootView.findViewById(R.id.card_detail_flavor_text);
-        bind(card);
+        card = getArguments().getParcelable(ARG_CARD);
+        if (card == null) throw new IllegalArgumentException();
+        bind();
+        setHasOptionsMenu(true);
         return rootView;
     }
 
-    public void bind(final Card card) {
-        imageView.setImageBitmap(CardRepository.getImage(card.getImage(), card.getType()));
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case R.id.action_add:
+                getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_card_detail, menu);
+    }
+
+    public void bind() {
+        imageView.setImageBitmap(CardRepository.getImage(getContext(), card));
         nameTextView.setText(card.getName());
         serialTextView.setText(card.getSerial());
         expansionTextView.setText(card.getExpansion());
         rarityTextView.setText(card.getRarity());
-        sideImageView.setImageResource(card.getSide().getDrawable());
-        typeTextView.setText(card.getType().getResId());
-        colorTextView.setText(card.getColor().getResId());
+        sideImageView.setText(card.getSide().getStringId());
+        typeTextView.setText(card.getType().getStringId());
+        colorTextView.setText(card.getColor().getStringId());
         if (card.getType() != Card.Type.Climax) {
             levelTextView.setText(String.valueOf(card.getLevel()));
             costTextView.setText(String.valueOf(card.getCost()));
@@ -119,7 +138,7 @@ public class CardDetailFragment extends BaseFragment {
             powerTextView.setText(R.string.not_applicable_value);
             soulTextView.setText(R.string.not_applicable_value);
         }
-        triggerTextView.setText(card.getTrigger().getResId());
+        triggerTextView.setText(card.getTrigger().getStringId());
         final String first = card.getAttribute1();
         SpannableString firstSpan = new SpannableString(first);
         firstSpan.setSpan(getCharaSpan(first), 0, first.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -151,22 +170,24 @@ public class CardDetailFragment extends BaseFragment {
         textTextView.setText(spannableStringBuilder);
         textTextView.setMovementMethod(LinkMovementMethod.getInstance());
         flavorTextView.setText(card.getFlavor());
+        getActivity().findViewById(R.id.toolbar).setBackgroundColor(
+                ContextCompat.getColor(getContext(), card.getColor().getColorId())
+        );
     }
 
-    private void startSearch(@NonNull final CardFilter cardFilter) {
-        final Intent returnIntent = new Intent();
-        returnIntent.putParcelableArrayListExtra(MainActivity.SEARCH_FILTER, cardFilter.getParcelableList());
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
-    }
-
-    private ClickableSpan getCharaSpan(final String chara) {
+    private ClickableSpan getCharaSpan(@NonNull final String chara) {
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                final CardFilter cardFilter = new CardFilter();
-                cardFilter.addFilterItem(KeywordCardFilterItem.newCharInstance(chara));
-                startSearch(cardFilter);
+                final CardRepository.Filter cardFilter = new CardRepository.Filter();
+                cardFilter.setHasName(false);
+                cardFilter.setHasChara(true);
+                cardFilter.setHasSerial(false);
+                cardFilter.setHasText(false);
+                final Set<String> keywords = new HashSet<>();
+                keywords.add(chara);
+                cardFilter.setKeyword(keywords);
+                startSearch(chara, cardFilter);
             }
 
             @Override
@@ -177,13 +198,19 @@ public class CardDetailFragment extends BaseFragment {
         };
     }
 
-    private ClickableSpan getNameSpan(final String name) {
+    private ClickableSpan getNameSpan(@NonNull final String name) {
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
-                final CardFilter cardFilter = new CardFilter();
-                cardFilter.addFilterItem(KeywordCardFilterItem.newNameInstance(name));
-                startSearch(cardFilter);
+                final CardRepository.Filter cardFilter = new CardRepository.Filter();
+                cardFilter.setHasName(true);
+                cardFilter.setHasChara(false);
+                cardFilter.setHasSerial(false);
+                cardFilter.setHasText(false);
+                final Set<String> keywords = new HashSet<>();
+                keywords.add(name);
+                cardFilter.setKeyword(keywords);
+                startSearch(name, cardFilter);
             }
 
             @Override
@@ -194,9 +221,9 @@ public class CardDetailFragment extends BaseFragment {
         };
     }
 
-    private SpannableStringBuilder regexSpan(SpannableStringBuilder spannableStringBuilder,
-                                             String regex,
-                                             Function<String, ClickableSpan> factoryMethod) {
+    private SpannableStringBuilder regexSpan(@NonNull final SpannableStringBuilder spannableStringBuilder,
+                                             @NonNull final String regex,
+                                             @NonNull final Function<String, ClickableSpan> factoryMethod) {
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(spannableStringBuilder);
         while (matcher.find()) {
@@ -207,5 +234,87 @@ public class CardDetailFragment extends BaseFragment {
             spannableStringBuilder.setSpan(clickableSpan, start, end, 0);
         }
         return spannableStringBuilder;
+    }
+
+    @NonNull
+    @Override
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    @NonNull
+    @Override
+    public String getImageName() {
+        return card.getImage();
+    }
+
+    public void startSearch(@NonNull final String title, @NonNull final CardRepository.Filter filter) {
+        getFragmentManager().popBackStackImmediate();
+        final Fragment target = getTargetFragment();
+        if (target == null) return;
+        final Intent resultIntent = new Intent();
+        resultIntent.putExtra(RESULT_FILTER, filter);
+        resultIntent.putExtra(RESULT_TITLE, title);
+        target.onActivityResult(getTargetRequestCode(), RESULT_OK, resultIntent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return DeckRepository.newDecksLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        final List<AbstractDeck> decks = DeckRepository.toDecks(data);
+        if (decks.size() > 0)
+            DialogUtils.showDeckSelectDialog(getContext(),
+                    Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
+                        @Nullable
+                        @Override
+                        public String apply(AbstractDeck input) {
+                            return input.getName();
+                        }
+                    })),
+                    new MaterialDialog.ListCallback() {
+                        @Override
+                        public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                            final long id = decks.get(position).getId();
+                            if (!DeckUtils.checkDeckCards(getContext(), id)) {
+                                Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
+                                        R.string.msg_cards_deck, Snackbar.LENGTH_LONG)
+                                        .show();
+                                return;
+                            }
+                            DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+                        }
+                    });
+        else
+            Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.dialog_create_button, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogUtils.showCreateDeckDialog(getContext());
+                        }
+                    })
+                    .show();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //no-ops
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getActivity().findViewById(R.id.toolbar).setBackgroundColor(
+                ContextCompat.getColor(getContext(), R.color.colorPrimary)
+        );
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        return card.getName();
     }
 }
