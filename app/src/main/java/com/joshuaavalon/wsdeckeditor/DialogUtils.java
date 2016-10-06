@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Ordering;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
@@ -22,6 +21,7 @@ import java.util.List;
 
 public class DialogUtils {
     private static final String INFO_DIALOG_SEPARATOR = "\n";
+    private static final String INFO_DIALOG_LINE_SEPARATOR = " / ";
 
     public static void showCreateDeckDialog(@NonNull final Context context) {
         new MaterialDialog.Builder(context)
@@ -86,24 +86,22 @@ public class DialogUtils {
         final TextView totalTextView = (TextView) view.findViewById(R.id.total_content_text_view);
         totalTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
         final List<String> tempList = new ArrayList<>();
+
         final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
-        for (Card.Color color : Card.Color.values()) {
-            if (colorCount.contains(color))
-                tempList.add(context.getString(R.string.format_info_string, context.getString(color.getStringId()), colorCount.count(color)));
-        }
-        colorTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+        for (Card.Color color : Card.Color.values())
+            tempList.add(String.valueOf(colorCount.count(color)));
+        colorTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
         tempList.clear();
+
         final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
-        for (Card.Type type : Card.Type.values()) {
-            if (typeCount.contains(type))
-                tempList.add(context.getString(R.string.format_info_string, context.getString(type.getStringId()), typeCount.count(type)));
-        }
-        typeTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+        for (Card.Type type : Card.Type.values())
+            tempList.add(String.valueOf(typeCount.count(type)));
+        typeTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
         tempList.clear();
+
         final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
-        for (Integer level : Ordering.natural().sortedCopy(levelCount.elementSet())) {
-            tempList.add(context.getString(R.string.format_info_string_lvl, String.valueOf(level), levelCount.count(level)));
-        }
-        levelTextView.setText(Joiner.on(INFO_DIALOG_SEPARATOR).join(tempList));
+        for (int i = 0; i <= 3; i++)
+            tempList.add(String.valueOf(levelCount.count(i)));
+        levelTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
     }
 }

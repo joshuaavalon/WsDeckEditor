@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!--        App Metadata Start       -->
     <string name="app_name">WS Deck Editor</string>
     <!--        App Metadata End         -->
@@ -90,6 +90,10 @@
     <!--             Menu End             -->
 
     <!--           Dialog Start           -->
+    <string name="dialog_info_level" tools:ignore="TypographyFractions">Level (0 / 1 / 2 / 3)</string>
+    <string name="dialog_info_color">Color (Yellow / Green / Red / Blue)</string>
+    <string name="dialog_info_type">Type (Character / Event / Climax)</string>
+
     <string name="dialog_select_your_deck">Select Your Deck</string>
     <string name="dialog_create_a_new_deck">Create A New Deck</string>
     <string name="dialog_rename_deck">Rename Deck</string>
