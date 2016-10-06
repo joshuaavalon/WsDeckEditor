@@ -3,13 +3,10 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.os.ResultReceiver;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +14,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.joshuaavalon.wsdeckeditor.LoaderId;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
-import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.data.CardDatabase;
+import com.joshuaavalon.wsdeckeditor.sdk.data.ConfigConstant;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DownloadService;
-import com.joshuaavalon.wsdeckeditor.sdk.data.tool.VolleyLoader;
 
-public class UpdateFragment extends BaseFragment {
+public class UpdateFragment extends BaseFragment implements Response.Listener<String>, Response.ErrorListener {
     private static final int CODE_CARD_DATABASE = 1;
     private static final int CODE_CARD_IMAGE = 2;
     private TextView latestTextView, currentTextView;
@@ -68,9 +70,14 @@ public class UpdateFragment extends BaseFragment {
                 progressDialog.setTitle(R.string.dialog_download_all_images);
             }
         });
-        getActivity().getSupportLoaderManager().initLoader(LoaderId.VersionLoader, null, new VersionLoaderCallBack());
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.NetworkVersionLoader, null, new NetworkVersionLoaderCallBack());
+        updateCurrentVersion();
+        final RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(new StringRequest(Request.Method.GET, ConfigConstant.URL_VERSION, this, this));
         return view;
+    }
+
+    private void updateCurrentVersion() {
+        currentTextView.setText(String.valueOf(new CardDatabase(getContext()).getVersion()));
     }
 
     @NonNull
@@ -85,45 +92,21 @@ public class UpdateFragment extends BaseFragment {
         downloadImagesButton.setEnabled(enable);
     }
 
-    private class VersionLoaderCallBack implements LoaderManager.LoaderCallbacks<Cursor> {
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return CardRepository.newVersionLoader(getContext());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            currentTextView.setText(String.valueOf(CardRepository.toVersion(data)));
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-
-        }
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        showNetworkError();
     }
 
-    private class NetworkVersionLoaderCallBack implements LoaderManager.LoaderCallbacks<VolleyLoader.Result<Integer>> {
+    @Override
+    public void onResponse(String response) {
+        latestTextView.setText(response);
+    }
 
-        @Override
-        public Loader<VolleyLoader.Result<Integer>> onCreateLoader(int id, Bundle args) {
-            return CardRepository.newNetworkVersionLoader(getContext());
-        }
-
-        @Override
-        public void onLoadFinished(Loader<VolleyLoader.Result<Integer>> loader, VolleyLoader.Result<Integer> data) {
-            if (data.getResult() != null) {
-                latestTextView.setText(String.valueOf(data.getResult()));
-            } else {
-                if (getActivity() == null) return;
-                final SnackBarSupport snackBarSupport = (SnackBarSupport) getActivity();
-                Snackbar.make(snackBarSupport.getCoordinatorLayout(), R.string.msg_network_err, Snackbar.LENGTH_LONG);
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<VolleyLoader.Result<Integer>> loader) {
-
-        }
+    private void showNetworkError() {
+        final Activity activity = getActivity();
+        if (activity == null || !(activity instanceof SnackBarSupport)) return;
+        final SnackBarSupport snackBarSupport = (SnackBarSupport) getActivity();
+        Snackbar.make(snackBarSupport.getCoordinatorLayout(), R.string.msg_network_err, Snackbar.LENGTH_LONG).show();
     }
 
     private class DownloadReceiver extends ResultReceiver {
@@ -149,14 +132,13 @@ public class UpdateFragment extends BaseFragment {
                 return;
             }
             if (resultData.getInt(DownloadService.ARG_RESULT, Activity.RESULT_CANCELED) == Activity.RESULT_CANCELED)
-                Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                        R.string.msg_network_err, Snackbar.LENGTH_LONG).show();
+                showNetworkError();
             else
                 switch (resultCode) {
                     case CODE_CARD_DATABASE:
                         Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
                                 R.string.msg_update_database, Snackbar.LENGTH_LONG).show();
-                        getActivity().getSupportLoaderManager().restartLoader(LoaderId.VersionLoader, null, new VersionLoaderCallBack());
+                        updateCurrentVersion();
                         break;
                     case CODE_CARD_IMAGE:
                         Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),

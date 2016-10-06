@@ -1,11 +1,8 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,18 +14,19 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.google.common.collect.Sets;
-import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ExpansionLoadTask;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ResultTask;
 import com.joshuaavalon.wsdeckeditor.sdk.util.Range;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class SearchFragment extends BaseFragment implements ResultTask.CallBack<List<String>>,
         View.OnClickListener {
     private Switch serialSwitch, nameSwitch, attributeSwitch, textSwitch, normalSwitch;
     private EditText keywordEditText, minLevelEditText, maxLevelEditText, minCostEditText,
@@ -87,31 +85,20 @@ public class SearchFragment extends BaseFragment implements LoaderManager.Loader
         for (Card.Trigger trigger : Card.Trigger.values())
             triggerItems.add(getString(trigger.getStringId()));
         triggerSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, triggerItems));
-
-        getActivity().getSupportLoaderManager().initLoader(LoaderId.ExpansionLoader, null, this);
+        new ExpansionLoadTask(this).execute(getContext());
         final Button searchButton = (Button) view.findViewById(R.id.search_button);
         searchButton.setOnClickListener(this);
         return view;
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return CardRepository.newExpansionLoader(getContext());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onResult(List<String> result) {
         final List<String> items = new ArrayList<>();
         items.add("");
-        items.addAll(CardRepository.toExpansions(data));
+        items.addAll(result);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_dropdown_item, items);
         expansionSpinner.setAdapter(adapter);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        //no-ops
     }
 
     @Override

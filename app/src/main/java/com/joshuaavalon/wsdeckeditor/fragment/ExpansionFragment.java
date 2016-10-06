@@ -1,11 +1,8 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ExpansionLoadTask;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ResultTask;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 
@@ -29,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpansionFragment extends BaseFragment implements SearchView.OnQueryTextListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        ResultTask.CallBack<List<String>> {
     private RecyclerView recyclerView;
     private CardListAdapter adapter;
     private List<String> expansions;
@@ -44,7 +41,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
         adapter = new CardListAdapter(new ArrayList<>(expansions));
         recyclerView.setAdapter(adapter);
         setHasOptionsMenu(true);
-        getActivity().getSupportLoaderManager().initLoader(LoaderId.ExpansionLoader, null, this);
+        new ExpansionLoadTask(this).execute(getContext());
         return view;
     }
 
@@ -82,26 +79,15 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
         return filteredModelList;
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return CardRepository.newExpansionLoader(getContext());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        expansions = CardRepository.toExpansions(data);
-        adapter.setModels(new ArrayList<>(expansions));
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        //no-ops
-    }
-
     @NonNull
     @Override
     public String getTitle() {
         return getString(R.string.card_expansion);
+    }
+
+    @Override
+    public void onResult(List<String> result) {
+        adapter.setModels(result);
     }
 
     private class CardListAdapter extends AnimatedRecyclerAdapter<String, CardListViewHolder> {
@@ -132,7 +118,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(title), true);
+                    ((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(getContext(), title), true);
                 }
             });
         }

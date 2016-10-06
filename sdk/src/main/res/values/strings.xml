@@ -1,22 +1,5 @@
 <resources>
     <!--        Data Related Start       -->
-    <string name="card_name">Name</string>
-    <string name="card_serial">Serial</string>
-    <string name="card_expansion">Expansion</string>
-    <string name="card_rarity">Rarity</string>
-    <string name="card_side">Side</string>
-    <string name="card_type">Type</string>
-    <string name="card_color">Color</string>
-    <string name="card_level">Level</string>
-    <string name="card_cost">Cost</string>
-    <string name="card_power">Power</string>
-    <string name="card_soul">Soul</string>
-    <string name="card_trigger">Trigger</string>
-    <string name="card_attribute">Attribute</string>
-    <string name="card_text">Text</string>
-    <string name="card_flavor_text">Flavor Text</string>
-    <string name="card_total">Total</string>
-
     <string name="type_chara">Character</string>
     <string name="type_climax">Climax</string>
     <string name="type_event">Event</string>

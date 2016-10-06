@@ -4,12 +4,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Range implements Parcelable {
+    public static final Creator<Range> CREATOR = new Creator<Range>() {
+        @Override
+        public Range createFromParcel(Parcel source) {
+            return new Range(source);
+        }
+
+        @Override
+        public Range[] newArray(int size) {
+            return new Range[size];
+        }
+    };
     private int max;
     private int min;
 
     public Range() {
         max = -1;
         min = -1;
+    }
+
+    protected Range(Parcel in) {
+        this.max = in.readInt();
+        this.min = in.readInt();
     }
 
     public int getMax() {
@@ -38,21 +54,4 @@ public class Range implements Parcelable {
         dest.writeInt(this.max);
         dest.writeInt(this.min);
     }
-
-    protected Range(Parcel in) {
-        this.max = in.readInt();
-        this.min = in.readInt();
-    }
-
-    public static final Creator<Range> CREATOR = new Creator<Range>() {
-        @Override
-        public Range createFromParcel(Parcel source) {
-            return new Range(source);
-        }
-
-        @Override
-        public Range[] newArray(int size) {
-            return new Range[size];
-        }
-    };
 }

@@ -47,6 +47,11 @@ public class Deck {
         return ImmutableMultiset.copyOf(cardList);
     }
 
+    public void setCardList(@NonNull final Multiset<Card> cardList) {
+        this.cardList.clear();
+        this.cardList.addAll(cardList);
+    }
+
     @NonNull
     public Set<String> getExpansion() {
         final Set<String> expansions = new HashSet<>();
@@ -110,10 +115,5 @@ public class Deck {
     public void addIfNotExist(@NonNull final Card card) {
         if (!cardList.contains(card))
             addCard(card);
-    }
-
-    public void setCardList(@NonNull final Multiset<Card> cardList) {
-        this.cardList.clear();
-        this.cardList.addAll(cardList);
     }
 }

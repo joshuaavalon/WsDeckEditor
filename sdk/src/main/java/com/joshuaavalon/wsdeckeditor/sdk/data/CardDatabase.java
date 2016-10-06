@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.sdk.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
@@ -12,7 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-class CardDatabase extends SQLiteOpenHelper {
+public class CardDatabase extends SQLiteOpenHelper {
     @NonNull
     static final String DATABASE_NAME = "wsdb.db";
     private static final int VERSION = 1;
@@ -76,12 +77,23 @@ class CardDatabase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
-    interface Table {
+    public int getVersion() {
+        final Cursor cursor = getReadableDatabase().query(Table.Version, new String[]{Field.Version},
+                null, null, null, null, null);
+        int result = 0;
+        if (cursor.moveToFirst()) {
+            result = cursor.getInt(0);
+        }
+        cursor.close();
+        return result;
+    }
+
+    public interface Table {
         String Card = "card";
         String Version = "version";
     }
 
-    interface Field {
+    public interface Field {
         String Name = "Name";
         String Serial = "Serial";
         String Rarity = "Rarity";

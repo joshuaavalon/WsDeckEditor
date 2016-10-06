@@ -47,6 +47,8 @@ import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.task.DeckListLoadTask;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ResultTask;
 import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 import com.joshuaavalon.wsdeckeditor.sdk.util.DeckRecord;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
@@ -60,10 +62,10 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class DeckEditFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DeckEditFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        ResultTask.CallBack<List<Card>> {
     public static final int REQUEST_CARD_DETAIL = 1;
     private static final String ARG_ID = "DeckEditFragment.arg.Id";
-    private static final String ARG_SERIALS = "DeckEditFragment.arg.Serials";
     private RecyclerView recyclerView;
     private CardRecyclerViewAdapter adapter;
     private LruCache<Card, Bitmap> bitmapCache;
@@ -177,10 +179,6 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
             case LoaderId.DeckRecordLoader:
                 records = null;
                 return DeckRepository.newDeckRecordLoader(getContext(), args.getLong(ARG_ID));
-            case LoaderId.CardLoader:
-                final List<String> serials = args.getStringArrayList(ARG_SERIALS);
-                if (serials != null)
-                    return CardRepository.newCardsLoader(getContext(), serials);
             default:
                 throw new IllegalArgumentException();
         }
@@ -200,21 +198,6 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                 records = DeckRepository.toDeckRecords(data);
                 combineDeck();
                 break;
-            case LoaderId.CardLoader:
-                if (abstractDeck == null) return;
-                deck = new Deck();
-                deck.setId(abstractDeck.getId());
-                deck.setName(abstractDeck.getName());
-                final List<Card> cards = CardRepository.toCards(data);
-                for (DeckRecord record : records) {
-                    for (Card card : cards) {
-                        if (!Objects.equals(card.getSerial(), record.getSerial())) continue;
-                        deck.setCardCount(card, record.getCount());
-                        break;
-                    }
-                }
-                resetDeck();
-                break;
         }
     }
 
@@ -232,16 +215,15 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
 
     private void combineDeck() {
         if (abstractDeck == null || records == null) return;
-        final Bundle args = new Bundle();
-        args.putStringArrayList(ARG_SERIALS, Lists.newArrayList(Iterables.transform(records,
+        final List<String> serials = Lists.newArrayList(Iterables.transform(records,
                 new Function<DeckRecord, String>() {
                     @Nullable
                     @Override
                     public String apply(DeckRecord input) {
                         return input.getSerial();
                     }
-                })));
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardLoader, args, this);
+                }));
+        new DeckListLoadTask(this, serials).execute(getContext());
     }
 
     @Override
@@ -301,6 +283,22 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                         })
                 .positiveText(R.string.dialog_select_button)
                 .show();
+    }
+
+    @Override
+    public void onResult(List<Card> result) {
+        if (abstractDeck == null) return;
+        deck = new Deck();
+        deck.setId(abstractDeck.getId());
+        deck.setName(abstractDeck.getName());
+        for (DeckRecord record : records) {
+            for (Card card : result) {
+                if (!Objects.equals(card.getSerial(), record.getSerial())) continue;
+                deck.setCardCount(card, record.getCount());
+                break;
+            }
+        }
+        resetDeck();
     }
 
     private static class SerialComparator implements Comparator<Multiset.Entry<Card>> {

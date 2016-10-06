@@ -23,20 +23,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadService extends IntentService {
+    public static final String ARG_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Progress";
+    public static final String ARG_MAX_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.MaxProgress";
+    public static final String ARG_RESULT = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Result";
     private static final String ACTION_DOWNLOAD_IMAGE = "com.joshuaavalon.wsdeckeditor.sdk.data.action.DownloadImage";
     private static final String ACTION_DOWNLOAD_DB = "com.joshuaavalon.wsdeckeditor.sdk.data.action.DownloadDatabase";
-
     private static final String EXTRA_RECEIVER = "com.joshuaavalon.wsdeckeditor.sdk.data.extra.Receiver";
     private static final String EXTRA_REQUEST_CODE = "com.joshuaavalon.wsdeckeditor.sdk.data.extra.RequestCode";
     private static final String EXTRA_URLS = "com.joshuaavalon.wsdeckeditor.sdk.data.extra.Urls";
     private static final String EXTRA_FORCED = "com.joshuaavalon.wsdeckeditor.sdk.data.extra.Forced";
-
-    public static final String ARG_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Progress";
-    public static final String ARG_MAX_PROGRESS = "com.joshuaavalon.wsdeckeditor.sdk.data.response.MaxProgress";
-    public static final String ARG_RESULT = "com.joshuaavalon.wsdeckeditor.sdk.data.response.Result";
 
     public DownloadService() {
         super("DownloadService");
@@ -70,12 +69,16 @@ public class DownloadService extends IntentService {
             final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
             final int requestCode = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
             final boolean forced = intent.getBooleanExtra(EXTRA_FORCED, false);
-            final Cursor cursor = getContentResolver().query(CardProvider.CARD_CONTENT_URI, new String[]{"Distinct " +
-                    CardDatabase.Field.Image}, null, null, null);
-            if (cursor == null) return;
-            final List<String> urls = CardRepository.toImages(cursor);
+            final Cursor cursor = new CardDatabase(getApplicationContext()).getReadableDatabase()
+                    .query(true, CardDatabase.Table.Card, new String[]{CardDatabase.Field.Image},
+                            null, null, null, null, null, null);
+            if (!cursor.moveToFirst()) return;
+            final List<String> result = new ArrayList<>();
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
             cursor.close();
-            handleDownloadImages(receiver, requestCode, urls, forced);
+            handleDownloadImages(receiver, requestCode, result, forced);
 
         } else if (ACTION_DOWNLOAD_DB.equals(action)) {
             final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
@@ -94,14 +97,14 @@ public class DownloadService extends IntentService {
         receiver.send(requestCode, resultData);
         for (String urlToDownload : urls) {
             try {
-                final URL url = new URL(urlToDownload);
-                final URLConnection connection = url.openConnection();
-                connection.connect();
-
-                final InputStream input = new BufferedInputStream(connection.getInputStream());
                 final File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                         URLUtil.guessFileName(urlToDownload, null, null));
                 if (!file.exists() || forced) {
+                    final URL url = new URL(urlToDownload);
+                    final URLConnection connection = url.openConnection();
+                    connection.connect();
+
+                    final InputStream input = new BufferedInputStream(connection.getInputStream());
                     final OutputStream output = new FileOutputStream(file);
 
                     final byte data[] = new byte[1024];

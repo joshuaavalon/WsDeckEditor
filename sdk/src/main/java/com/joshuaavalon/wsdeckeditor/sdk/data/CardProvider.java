@@ -13,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class CardProvider extends ContentProvider {
+    static final String ARG_LIMIT = "limit";
+    static final String ARG_OFFSET = "offset";
     private static final String PROVIDER_NAME = "com.joshuaavalon.wsdeckeditor.sdk.Card";
     private static final String CARD_URL = String.format("content://%s/%s", PROVIDER_NAME, CardDatabase.Table.Card);
     static final Uri CARD_CONTENT_URI = Uri.parse(CARD_URL);
@@ -22,8 +24,6 @@ public class CardProvider extends ContentProvider {
     private static final int CODE_CARD = 1;
     private static final int CODE_CARD_ID = 2;
     private static final int CODE_VERSION = 3;
-    static final String ARG_LIMIT = "limit";
-    static final String ARG_OFFSET = "offset";
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);

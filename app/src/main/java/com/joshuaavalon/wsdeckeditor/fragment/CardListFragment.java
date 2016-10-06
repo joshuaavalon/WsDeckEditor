@@ -1,6 +1,7 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -48,6 +49,8 @@ import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
+import com.joshuaavalon.wsdeckeditor.sdk.task.CardListLoadTask;
+import com.joshuaavalon.wsdeckeditor.sdk.task.ResultTask;
 import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
@@ -61,9 +64,8 @@ import java.util.Stack;
 import static android.app.Activity.RESULT_OK;
 
 public class CardListFragment extends BaseFragment implements ActionMode.Callback, ActionModeListener,
-        SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor>, OnBackPressedListener {
+        SearchView.OnQueryTextListener, OnBackPressedListener, ResultTask.CallBack<List<Card>>, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int REQUEST_CARD_DETAIL = 1;
-    private static final String ARG_EXPANSION = "CardListFragment.arg.Expansion";
     private static final String ARG_FILTER = "CardListFragment.arg.Filter";
     private static final String ARG_TITLE = "CardListFragment.arg.Title";
     private static final int STACK_SIZE = 5;
@@ -76,16 +78,15 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     private LruCache<Card, Bitmap> bitmapCache;
     @Nullable
     private String title;
-    private Stack<Bundle> argStack;
+    private Stack<CardRepository.Filter> argStack;
     private Stack<String> titleStack;
 
     @NonNull
-    public static CardListFragment newInstance(@NonNull final String expansion) {
-        final CardListFragment fragment = new CardListFragment();
-        final Bundle args = new Bundle();
-        args.putString(ARG_EXPANSION, expansion);
-        fragment.setArguments(args);
-        return fragment;
+    public static CardListFragment newInstance(@NonNull final Context context, @NonNull final String expansion) {
+        final CardRepository.Filter filter = new CardRepository.Filter();
+        filter.setExpansion(expansion);
+        filter.setNormalOnly(PreferenceRepository.getHideNormal(context));
+        return newInstance(expansion, filter);
     }
 
     @NonNull
@@ -114,6 +115,9 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         bitmapCache = BitmapUtils.createBitmapCache();
         argStack = new SizedStack<>(STACK_SIZE);
         titleStack = new SizedStack<>(STACK_SIZE);
+        final CardRepository.Filter filter = getArguments().getParcelable(ARG_FILTER);
+        if (filter != null)
+            argStack.add(filter);
     }
 
     @Override
@@ -126,21 +130,19 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         setHasOptionsMenu(true);
-        argStack.add(getArguments());
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, getArguments(), this);
+        final CardRepository.Filter filter = getArguments().getParcelable(ARG_FILTER);
+        if (filter != null)
+            reload(filter);
         initTitle();
         return view;
     }
 
     private void initTitle() {
         final Bundle args = getArguments();
-        if (args.containsKey(ARG_EXPANSION))
-            title = args.getString(ARG_EXPANSION);
-        else if (args.containsKey(ARG_FILTER))
-            if (args.containsKey(ARG_TITLE))
-                title = args.getString(ARG_TITLE);
-            else
-                title = getString(R.string.search_result);
+        if (args.containsKey(ARG_TITLE))
+            title = args.getString(ARG_TITLE);
+        else
+            title = getString(R.string.search_result);
         titleStack.add(getTitle());
     }
 
@@ -239,16 +241,6 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case LoaderId.CardListLoader:
-                final String expansion = args.getString(ARG_EXPANSION);
-                if (expansion != null)
-                    return CardRepository.newCardsLoader(getContext(), expansion,
-                            PreferenceRepository.getShowLimit(getContext()), 0,
-                            PreferenceRepository.getHideNormal(getContext()));
-                final CardRepository.Filter filter = args.getParcelable(ARG_FILTER);
-                if (filter != null)
-                    return CardRepository.newCardsLoader(getContext(), filter,
-                            PreferenceRepository.getShowLimit(getContext()), 0);
             case LoaderId.DeckListLoader:
                 return DeckRepository.newDecksLoader(getContext());
         }
@@ -258,13 +250,6 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case LoaderId.CardListLoader:
-                resultCards.clear();
-                resultCards.addAll(CardRepository.toCards(data));
-                adapter.setModels(new ArrayList<>(resultCards));
-                recyclerView.scrollToPosition(0);
-                getActivity().setTitle(getTitle());
-                break;
             case LoaderId.DeckListLoader:
                 final List<AbstractDeck> decks = DeckRepository.toDecks(data);
                 if (decks.size() > 0)
@@ -319,8 +304,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         if (argStack.size() <= 1) return false;
         argStack.pop();
         titleStack.pop();
-        final Bundle args = argStack.peek();
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
+        reload(argStack.peek());
         title = titleStack.peek();
         return true;
     }
@@ -350,14 +334,16 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         final CardRepository.Filter filter = data.getParcelableExtra(CardDetailFragment.RESULT_FILTER);
         if (filter == null) return;
         filter.setNormalOnly(PreferenceRepository.getHideNormal(getContext()));
-        final Bundle args = new Bundle();
-        args.putParcelable(ARG_FILTER, filter);
-        argStack.add(args);
+        argStack.add(filter);
         final String[] keywords = new String[filter.getKeyword().size()];
         filter.getKeyword().toArray(keywords);
         title = keywords[0];
         titleStack.add(title);
-        getActivity().getSupportLoaderManager().restartLoader(LoaderId.CardListLoader, args, this);
+        reload(filter);
+    }
+
+    private void reload(@NonNull final CardRepository.Filter filter) {
+        new CardListLoadTask(this, filter, PreferenceRepository.getShowLimit(getContext()), 0).execute(getContext());
     }
 
     @NonNull
@@ -366,6 +352,15 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         if (title != null)
             return title;
         return super.getTitle();
+    }
+
+    @Override
+    public void onResult(List<Card> result) {
+        resultCards.clear();
+        resultCards.addAll(result);
+        adapter.setModels(new ArrayList<>(resultCards));
+        recyclerView.scrollToPosition(0);
+        getActivity().setTitle(getTitle());
     }
 
     private class CardRecyclerViewAdapter extends SelectableAdapter<Card, CardViewHolder> {
