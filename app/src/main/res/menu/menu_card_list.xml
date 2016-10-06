@@ -9,7 +9,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_add"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/ic_view_list_white_24dp"
         android:orderInCategory="20"
         android:title="@string/menu_add_to_deck"
         app:showAsAction="ifRoom" />

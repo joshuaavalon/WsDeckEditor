@@ -87,21 +87,23 @@ public class DeckRepository {
         contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
     }
 
-    public static void addCardIfNotExist(@NonNull final Context context, final long id,
-                                         @NonNull final String serial) {
-        if (id == Deck.NO_ID) return;
+    public static boolean addCardIfNotExist(@NonNull final Context context, final long id,
+                                            @NonNull final String serial) {
+        if (id == Deck.NO_ID) return false;
         final ContentResolver contentResolver = context.getContentResolver();
         final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
                 id), null, String.format("%s = ?", DeckDatabase.Field.Serial), new String[]{serial}, null);
-        if (cursor != null && cursor.getCount() >= 1) {
-            return;
-        } else if (cursor != null)
-            cursor.close();
+        if (cursor == null) return false;
+        final int count = cursor.getCount();
+        cursor.close();
+        if (count >= 1)
+            return false;
         final ContentValues cardValues = new ContentValues();
         cardValues.put(DeckDatabase.Field.DeckId, id);
         cardValues.put(DeckDatabase.Field.Serial, serial);
         cardValues.put(DeckDatabase.Field.Count, 1);
         contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
+        return true;
     }
 
 

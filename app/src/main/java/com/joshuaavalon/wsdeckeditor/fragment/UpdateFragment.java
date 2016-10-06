@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.os.ResultReceiver;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardDatabase;
 import com.joshuaavalon.wsdeckeditor.sdk.data.ConfigConstant;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DownloadService;
@@ -94,7 +92,7 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        showNetworkError();
+        showMessage(R.string.msg_network_err);
     }
 
     @Override
@@ -102,12 +100,6 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
         latestTextView.setText(response);
     }
 
-    private void showNetworkError() {
-        final Activity activity = getActivity();
-        if (activity == null || !(activity instanceof SnackBarSupport)) return;
-        final SnackBarSupport snackBarSupport = (SnackBarSupport) getActivity();
-        Snackbar.make(snackBarSupport.getCoordinatorLayout(), R.string.msg_network_err, Snackbar.LENGTH_LONG).show();
-    }
 
     private class DownloadReceiver extends ResultReceiver {
         public DownloadReceiver(Handler handler) {
@@ -132,17 +124,15 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
                 return;
             }
             if (resultData.getInt(DownloadService.ARG_RESULT, Activity.RESULT_CANCELED) == Activity.RESULT_CANCELED)
-                showNetworkError();
+                showMessage(R.string.msg_network_err);
             else
                 switch (resultCode) {
                     case CODE_CARD_DATABASE:
-                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                R.string.msg_update_database, Snackbar.LENGTH_LONG).show();
+                        showMessage(R.string.msg_update_database);
                         updateCurrentVersion();
                         break;
                     case CODE_CARD_IMAGE:
-                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                R.string.msg_update_image, Snackbar.LENGTH_LONG).show();
+                        showMessage(R.string.msg_update_image);
                         break;
                 }
             progressDialog.dismiss();

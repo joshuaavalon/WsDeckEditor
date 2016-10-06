@@ -80,6 +80,8 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     private String title;
     private Stack<CardRepository.Filter> argStack;
     private Stack<String> titleStack;
+    private List<AbstractDeck> decks;
+    private int selectedPosition = -1;
 
     @NonNull
     public static CardListFragment newInstance(@NonNull final Context context, @NonNull final String expansion) {
@@ -124,6 +126,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_card_list, container, false);
+        decks = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         resultCards = new ArrayList<>();
         adapter = new CardRecyclerViewAdapter(new ArrayList<>(resultCards), this);
@@ -134,6 +137,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         if (filter != null)
             reload(filter);
         initTitle();
+        getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
         return view;
     }
 
@@ -167,11 +171,27 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         final int id = item.getItemId();
         switch (id) {
             case R.id.action_add:
-                startActionMode();
+                selectDeckDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void selectDeckDialog() {
+        if (decks.size() > 0)
+            DialogUtils.showDeckSelectDialog(getContext(), getDeckName(),
+                    selectedPosition,
+                    new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            selectedPosition = which;
+                            PreferenceRepository.setSelectedDeck(getContext(), decks.get(which).getId());
+                            return true;
+                        }
+                    });
+        else
+            showNoDeckFound();
     }
 
     @Override
@@ -220,17 +240,47 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 adapter.selectAll();
                 return true;
             case R.id.action_add:
-                if (adapter.getSelectedItemCount() <= SELECT_CARD_LIMIT)
-                    getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, getArguments(), this);
-                else
-                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                            R.string.msg_select_too_many, Snackbar.LENGTH_LONG).show();
+                addSelectedCard();
                 return true;
             default:
                 return false;
         }
     }
 
+    private void addSelectedCard() {
+        if (adapter.getSelectedItemCount() <= SELECT_CARD_LIMIT) {
+            if (decks.size() > 0)
+                DialogUtils.showDeckSelectDialog(getContext(), getDeckName(),
+                        new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                final long id = decks.get(which).getId();
+                                if (!DeckUtils.checkDeckCards(getContext(), id)) {
+                                    showMessage(R.string.msg_cards_deck);
+                                    return;
+                                }
+                                for (int index : adapter.getSelectedItems())
+                                    DeckRepository.addCardIfNotExist(getContext(), id, resultCards.get(index).getSerial());
+                                showMessage(R.string.msg_add_to_deck);
+                                if (actionMode != null && PreferenceRepository.getAutoClose(getContext()))
+                                    actionMode.finish();
+                            }
+                        });
+            else
+                showNoDeckFound();
+        } else
+            showMessage(R.string.msg_select_too_many);
+    }
+
+    private List<String> getDeckName() {
+        return Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
+            @Nullable
+            @Override
+            public String apply(AbstractDeck input) {
+                return input.getName();
+            }
+        }));
+    }
 
     @Override
     public void onDestroyActionMode(final ActionMode actionMode) {
@@ -251,47 +301,32 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case LoaderId.DeckListLoader:
-                final List<AbstractDeck> decks = DeckRepository.toDecks(data);
-                if (decks.size() > 0)
-                    DialogUtils.showDeckSelectDialog(getContext(),
-                            Lists.newArrayList(Iterables.transform(decks, new Function<AbstractDeck, String>() {
-                                @Nullable
-                                @Override
-                                public String apply(AbstractDeck input) {
-                                    return input.getName();
-                                }
-                            })),
-                            new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                                    final long id = decks.get(position).getId();
-                                    if (!DeckUtils.checkDeckCards(getContext(), id)) {
-                                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                                R.string.msg_cards_deck, Snackbar.LENGTH_LONG)
-                                                .show();
-                                        return;
-                                    }
-                                    for (int index : adapter.getSelectedItems()) {
-                                        DeckRepository.addCardIfNotExist(getContext(), id,
-                                                resultCards.get(index).getSerial());
-                                    }
-                                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                            R.string.msg_add_to_deck, Snackbar.LENGTH_LONG).show();
-                                    if (actionMode != null && PreferenceRepository.getAutoClose(getContext()))
-                                        actionMode.finish();
-                                }
-                            });
-                else
-                    Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.dialog_create_button, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    DialogUtils.showCreateDeckDialog(getContext());
-                                }
-                            })
-                            .show();
+                decks = DeckRepository.toDecks(data);
+                updateSelectedPosition();
                 break;
         }
+    }
+
+    private void updateSelectedPosition() {
+        final long id = PreferenceRepository.getSelectedDeck(getContext());
+        if (id < 0) return;
+        selectedPosition = Iterables.indexOf(decks, new Predicate<AbstractDeck>() {
+            @Override
+            public boolean apply(@Nullable AbstractDeck input) {
+                return input != null && input.getId() == id;
+            }
+        });
+    }
+
+    private void showNoDeckFound() {
+        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_no_deck, Snackbar.LENGTH_LONG)
+                .setAction(R.string.dialog_create_button, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogUtils.showCreateDeckDialog(getContext());
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -344,6 +379,27 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
 
     private void reload(@NonNull final CardRepository.Filter filter) {
         new CardListLoadTask(this, filter, PreferenceRepository.getShowLimit(getContext()), 0).execute(getContext());
+    }
+
+    private void addCardToDeck(@NonNull final Card card) {
+        if (decks.size() == 0) {
+            showNoDeckFound();
+            return;
+        }
+        if (selectedPosition < 0 || selectedPosition >= decks.size()) {
+            showMessage(R.string.msg_no_select_deck);
+            return;
+        }
+        final long id = decks.get(selectedPosition).getId();
+        if (!DeckUtils.checkDeckCards(getContext(), id)) {
+            showMessage(R.string.msg_cards_deck);
+            return;
+        }
+        final boolean added = DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+        if (added)
+            showMessage(R.string.msg_add_to_deck);
+        else
+            showMessage(R.string.msg_already_exist);
     }
 
     @NonNull
@@ -404,6 +460,8 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         @NonNull
         private final View colorView;
         @NonNull
+        private final ImageView actionView;
+        @NonNull
         private String imageName;
 
 
@@ -414,6 +472,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
             nameTextView = (TextView) itemView.findViewById(R.id.card_name);
             serialTextView = (TextView) itemView.findViewById(R.id.card_serial);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.card_background);
+            actionView = (ImageView) itemView.findViewById(R.id.image_view);
             colorView = itemView.findViewById(R.id.color_bar);
             itemView.setOnLongClickListener(this);
             this.actionModeListener = actionModeListener;
@@ -448,6 +507,12 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                     card.getLevel(), getString(card.getType().getStringId())));
             colorView.setBackgroundResource(card.getColor().getColorId());
             linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
+            actionView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addCardToDeck(card);
+                }
+            });
         }
 
         @Override

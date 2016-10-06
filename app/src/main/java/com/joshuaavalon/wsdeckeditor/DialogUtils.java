@@ -51,6 +51,18 @@ public class DialogUtils {
     }
 
     public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,
+                                            final int selectedPosition,
+                                            @NonNull final MaterialDialog.ListCallbackSingleChoice callback) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_select_your_deck)
+                .items(deckNames)
+                .itemsCallbackSingleChoice(selectedPosition, callback)
+                .positiveText(R.string.dialog_select_button)
+                .show();
+    }
+
+
+    public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,
                                             @NonNull final MaterialDialog.ListCallback callback) {
         new MaterialDialog.Builder(context)
                 .title(R.string.dialog_select_your_deck)

@@ -34,4 +34,14 @@ public class PreferenceRepository {
         editor.putInt(context.getString(R.string.pref_sort_order), order.ordinal());
         editor.apply();
     }
+
+    public static long getSelectedDeck(@NonNull final Context context) {
+        return getSharedPreferences(context).getLong(context.getString(R.string.pref_deck_id), -1);
+    }
+
+    public static void setSelectedDeck(@NonNull final Context context, final long id) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putLong(context.getString(R.string.pref_deck_id), id);
+        editor.apply();
+    }
 }

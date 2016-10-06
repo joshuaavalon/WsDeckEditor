@@ -115,6 +115,8 @@
     <!--            Dialog End            -->
 
     <!--           Message Start          -->
+    <string name="msg_already_exist">This card already exists in deck.</string>
+    <string name="msg_no_select_deck">Select a deck first.</string>
     <string name="msg_select_too_many">Selected too many cards.</string>
     <string name="msg_deck_duplicated">Deck duplicated.</string>
     <string name="msg_add_to_deck">Added to deck.</string>
@@ -138,6 +140,7 @@
     <string name="pref_auto_close">autoClose</string>
     <string name="pref_show_limit">showLimit</string>
     <string name="pref_sort_order">sortOrder</string>
+    <string name="pref_deck_id">deckId</string>
 
     <string name="pref_hide_normal_title">Show normal card only</string>
     <string name="pref_auto_close_title">Auto close select mode</string>

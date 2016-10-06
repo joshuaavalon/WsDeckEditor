@@ -280,9 +280,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder,
                         public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                             final long id = decks.get(position).getId();
                             if (!DeckUtils.checkDeckCards(getContext(), id)) {
-                                Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(),
-                                        R.string.msg_cards_deck, Snackbar.LENGTH_LONG)
-                                        .show();
+                                showMessage(R.string.msg_cards_deck);
                                 return;
                             }
                             DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
