@@ -4,56 +4,48 @@
     <!--        App Metadata End         -->
 
     <!--        Data Related Start       -->
-    <string name="card_name">Name</string>
-    <string name="card_serial">Number</string>
-    <string name="card_expansion">Expansion</string>
-    <string name="card_rarity">Rarity</string>
-    <string name="card_side">Side</string>
-    <string name="card_type">Type</string>
-    <string name="card_color">Color</string>
-    <string name="card_level">Level</string>
-    <string name="card_cost">Cost</string>
-    <string name="card_power">Power</string>
-    <string name="card_soul">Soul</string>
-    <string name="card_trigger">Trigger</string>
-    <string name="card_attribute">Special Attribute</string>
-    <string name="card_text">Text</string>
-    <string name="card_flavor_text">Flavor Text</string>
-    <string name="card_total">Total</string>
+    <string name="card_name">カード名</string>
+    <string name="card_serial">カード番号</string>
+    <string name="card_expansion">エクスパンション</string>
+    <string name="card_rarity">レアリティ</string>
+    <string name="card_side">サイド</string>
+    <string name="card_type">種類</string>
+    <string name="card_color">色</string>
+    <string name="card_level">レベル</string>
+    <string name="card_cost">コスト</string>
+    <string name="card_power">パワー</string>
+    <string name="card_soul">ソウル</string>
+    <string name="card_trigger">トリガー</string>
+    <string name="card_attribute">特徴</string>
+    <string name="card_text">テキスト</string>
+    <string name="card_flavor_text">フレーバー</string>
+    <string name="card_total">合計</string>
 
-    <string name="type_chara">Character</string>
-    <string name="type_climax">Climax</string>
-    <string name="type_event">Event</string>
+    <string name="type_chara">キャラ</string>
+    <string name="type_climax">クライマックス</string>
+    <string name="type_event">イベント</string>
 
-    <string name="color_yellow">Yellow</string>
-    <string name="color_green">Green</string>
-    <string name="color_red">Red</string>
-    <string name="color_blue">Blue</string>
+    <string name="color_yellow">黃</string>
+    <string name="color_green">緑</string>
+    <string name="color_red">赤</string>
+    <string name="color_blue">青</string>
 
-    <string name="trigger_none">None</string>
-    <string name="trigger_1s">Soul+1</string>
-    <string name="trigger_2s">Soul+2</string>
-    <string name="trigger_wind">Return</string>
-    <string name="trigger_fire">Shot</string>
-    <string name="trigger_bag">Pool</string>
-    <string name="trigger_gold">Treasure</string>
-    <string name="trigger_door">Comeback</string>
-    <string name="trigger_book">Draw</string>
-    <string name="trigger_gate">Gate</string>
+    <string name="trigger_none">無し</string>
+    <string name="trigger_1s">ソウル+1</string>
+    <string name="trigger_2s">ソウル+2</string>
+    <string name="trigger_wind">リターン</string>
+    <string name="trigger_bag">プール</string>
+    <string name="trigger_gold">トレジャー</string>
+    <string name="trigger_door">カムバック</string>
+    <string name="trigger_book">ドロー</string>
+    <string name="trigger_gate">ゲート</string>
 
-    <string name="side_w">Weib</string>
-    <string name="side_s">Schwarz</string>
+    <string name="side_w">ヴァイス</string>
+    <string name="side_s">シュヴァルツ</string>
     <!--        Data Metadata End         -->
 
     <!--      Condition Related Start     -->
-    <string name="filter_keyword">Keyword</string>
-    <string name="filter_serial" translatable="false">@string/card_serial</string>
-    <string name="filter_name" translatable="false">@string/card_name</string>
-    <string name="filter_attr" translatable="false">@string/card_attribute</string>
-    <string name="filter_text" translatable="false">@string/card_text</string>
-    <string name="filter_expansion" translatable="false">@string/card_expansion</string>
-    <string name="filter_type" translatable="false">@string/card_type</string>
-    <string name="filter_color" translatable="false">@string/card_color</string>
+    <string name="filter_keyword">キーワード</string>
     <string name="filter_level_max">Max Level</string>
     <string name="filter_level_min">Min Level</string>
     <string name="filter_cost_max">Max Cost</string>
@@ -62,16 +54,15 @@
     <string name="filter_power_min">Min Power</string>
     <string name="filter_soul_max">Max Soul</string>
     <string name="filter_soul_min">Min Soul</string>
-    <string name="filter_trigger" translatable="false">@string/card_trigger</string>
     <string name="filter_normal_only">Normal Only</string>
 
     <!--       Condition Related End      -->
 
     <!--            Menu Start            -->
-    <string name="nav_search">Search</string>
+    <string name="nav_search">検索</string>
     <string name="nav_card_list">Card Lists</string>
-    <string name="nav_update">Update</string>
-    <string name="nav_setting">Setting</string>
+    <string name="nav_update">更新</string>
+    <string name="nav_setting">設定</string>
     <string name="nav_about">About</string>
     <string name="nav_deck_edit">Deck Edit</string>
 
@@ -90,9 +81,9 @@
     <!--             Menu End             -->
 
     <!--           Dialog Start           -->
-    <string name="dialog_info_level" tools:ignore="TypographyFractions">Level (0 / 1 / 2 / 3)</string>
-    <string name="dialog_info_color">Color (Yellow / Green / Red / Blue)</string>
-    <string name="dialog_info_type">Type (Character / Event / Climax)</string>
+    <string name="dialog_info_level" tools:ignore="TypographyFractions">レベル (0 / 1 / 2 / 3)</string>
+    <string name="dialog_info_color">色 (黃 / 緑 / 赤 / 青)</string>
+    <string name="dialog_info_type">種類 (キャラ / イベント / クライマックス)</string>
 
     <string name="dialog_select_your_deck">Select Deck</string>
     <string name="dialog_create_a_new_deck">Create A New Deck</string>
@@ -108,7 +99,7 @@
 
     <string name="dialog_count">Count</string>
 
-    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_cancel_button">キャンセル</string>
     <string name="dialog_delete_button">Delete</string>
     <string name="dialog_create_button">Create</string>
     <string name="dialog_change_button">Change</string>
@@ -132,22 +123,15 @@
     <!--            Message End           -->
 
     <!--            Display Start         -->
-    <string name="format_card_detail">%1$s Lv.%2$d %3$s</string>
-    <string name="not_applicable_value" translatable="false">-</string>
+    <string name="format_card_detail">%1$s レベル%2$d %3$s</string>
 
     <!--             Display End          -->
 
     <!--          Preference Start        -->
-    <string name="pref_hide_normal" translatable="false">hideNormal</string>
-    <string name="pref_auto_close" translatable="false">autoClose</string>
-    <string name="pref_show_limit" translatable="false">showLimit</string>
-    <string name="pref_sort_order" translatable="false">sortOrder</string>
-    <string name="pref_add_if_not_exist" translatable="false">addIfNotExist</string>
-    <string name="pref_deck_id" translatable="false">deckId</string>
 
     <string name="pref_hide_normal_title">Show normal card only</string>
     <string name="pref_auto_close_title">Auto close select mode</string>
-    <string name="pref_show_limit_title">Card limit shown</string>
+    <string name="pref_show_limit_title">表示件数</string>
     <string name="pref_add_if_not_exist_title">Add card if not exist</string>
 
     <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
@@ -155,25 +139,23 @@
     <string name="pref_show_limit_summary">Number of cards show at the same time.</string>
     <string name="pref_add_if_not_exist_summary">Add a card to deck only if it does not exist in deck.</string>
 
-    <string name="default_show_limit" translatable="false">200</string>
     <!--           Preference End         -->
 
     <!--         Accessibility Start      -->
-    <string name="acb_ws_logo">Weib Schwarz Logo</string>
+    <string name="acb_ws_logo">ヴァイスシュヴァルツロゴ</string>
     <string name="acb_card_image">Card Image</string>
     <string name="acb_icon">Icon</string>
     <!--          Accessibility End       -->
 
-    <string name="placeholder_text" translatable="false">Place Holder</string>
     <string name="search_result">Search Result</string>
-    <string name="latest_version">Latest Version</string>
-    <string name="current_version">Current Version</string>
-    <string name="question_mark" translatable="false">\?</string>
+    <string name="latest_version">最新バージョン</string>
+    <string name="current_version">バージョン</string>
 
     <string-array name="sort_type">
         <item>@string/card_serial</item>
         <item>@string/card_level</item>
         <item>Detail</item>
     </string-array>
+    <string name="trigger_fire">ショット</string>
     <string name="about_text">This is an open source project hosted on <a href="">Github</a>. You are welcome to report any issues or give any suggestions.</string>
 </resources>

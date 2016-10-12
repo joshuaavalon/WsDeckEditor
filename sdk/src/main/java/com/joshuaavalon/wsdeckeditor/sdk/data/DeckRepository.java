@@ -61,18 +61,6 @@ public class DeckRepository {
                 id), null, null);
     }
 
-    public static void updateDeck(@NonNull final Context context, @NonNull final Deck deck) {
-        if (deck.getId() == Deck.NO_ID) return;
-        final ContentResolver contentResolver = context.getContentResolver();
-        final ContentValues deckValues = new ContentValues();
-        deckValues.put(DeckDatabase.Field.Name, deck.getName());
-        contentResolver.update(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
-                deck.getId()), deckValues, null, null);
-        contentResolver.delete(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
-                deck.getId()), null, null);
-        insertCard(contentResolver, deck.getId(), deck.getCardList());
-    }
-
     public static void updateDeckCount(@NonNull final Context context, final long id,
                                        @NonNull final String serial, final int count) {
         if (id == Deck.NO_ID) return;
@@ -97,11 +85,30 @@ public class DeckRepository {
         final int count = cursor.getCount();
         cursor.close();
         if (count >= 1)
-            return false;
+            return true;
         final ContentValues cardValues = new ContentValues();
         cardValues.put(DeckDatabase.Field.DeckId, id);
         cardValues.put(DeckDatabase.Field.Serial, serial);
         cardValues.put(DeckDatabase.Field.Count, 1);
+        contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
+        return true;
+    }
+
+
+    public static boolean addCard(@NonNull final Context context, final long id,
+                                  @NonNull final String serial) {
+        if (id == Deck.NO_ID) return false;
+        final ContentResolver contentResolver = context.getContentResolver();
+        final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
+                id), new String[]{DeckDatabase.Field.Count}, String.format("%s = ?", DeckDatabase.Field.Serial), new String[]{serial}, null);
+        if (cursor == null) return false;
+        cursor.moveToFirst();
+        final int count = cursor.getCount() == 0 ? 1 : cursor.getInt(0) + 1;
+        cursor.close();
+        final ContentValues cardValues = new ContentValues();
+        cardValues.put(DeckDatabase.Field.DeckId, id);
+        cardValues.put(DeckDatabase.Field.Serial, serial);
+        cardValues.put(DeckDatabase.Field.Count, count);
         contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
         return true;
     }

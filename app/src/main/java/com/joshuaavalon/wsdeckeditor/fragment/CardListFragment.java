@@ -260,7 +260,10 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                                     return;
                                 }
                                 for (int index : adapter.getSelectedItems())
-                                    DeckRepository.addCardIfNotExist(getContext(), id, resultCards.get(index).getSerial());
+                                    if (PreferenceRepository.getAddIfNotExist(getContext()))
+                                        DeckRepository.addCardIfNotExist(getContext(), id, resultCards.get(index).getSerial());
+                                    else
+                                        DeckRepository.addCard(getContext(), id, resultCards.get(index).getSerial());
                                 showMessage(R.string.msg_add_to_deck);
                                 if (actionMode != null && PreferenceRepository.getAutoClose(getContext()))
                                     actionMode.finish();
@@ -395,11 +398,14 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
             showMessage(R.string.msg_cards_deck);
             return;
         }
-        final boolean added = DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+
+        final boolean added = PreferenceRepository.getAddIfNotExist(getContext()) ?
+                DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial()) :
+                DeckRepository.addCard(getContext(), id, card.getSerial());
         if (added)
             showMessage(R.string.msg_add_to_deck);
         else
-            showMessage(R.string.msg_already_exist);
+            showMessage(R.string.msg_deck_error);
     }
 
     @NonNull

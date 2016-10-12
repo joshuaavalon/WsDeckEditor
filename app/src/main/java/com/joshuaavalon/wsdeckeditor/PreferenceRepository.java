@@ -20,6 +20,9 @@ public class PreferenceRepository {
         return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_auto_close), true);
     }
 
+    public static boolean getAddIfNotExist(@NonNull final Context context) {
+        return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_add_if_not_exist), false);
+    }
 
     private static SharedPreferences getSharedPreferences(@NonNull final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);

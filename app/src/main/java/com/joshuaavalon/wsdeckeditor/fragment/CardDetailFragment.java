@@ -35,6 +35,7 @@ import com.joshuaavalon.wsdeckeditor.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.DialogUtils;
 import com.joshuaavalon.wsdeckeditor.LoaderId;
+import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
@@ -283,7 +284,10 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder,
                                 showMessage(R.string.msg_cards_deck);
                                 return;
                             }
-                            DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+                            if (PreferenceRepository.getAddIfNotExist(getContext()))
+                                DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+                            else
+                                DeckRepository.addCard(getContext(), id, card.getSerial());
                         }
                     });
         else

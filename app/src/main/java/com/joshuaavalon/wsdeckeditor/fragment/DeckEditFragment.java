@@ -403,7 +403,8 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                     .title(R.string.dialog_change_card_count)
                     .content(card.getSerial() + " " + card.getName())
                     .inputType(InputType.TYPE_CLASS_NUMBER)
-                    .positiveText(R.string.dialog_apply_button)
+                    .positiveText(R.string.dialog_change_button)
+                    .negativeText(R.string.dialog_cancel_button)
                     .input(getString(R.string.dialog_count), String.valueOf(entry.getCount()), false,
                             new MaterialDialog.InputCallback() {
                                 @Override
