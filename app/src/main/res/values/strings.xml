@@ -175,5 +175,6 @@
         <item>@string/card_level</item>
         <item>Detail</item>
     </string-array>
-    <string name="about_text">This is an open source project hosted on <a href="">Github</a>. You are welcome to report any issues or give any suggestions.</string>
+    <string name="about_text">This is an open source project hosted on <a href="https://gitlab.com/GroupAvalon/WsDeckEditor">Gitlab</a>. You are welcome to report any issues or give any suggestions.</string>
+    <string name="update_notice">Update database downloads the latest card data from internet. It costs around 10MB.\n\nUpdate image downloads missing images.\n\nDownload image downloads <b>ALL</b> images. It cost around 300MB.</string>
 </resources>
