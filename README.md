@@ -1,7 +1,7 @@
 # Ws Deck Editor
 
 Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
-![](https://gitlab.com/GroupAvalon/WsDeckEditor/blob/master/screenshots/003.png)
+![](https://gitlab.com/GroupAvalon/WsDeckEditor/raw/master/screenshots/003.png)
 
 ## Quick Start
 
