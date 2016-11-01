@@ -7,6 +7,15 @@ import android.support.annotation.NonNull;
 
 
 public class PreferenceRepository {
+    public static void setFirstTime(@NonNull final Context context, final boolean bool) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putBoolean(context.getString(R.string.pref_is_first), bool);
+        editor.apply();
+    }
+
+    public static boolean getFirstTime(@NonNull final Context context){
+        return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_is_first), true);
+    }
 
     public static boolean getHideNormal(@NonNull final Context context) {
         return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_hide_normal), true);

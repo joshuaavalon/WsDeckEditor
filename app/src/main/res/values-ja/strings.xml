@@ -2,7 +2,6 @@
     <!--        App Metadata Start       -->
     <string name="app_name">WS Deck Editor</string>
     <!--        App Metadata End         -->
-
     <!--        Data Related Start       -->
     <string name="card_name">カード名</string>
     <string name="card_serial">カード番号</string>
@@ -20,16 +19,13 @@
     <string name="card_text">テキスト</string>
     <string name="card_flavor_text">フレーバー</string>
     <string name="card_total">合計</string>
-
     <string name="type_chara">キャラ</string>
     <string name="type_climax">クライマックス</string>
     <string name="type_event">イベント</string>
-
     <string name="color_yellow">黃</string>
     <string name="color_green">緑</string>
     <string name="color_red">赤</string>
     <string name="color_blue">青</string>
-
     <string name="trigger_none">無し</string>
     <string name="trigger_1s">ソウル+1</string>
     <string name="trigger_2s">ソウル+2</string>
@@ -40,117 +36,98 @@
     <string name="trigger_book">ドロー</string>
     <string name="trigger_gate">ゲート</string>
     <string name="trigger_fire">ショット</string>
-
     <string name="side_w">ヴァイス</string>
     <string name="side_s">シュヴァルツ</string>
     <!--        Data Metadata End         -->
-
     <!--      Condition Related Start     -->
     <string name="filter_keyword">キーワード</string>
-    <string name="filter_level_max">Max Level</string>
-    <string name="filter_level_min">Min Level</string>
-    <string name="filter_cost_max">Max Cost</string>
-    <string name="filter_cost_min">Min Cost</string>
-    <string name="filter_power_max">Max Power</string>
-    <string name="filter_power_min">Min Power</string>
-    <string name="filter_soul_max">Max Soul</string>
-    <string name="filter_soul_min">Min Soul</string>
-    <string name="filter_normal_only">Normal Only</string>
-
+    <string name="filter_level_max">最大レベル</string>
+    <string name="filter_level_min">最低レベル</string>
+    <string name="filter_cost_max">最大コスト</string>
+    <string name="filter_cost_min">最低コスト</string>
+    <string name="filter_power_max">最大パワー</string>
+    <string name="filter_power_min">最低パワー</string>
+    <string name="filter_soul_max">最大ソウル</string>
+    <string name="filter_soul_min">最低ソウル</string>
+    <string name="filter_normal_only">ノーマル限定</string>
     <!--       Condition Related End      -->
-
     <!--            Menu Start            -->
     <string name="nav_search">検索</string>
-    <string name="nav_card_list">Card Lists</string>
+    <string name="nav_card_list">カードリスト</string>
     <string name="nav_update">更新</string>
     <string name="nav_setting">設定</string>
-    <string name="nav_about">About</string>
-    <string name="nav_deck_edit">Deck Edit</string>
-
-    <string name="nav_drawer_open">Open Navigation Drawer</string>
-    <string name="nav_drawer_close">Close Navigation Drawer</string>
-
-    <string name="menu_filter_exp">Filter Expansions</string>
-    <string name="menu_select_all">Select All</string>
-    <string name="menu_filter_cards">Filter Cards</string>
-    <string name="menu_sorting">Sorting</string>
-    <string name="menu_delete_deck">Delete Deck</string>
-    <string name="menu_duplicate_deck">Duplicate Deck</string>
-    <string name="menu_deck_info">Deck Info</string>
-    <string name="menu_add_deck">Add Deck</string>
-    <string name="menu_add_to_deck">Add To Deck</string>
+    <string name="nav_about">お間い合わせ</string>　
+    <string name="nav_deck_edit">デッキ編集</string>
+    <string name="nav_drawer_open">メニューを開く</string>　
+    <string name="nav_drawer_close">メニューを閉る</string>
+    <string name="menu_filter_exp">エクスパンションフィルター</string>
+    <string name="menu_select_all">全選択</string>
+    <string name="menu_filter_cards">カードフィルター</string>
+    <string name="menu_sorting">並べ替え</string>
+    <string name="menu_delete_deck">デッキ削除</string>
+    <string name="menu_duplicate_deck">デッキ複製</string>
+    <string name="menu_deck_info">デッキ詳細</string>
+    <string name="menu_add_deck">デッキ作成</string>
+    <string name="menu_add_to_deck">デッキに加えます</string>　　
     <!--             Menu End             -->
-
     <!--           Dialog Start           -->
     <string name="dialog_info_level" tools:ignore="TypographyFractions">レベル (0 / 1 / 2 / 3)</string>
     <string name="dialog_info_color">色 (黃 / 緑 / 赤 / 青)</string>
     <string name="dialog_info_type">種類 (キャラ / イベント / クライマックス)</string>
-
-    <string name="dialog_select_your_deck">Select Deck</string>
-    <string name="dialog_create_a_new_deck">Create A New Deck</string>
-    <string name="dialog_rename_deck">Rename Deck</string>
-    <string name="dialog_change_card_count">Change Card Count</string>
-    <string name="dialog_deck_name">Name</string>
-    <string name="dialog_sort_by">Sort By</string>
-    <string name="dialog_deck_info">Information</string>
-    <string name="dialog_delete_deck">Delete this deck?</string>
-    <string name="dialog_update_database">Update Database</string>
-    <string name="dialog_update_images">Update Images</string>
-    <string name="dialog_download_all_images">Download All Images</string>
-
-    <string name="dialog_count">Count</string>
-
+    <string name="dialog_select_your_deck">デッキ選択</string>
+    <string name="dialog_create_a_new_deck">デッキ作成</string>
+    <string name="dialog_rename_deck">デッキ名変更</string>
+    <string name="dialog_change_card_count">カードカウント数変更</string>　
+    <string name="dialog_deck_name">名前</string>　
+    <string name="dialog_sort_by">並べ替え</string>　
+    <string name="dialog_deck_info">詳細</string>
+    <string name="dialog_delete_deck">デッキを削除します？</string>
+    <string name="dialog_update_database">データベース更新</string>
+    <string name="dialog_update_images">画像更新</string>
+    <string name="dialog_download_all_images">全画像をダウンロード</string>
+    <string name="dialog_count">合計</string>
     <string name="dialog_cancel_button">キャンセル</string>
-    <string name="dialog_delete_button">Delete</string>
-    <string name="dialog_create_button">Create</string>
-    <string name="dialog_change_button">Change</string>
-    <string name="dialog_select_button">Select</string>
-    <string name="dialog_update_db_button">Update Database</string>
-    <string name="dialog_update_images_button">Update Images</string>
-    <string name="dialog_download_all_images_button">Download All Images</string>
+    <string name="dialog_delete_button">削除</string>
+    <string name="dialog_create_button">作成</string>
+    <string name="dialog_change_button">変更</string>
+    <string name="dialog_select_button">選択</string>
+    <string name="dialog_update_db_button">データベース更新</string>
+    <string name="dialog_update_images_button">画像更新</string>　
+    <string name="dialog_download_all_images_button">全画像をダウンロード</string>
     <!--            Dialog End            -->
-
     <!--           Message Start          -->
-    <string name="msg_deck_error">Cannot add this card to deck.</string>
-    <string name="msg_no_select_deck">Select a deck first.</string>
-    <string name="msg_select_too_many">Selected too many cards.</string>
-    <string name="msg_deck_duplicated">Deck duplicated.</string>
-    <string name="msg_add_to_deck">Added to deck.</string>
-    <string name="msg_update_database">Database updated.</string>
-    <string name="msg_update_image">Image updated.</string>
-    <string name="msg_network_err">Network error. Please check your network and try again.</string>
-    <string name="msg_no_deck">No deck found.</string>
-    <string name="msg_cards_deck">Too many cards in this deck.</string>
+    <string name="msg_deck_error">このカードをデッキに入ってきません。</string>
+    <string name="msg_no_select_deck">デッキを選択してください。</string>
+    <string name="msg_select_too_many">カードを選択多すぎです。</string>
+    <string name="msg_deck_duplicated">デッキをコピーされました。</string>
+    <string name="msg_add_to_deck">デッキに入れました。</string>　
+    <string name="msg_update_database">データベースを更新しました。</string>
+    <string name="msg_update_image">画像を更新しました。</string>
+    <string name="msg_network_err">ネットエラー発生しました。ネットの状況を確認し、再起動してください。</string>
+    <string name="msg_no_deck">デッキを見つかりません。</string>
+    <string name="msg_cards_deck">デッキ中にカードが多すぎです。</string>
     <!--            Message End           -->
-
     <!--            Display Start         -->
     <string name="format_card_detail">%1$s レベル%2$d %3$s</string>
-
     <!--             Display End          -->
-
     <!--          Preference Start        -->
-    <string name="pref_hide_normal_title">Show normal card only</string>
-    <string name="pref_auto_close_title">Auto close select mode</string>
-    <string name="pref_show_limit_title">表示件数</string>
-    <string name="pref_add_if_not_exist_title">Add card if not exist</string>
-
-    <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
-    <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
-    <string name="pref_show_limit_summary">Number of cards show at the same time.</string>
-    <string name="pref_add_if_not_exist_summary">Add a card to deck only if it does not exist in deck.</string>
-
+    <string name="pref_hide_normal_title">ノーマルカードを表示するのみ</string>　　
+    <string name="pref_auto_close_title">選択モード自動閉めます</string>
+    <string name="pref_show_limit_title">表示件数</string>　　　　　　　　　　
+    <string name="pref_add_if_not_exist_title">このカードを存在しないの場合、このカードを入れます。</string>
+    <string name="pref_hide_normal_summary">ＲＲＲ、ＳＲ，ＸＲ、ＳＰのカードを表示しません。</string>
+    <string name="pref_auto_close_summary">カードをデッキに入れました、もしくはカードを選択せれていませんの場合、選択モードを閉めます。</string>
+    <string name="pref_show_limit_summary">ガード数を同時表示します。</string>
+    <string name="pref_add_if_not_exist_summary">このカードをデッキに入ってないの場合、このカードをデッキに入れます。</string>
     <!--           Preference End         -->
-
     <!--         Accessibility Start      -->
     <string name="acb_ws_logo">ヴァイスシュヴァルツロゴ</string>
-    <string name="acb_card_image">Card Image</string>
-    <string name="acb_icon">Icon</string>
+    <string name="acb_card_image">カード画像</string>
+    <string name="acb_icon">Icon</string>　アイコン
     <!--          Accessibility End       -->
-
-    <string name="search_result">Search Result</string>
+    <string name="search_result">捜索結果</string>
     <string name="latest_version">最新バージョン</string>
     <string name="current_version">バージョン</string>
-
-    <string name="about_text">This is an open source project hosted on <a href="">Gitlab</a>. You are welcome to report any issues or give any suggestions.</string>
-    <string name="update_notice">Update database downloads the latest card data from internet. It costs around 10MB.  Update image downloads missing images.  Download image downloads <b>ALL</b> images. It cost around 300MB.</string>
+    <string name="about_text">こちらは <a href="">Gitlab</a>が開発したオープンソースプロジェクトでごさいます。よくある質問、何かのアドバス、お問い合わせしてお願いいたします。</string>
+    <string name="update_notice">データベースが最新のカードデータをダウンロードします、１０ＭＢぐらいの容量が必要です。画像を更新すると、欠落の画像が補充します。<b>全画像</b>をダウンロードすると、再ダウンロードを行われます。300ＭＢぐらいの容量が必要です。</string>
 </resources>

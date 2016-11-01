@@ -138,6 +138,7 @@
     <!--             Display End          -->
 
     <!--          Preference Start        -->
+    <string name="pref_is_first" translatable="false">isFirst</string>
     <string name="pref_hide_normal" translatable="false">hideNormal</string>
     <string name="pref_auto_close" translatable="false">autoClose</string>
     <string name="pref_show_limit" translatable="false">showLimit</string>
