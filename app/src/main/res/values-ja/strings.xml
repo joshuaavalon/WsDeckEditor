@@ -130,4 +130,10 @@
     <string name="current_version">バージョン</string>
     <string name="about_text">こちらは <a href="">Gitlab</a>が開発したオープンソースプロジェクトでごさいます。よくある質問、何かのアドバス、お問い合わせしてお願いいたします。</string>
     <string name="update_notice">データベースが最新のカードデータをダウンロードします、１０ＭＢぐらいの容量が必要です。画像を更新すると、欠落の画像が補充します。<b>全画像</b>をダウンロードすると、再ダウンロードを行われます。300ＭＢぐらいの容量が必要です。</string>
+
+    <string-array name="sort_type">
+        <item>@string/card_serial</item>
+        <item>@string/card_level</item>
+        <item>詳細</item>
+    </string-array>
 </resources>

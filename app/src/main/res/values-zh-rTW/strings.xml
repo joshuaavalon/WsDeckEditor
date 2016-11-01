@@ -113,4 +113,9 @@
     <string name="format_card_detail">%1$s 等級%2$d %3$s</string>
     <string name="about_text">這是一個在<a href="https://gitlab.com/GroupAvalon/WsDeckEditor">Gitlab</a>開源的項目。歡迎任何人回報問題或提供建議。</string>
     <string name="update_notice">更新資料庫會下載最新的卡牌資源。大約使用10MB。 更新圖牌會下載缺失的圖牌。下載全部圖片會重新下載<b>全部</b>圖片。太約使用300MB。</string>
+    <string-array name="sort_type">
+        <item>@string/card_serial</item>
+        <item>@string/card_level</item>
+        <item>詳細</item>
+    </string-array>
 </resources>
