@@ -25,3 +25,5 @@
 -dontwarn   org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -keepattributes InnerClasses
 -keepattributes EnclosingMethod
+-keep class android.support.** { *; }
+-keep interface android.support.** { *; }
