@@ -121,11 +121,14 @@ public class DownloadService extends IntentService {
                 resultData.putInt(ARG_PROGRESS, finishCount);
                 receiver.send(requestCode, resultData);
             } catch (IOException e) {
-                e.printStackTrace();
-                resultData.putInt(ARG_PROGRESS, finishCount);
-                resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
-                receiver.send(requestCode, resultData);
-                return;
+                // Broken Image from Ws Site
+                if (!(e instanceof FileNotFoundException)) {
+                    e.printStackTrace();
+                    resultData.putInt(ARG_PROGRESS, finishCount);
+                    resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
+                    receiver.send(requestCode, resultData);
+                    return;
+                }
             }
         }
         resultData.putInt(ARG_PROGRESS, finishCount);

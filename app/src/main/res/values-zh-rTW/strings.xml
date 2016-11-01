@@ -76,7 +76,7 @@
     <string name="msg_no_select_deck">請先選擇牌組。</string>
     <string name="msg_select_too_many">選擇了太多卡。</string>
     <string name="msg_update_database">資訊庫更新完畢。</string>
-    <string name="msg_update_image">圖牌更新完畢。</string>
+    <string name="msg_update_image">圖片更新完畢。</string>
     <string name="nav_about">關於</string>
     <string name="nav_card_list">卡表</string>
     <string name="nav_deck_edit">牌組</string>
@@ -110,7 +110,7 @@
     <string name="type_chara">角色</string>
     <string name="type_climax">高潮</string>
     <string name="type_event">事件</string>
-    <string name="format_card_detail">%1$s 等級.%2$d %3$s</string>
+    <string name="format_card_detail">%1$s 等級%2$d %3$s</string>
     <string name="about_text">這是一個在<a href="https://gitlab.com/GroupAvalon/WsDeckEditor">Gitlab</a>開源的項目。歡迎任何人回報問題或提供建議。</string>
     <string name="update_notice">更新資料庫會下載最新的卡牌資源。大約使用10MB。 更新圖牌會下載缺失的圖牌。下載全部圖片會重新下載<b>全部</b>圖片。太約使用300MB。</string>
 </resources>
