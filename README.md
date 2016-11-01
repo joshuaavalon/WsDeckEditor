@@ -5,9 +5,8 @@ Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 
 ## Quick Start
 
-1. Download the latest release from [here](https://gitlab.com/GroupAvalon/WsCardDatabaseBuilder/tags).
-2. Unzip the file.
-3. Start the executable by `WSCDB -c`. Or use `WSCDB -c -s` for quick rebuild if you sure your serials are up-to-date.
+1. Download the latest release from [here](https://gitlab.com/GroupAvalon/WsDeckEditor/tags).
+2. Install the .apk
 
 ## Build
 
