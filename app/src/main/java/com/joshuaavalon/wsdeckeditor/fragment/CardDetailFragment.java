@@ -284,10 +284,15 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder,
                                 showMessage(R.string.msg_cards_deck);
                                 return;
                             }
+                            int count;
                             if (PreferenceRepository.getAddIfNotExist(getContext()))
-                                DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
+                                count = DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial());
                             else
-                                DeckRepository.addCard(getContext(), id, card.getSerial());
+                                count = DeckRepository.addCard(getContext(), id, card.getSerial());
+                            if (count > 0)
+                                showMessage(getString(R.string.msg_add_to_deck_single, count));
+                            else
+                                showMessage(R.string.msg_deck_error);
                         }
                     });
         else

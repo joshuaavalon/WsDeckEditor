@@ -75,44 +75,49 @@ public class DeckRepository {
         contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
     }
 
-    public static boolean addCardIfNotExist(@NonNull final Context context, final long id,
+    public static int addCardIfNotExist(@NonNull final Context context, final long id,
                                             @NonNull final String serial) {
-        if (id == Deck.NO_ID) return false;
+        if (id == Deck.NO_ID) return -1;
         final ContentResolver contentResolver = context.getContentResolver();
         final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
                 id), null, String.format("%s = ?", DeckDatabase.Field.Serial), new String[]{serial}, null);
-        if (cursor == null) return false;
+        if (cursor == null) return -1;
         final int count = cursor.getCount();
         cursor.close();
         if (count >= 1)
-            return true;
+            return -1;
         final ContentValues cardValues = new ContentValues();
         cardValues.put(DeckDatabase.Field.DeckId, id);
         cardValues.put(DeckDatabase.Field.Serial, serial);
         cardValues.put(DeckDatabase.Field.Count, 1);
         contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
-        return true;
+        return 1;
     }
 
-
-    public static boolean addCard(@NonNull final Context context, final long id,
+    public static int addCard(@NonNull final Context context, final long id,
                                   @NonNull final String serial) {
-        if (id == Deck.NO_ID) return false;
+        if (id == Deck.NO_ID) return -1;
         final ContentResolver contentResolver = context.getContentResolver();
         final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
                 id), new String[]{DeckDatabase.Field.Count}, String.format("%s = ?", DeckDatabase.Field.Serial), new String[]{serial}, null);
-        if (cursor == null) return false;
+        if (cursor == null) return -1;
         cursor.moveToFirst();
-        final int count = cursor.getCount() == 0 ? 1 : cursor.getInt(0) + 1;
+        final boolean contains = cursor.getCount() > 0;
+        final int count = contains ? cursor.getInt(0) + 1 : 1;
         cursor.close();
         final ContentValues cardValues = new ContentValues();
-        cardValues.put(DeckDatabase.Field.DeckId, id);
-        cardValues.put(DeckDatabase.Field.Serial, serial);
         cardValues.put(DeckDatabase.Field.Count, count);
-        contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
-        return true;
+        if (contains)
+            contentResolver.update(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI, id),
+                    cardValues, String.format("%s = ?", DeckDatabase.Field.Serial),
+                    new String[]{serial});
+        else {
+            cardValues.put(DeckDatabase.Field.DeckId, id);
+            cardValues.put(DeckDatabase.Field.Serial, serial);
+            contentResolver.insert(DeckProvider.DECK_RECORD_CONTENT_URI, cardValues);
+        }
+        return count;
     }
-
 
     public static void updateDeckName(@NonNull final Context context, final long id, @NonNull final String name) {
         if (id == Deck.NO_ID) return;
@@ -136,7 +141,6 @@ public class DeckRepository {
         contentResolver.bulkInsert(DeckProvider.DECK_RECORD_CONTENT_URI,
                 deckRecordValues.toArray(new ContentValues[deckRecordValues.size()]));
     }
-
 
     @NonNull
     public static List<AbstractDeck> toDecks(@NonNull final Cursor cursor) {

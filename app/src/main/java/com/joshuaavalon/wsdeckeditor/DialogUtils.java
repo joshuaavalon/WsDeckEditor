@@ -3,6 +3,7 @@ package com.joshuaavalon.wsdeckeditor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +25,10 @@ public class DialogUtils {
     private static final String INFO_DIALOG_LINE_SEPARATOR = " / ";
 
     public static void showCreateDeckDialog(@NonNull final Context context) {
+        showCreateDeckDialog(context, null);
+    }
+
+    public static void showCreateDeckDialog(@NonNull final Context context, @Nullable final CreateDeckCallback callback) {
         new MaterialDialog.Builder(context)
                 .title(R.string.dialog_create_a_new_deck)
                 .inputType(InputType.TYPE_CLASS_TEXT)
@@ -33,6 +38,8 @@ public class DialogUtils {
                         final Deck deck = new Deck();
                         deck.setName(input.toString());
                         DeckRepository.createDeck(context, deck);
+                        if (callback != null)
+                            callback.onCreate(deck);
                     }
                 }).show();
     }
@@ -60,7 +67,6 @@ public class DialogUtils {
                 .positiveText(R.string.dialog_select_button)
                 .show();
     }
-
 
     public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,
                                             @NonNull final MaterialDialog.ListCallback callback) {
@@ -103,5 +109,9 @@ public class DialogUtils {
         for (int i = 0; i <= 3; i++)
             tempList.add(String.valueOf(levelCount.count(i)));
         levelTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
+    }
+
+    public interface CreateDeckCallback {
+        void onCreate(@NonNull final Deck deck);
     }
 }

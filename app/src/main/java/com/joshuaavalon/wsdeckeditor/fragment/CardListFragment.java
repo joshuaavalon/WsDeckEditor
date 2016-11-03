@@ -47,6 +47,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.SizedStack;
 import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.task.CardListLoadTask;
@@ -326,7 +327,13 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 .setAction(R.string.dialog_create_button, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DialogUtils.showCreateDeckDialog(getContext());
+                        DialogUtils.showCreateDeckDialog(getContext(), new DialogUtils.CreateDeckCallback() {
+                            @Override
+                            public void onCreate(@NonNull Deck deck) {
+                                PreferenceRepository.setSelectedDeck(getContext(), deck.getId());
+                                updateSelectedPosition();
+                            }
+                        });
                     }
                 })
                 .show();
@@ -399,11 +406,11 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
             return;
         }
 
-        final boolean added = PreferenceRepository.getAddIfNotExist(getContext()) ?
+        final int count = PreferenceRepository.getAddIfNotExist(getContext()) ?
                 DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial()) :
                 DeckRepository.addCard(getContext(), id, card.getSerial());
-        if (added)
-            showMessage(R.string.msg_add_to_deck);
+        if(count > 0)
+            showMessage(getString(R.string.msg_add_to_deck_single, count));
         else
             showMessage(R.string.msg_deck_error);
     }

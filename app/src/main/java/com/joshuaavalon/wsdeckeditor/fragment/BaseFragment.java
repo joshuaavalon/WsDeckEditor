@@ -30,4 +30,14 @@ public abstract class BaseFragment extends Fragment {
         } else
             Toast.makeText(getActivity(), resId, Toast.LENGTH_LONG).show();
     }
+
+    protected void showMessage(@NonNull final String message) {
+        final Activity activity = getActivity();
+        if (activity == null) return;
+        if (activity instanceof SnackBarSupport) {
+            Snackbar.make(((SnackBarSupport) activity).getCoordinatorLayout(),
+                    message, Snackbar.LENGTH_LONG).show();
+        } else
+            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+    }
 }

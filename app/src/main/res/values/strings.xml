@@ -108,6 +108,8 @@
 
     <string name="dialog_count">Count</string>
 
+    <string name="dialog_update_button">Update</string>
+    <string name="dialog_download_button">Download</string>
     <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_delete_button">Delete</string>
     <string name="dialog_create_button">Create</string>
@@ -123,7 +125,8 @@
     <string name="msg_no_select_deck">Select a deck first.</string>
     <string name="msg_select_too_many">Selected too many cards.</string>
     <string name="msg_deck_duplicated">Deck duplicated.</string>
-    <string name="msg_add_to_deck">Added to deck.</string>
+    <string name="msg_add_to_deck">Added to deck. </string>
+    <string name="msg_add_to_deck_single">Added to deck. (%d)</string>
     <string name="msg_update_database">Database updated.</string>
     <string name="msg_update_image">Image updated.</string>
     <string name="msg_network_err">Network error. Please check your network and try again.</string>
@@ -177,5 +180,7 @@
         <item>Detail</item>
     </string-array>
     <string name="about_text">This is an open source project hosted on <a href="https://gitlab.com/GroupAvalon/WsDeckEditor">Gitlab</a>. You are welcome to report any issues or give any suggestions.</string>
-    <string name="update_notice">Update database downloads the latest card data from internet. It costs around 10MB.\n\nUpdate image downloads missing images.\n\nDownload image downloads <b>ALL</b> images. It cost around 300MB.</string>
+    <string name="download_img_notice">Download image downloads <b>ALL</b> images. It cost around 300MB.</string>
+    <string name="update_img_notice">Update image downloads missing images.</string>
+    <string name="update_db_notice">Update database downloads the latest card data from internet. It costs around 10MB.</string>
 </resources>

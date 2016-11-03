@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,27 +47,21 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
         updateDatabaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleButton(false);
-                DownloadService.startDownloadCardDatabase(getContext(), receiver, CODE_CARD_DATABASE);
-                progressDialog.setTitle(R.string.dialog_update_database);
+                updateDatabaseDialog();
             }
         });
         updateImagesButton = (Button) view.findViewById(R.id.update_images_button);
         updateImagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleButton(false);
-                DownloadService.startDownloadImages(getContext(), receiver, CODE_CARD_IMAGE, false);
-                progressDialog.setTitle(R.string.dialog_update_images);
+                updateImagesDialog();
             }
         });
         downloadImagesButton = (Button) view.findViewById(R.id.download_all_images_button);
         downloadImagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleButton(false);
-                DownloadService.startDownloadImages(getContext(), receiver, CODE_CARD_IMAGE, true);
-                progressDialog.setTitle(R.string.dialog_download_all_images);
+                downloadImagesDialog();
             }
         });
         updateCurrentVersion();
@@ -76,6 +72,57 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
 
     private void updateCurrentVersion() {
         currentTextView.setText(String.valueOf(new CardDatabase(getContext()).getVersion()));
+    }
+
+    private void updateDatabaseDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.dialog_update_database)
+                .content(R.string.update_db_notice)
+                .positiveText(R.string.dialog_update_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        toggleButton(false);
+                        DownloadService.startDownloadCardDatabase(getContext(), receiver, CODE_CARD_DATABASE);
+                        progressDialog.setTitle(R.string.dialog_update_database);
+                    }
+                })
+                .show();
+    }
+
+    private void updateImagesDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.dialog_update_database)
+                .content(R.string.update_img_notice)
+                .positiveText(R.string.dialog_update_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        toggleButton(false);
+                        DownloadService.startDownloadImages(getContext(), receiver, CODE_CARD_IMAGE, false);
+                        progressDialog.setTitle(R.string.dialog_update_images);
+                    }
+                })
+                .show();
+    }
+
+    private void downloadImagesDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(R.string.dialog_download_all_images)
+                .content(R.string.download_img_notice)
+                .positiveText(R.string.dialog_download_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        toggleButton(false);
+                        DownloadService.startDownloadImages(getContext(), receiver, CODE_CARD_IMAGE, true);
+                        progressDialog.setTitle(R.string.dialog_download_all_images);
+                    }
+                })
+                .show();
     }
 
     @NonNull
