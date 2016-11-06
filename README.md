@@ -1,4 +1,6 @@
 # Ws Deck Editor
+[![Release](https://img.shields.io/github/release/joshuaavalon/WsDeckEditor.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/releases)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/blob/master/LICENSE)
 
 Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 
@@ -16,14 +18,10 @@ Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 3. [Optional] Upload your own database to web server and change url(s) in `ConfigConstant`.
 4. Build the apk.
 
-
-
 ## Screenshot
 
-![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/001.jpg)
-![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/002.jpg)
+![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/001.jpg)![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/002.jpg)
 
 ![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/003.jpg)![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/004.jpg)
 
-![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/005.jpg)
-![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/006.jpg)
+![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/005.jpg)![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/006.jpg)
