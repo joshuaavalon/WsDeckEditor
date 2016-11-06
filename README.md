@@ -25,3 +25,7 @@ Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 ![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/003.jpg)![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/004.jpg)
 
 ![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/005.jpg)![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/006.jpg)
+
+## Contribution
+
+Japanese Translation - [Alex](http://www.plurk.com/m/u/alex10076)
