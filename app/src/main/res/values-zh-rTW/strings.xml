@@ -111,7 +111,7 @@
     <string name="type_climax">高潮</string>
     <string name="type_event">事件</string>
     <string name="format_card_detail">%1$s 等級%2$d %3$s</string>
-    <string name="about_text">這是一個在<a href="https://gitlab.com/GroupAvalon/WsDeckEditor">Gitlab</a>開源的項目。歡迎任何人回報問題或提供建議。</string>
+    <string name="about_text">這是一個在<a href="https://github.com/joshuaavalon/WsDeckEditor">Github</a>開源的項目。歡迎任何人回報問題或提供建議。</string>
     <string-array name="sort_type">
         <item>@string/card_serial</item>
         <item>@string/card_level</item>
