@@ -31,13 +31,15 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, new AboutFragment(), null).commit();
         if (PreferenceRepository.getFirstTime(this)) {
             PreferenceRepository.setFirstTime(this, false);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, new UpdateFragment(), null).commit();
-        } else
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, new AboutFragment(), null).commit();
+                    .replace(R.id.fragment, new UpdateFragment(), null)
+                    .addToBackStack(INITIAL_STACK)
+                    .commit();
+        }
     }
 
     private void initUi() {
