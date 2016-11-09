@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
-import com.joshuaavalon.wsdeckeditor.sdk.LeakLessCursorFactory;
-
 public class DeckDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "deck.db";
     private static final int VERSION = 2;
