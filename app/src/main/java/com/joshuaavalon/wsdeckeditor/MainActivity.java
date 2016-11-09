@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         new UpdateHandler(this).getUpdateNeed(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean response) {
-               showUpdateNotification(response);
+                showUpdateNotification(response);
             }
         }, null);
     }

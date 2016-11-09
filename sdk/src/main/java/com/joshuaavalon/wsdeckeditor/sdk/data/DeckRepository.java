@@ -76,7 +76,7 @@ public class DeckRepository {
     }
 
     public static int addCardIfNotExist(@NonNull final Context context, final long id,
-                                            @NonNull final String serial) {
+                                        @NonNull final String serial) {
         if (id == Deck.NO_ID) return -1;
         final ContentResolver contentResolver = context.getContentResolver();
         final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
@@ -95,7 +95,7 @@ public class DeckRepository {
     }
 
     public static int addCard(@NonNull final Context context, final long id,
-                                  @NonNull final String serial) {
+                              @NonNull final String serial) {
         if (id == Deck.NO_ID) return -1;
         final ContentResolver contentResolver = context.getContentResolver();
         final Cursor cursor = contentResolver.query(ContentUris.withAppendedId(DeckProvider.DECK_RECORD_CONTENT_URI,
@@ -119,7 +119,7 @@ public class DeckRepository {
         return count;
     }
 
-    public static void updateDeck(@NonNull final Context context,@NonNull final AbstractDeck deck) {
+    public static void updateDeck(@NonNull final Context context, @NonNull final AbstractDeck deck) {
         if (deck.getId() == Deck.NO_ID) return;
         final ContentResolver contentResolver = context.getContentResolver();
         final ContentValues deckValues = new ContentValues();

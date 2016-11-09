@@ -6,12 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import com.joshuaavalon.wsdeckeditor.sdk.LeakLessCursorFactory;
+
 public class DeckDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "deck.db";
     private static final int VERSION = 2;
 
     public DeckDatabase(@NonNull final Context context) {
-        super(context, DATABASE_NAME, null, VERSION);
+        super(context, DATABASE_NAME, new LeakLessCursorFactory(), VERSION);
     }
 
     @Override

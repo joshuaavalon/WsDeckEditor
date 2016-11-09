@@ -5,10 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.webkit.URLUtil;
 
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
-import com.joshuaavalon.wsdeckeditor.sdk.data.CardDatabase;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 
 import java.util.List;
