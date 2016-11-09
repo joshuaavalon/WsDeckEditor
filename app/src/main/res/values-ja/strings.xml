@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!--        App Metadata Start       -->
-    <string name="app_name">WS Deck Editor</string>
+    <string name="app_name">WSデッキエディタ</string>
     <!--        App Metadata End         -->
     <!--        Data Related Start       -->
     <string name="card_name">カード名</string>
