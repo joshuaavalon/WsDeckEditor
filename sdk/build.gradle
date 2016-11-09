@@ -1,5 +1,12 @@
 apply plugin: 'com.android.library'
 
+def readSetting() {
+    def propsFile = rootProject.file('settings.properties');
+    def props = new Properties();
+    props.load(new FileInputStream(propsFile));
+    return props;
+}
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
@@ -10,8 +17,17 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
+        debug {
+            def setting = readSetting();
+            buildConfigField "String", "urlVersion", setting["urlVersion"]
+            buildConfigField "String", "urlDatabase", setting["urlDatabase"]
+        }
         release {
+            def setting = readSetting();
+            buildConfigField "String", "urlVersion", setting["urlVersion"]
+            buildConfigField "String", "urlDatabase", setting["urlDatabase"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

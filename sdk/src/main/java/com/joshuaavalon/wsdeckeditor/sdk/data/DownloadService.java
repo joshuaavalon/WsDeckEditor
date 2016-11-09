@@ -13,6 +13,8 @@ import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +59,7 @@ public class DownloadService extends IntentService {
         intent.setAction(ACTION_DOWNLOAD_DB);
         intent.putExtra(EXTRA_RECEIVER, receiver);
         intent.putExtra(EXTRA_REQUEST_CODE, requestCode);
-        intent.putExtra(EXTRA_URLS, ConfigConstant.URL_DATABASE);
+        intent.putExtra(EXTRA_URLS, BuildConfig.urlDatabase);
         context.startService(intent);
     }
 

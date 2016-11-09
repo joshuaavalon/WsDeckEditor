@@ -9,8 +9,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardDatabase;
-import com.joshuaavalon.wsdeckeditor.sdk.data.ConfigConstant;
 
 public class UpdateHandler {
     @NonNull
@@ -23,7 +23,7 @@ public class UpdateHandler {
     public void getNetworkVersion(@NonNull final Response.Listener<String> listener,
                                   @Nullable final Response.ErrorListener errorListener) {
         final RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(new StringRequest(Request.Method.GET, ConfigConstant.URL_VERSION, listener, errorListener));
+        requestQueue.add(new StringRequest(Request.Method.GET, BuildConfig.urlVersion, listener, errorListener));
     }
 
     public int getDatabaseVersion() {

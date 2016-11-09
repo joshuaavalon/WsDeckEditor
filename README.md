@@ -14,8 +14,8 @@ Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 ## Build
 
 1. Clone the repository.
-2. [Optional] Download latest release of [Ws Card Database Builder](https://github.com/joshuaavalon/WsCardDbBuilder) and follow instructions to build the database.
-3. [Optional] Upload your own database to web server and change url(s) in `ConfigConstant`.
+2. Download latest release of [Ws Card Database Builder](https://github.com/joshuaavalon/WsCardDbBuilder) and follow instructions to build the database.
+3. Create settings.properties with `urlVersion` and `urlDatabase`.
 4. Build the apk.
 
 ## Screenshot
