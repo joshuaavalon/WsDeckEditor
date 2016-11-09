@@ -16,6 +16,15 @@ public class PreferenceRepository {
     public static boolean getFirstTime(@NonNull final Context context){
         return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_is_first), true);
     }
+    public static void setSwipeRemove(@NonNull final Context context, final boolean bool) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putBoolean(context.getString(R.string.pref_swipe_remove), bool);
+        editor.apply();
+    }
+
+    public static boolean getSwipeRemove(@NonNull final Context context){
+        return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_swipe_remove), false);
+    }
 
     public static boolean getHideNormal(@NonNull final Context context) {
         return getSharedPreferences(context).getBoolean(context.getString(R.string.pref_hide_normal), true);

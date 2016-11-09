@@ -142,4 +142,7 @@
     <string name="download_img_notice"><b>全画像</b>をダウンロードすると、再ダウンロードを行われます。300ＭＢぐらいの容量が必要です。</string>
     <string name="msg_add_to_deck_single">デッキに入れました。(%d)</string>
     <string name="msg_set_fav">お気入りのカードに登録しますた。</string>
+    <string name="dialog_undo_button">取り消し</string>
+    <string name="pref_swipe_remove_title">スワイプ削除</string>
+    <string name="pref_swipe_remove_summary">左スワイプでカードとデッキを削除します。</string>
 </resources>

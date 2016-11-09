@@ -124,4 +124,7 @@
     <string name="update_img_notice">更新圖牌會下載沒有的圖片。</string>
     <string name="msg_add_to_deck_single">已加到牌組。(%d)</string>
     <string name="msg_set_fav">已設定為最喜愛的卡牌。</string>
+    <string name="dialog_undo_button">復原</string>
+    <string name="pref_swipe_remove_title">滑動移除</string>
+    <string name="pref_swipe_remove_summary">由左向右滑動移除卡牌及牌組。</string>
 </resources>

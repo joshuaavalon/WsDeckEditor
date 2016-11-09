@@ -23,6 +23,7 @@ import com.joshuaavalon.wsdeckeditor.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.DialogUtils;
 import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
+import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
@@ -49,24 +50,26 @@ public class DeckListFragment extends ImageListFragment implements SearchView.On
         decks = new ArrayList<>();
         adapter = new DeckListAdapter(new ArrayList<>(decks));
         recyclerView.setAdapter(adapter);
-        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(final RecyclerView recyclerView,
-                                          final RecyclerView.ViewHolder viewHolder,
-                                          final RecyclerView.ViewHolder target) {
-                        return false;
-                    }
+        if (PreferenceRepository.getSwipeRemove(getContext())) {
+            final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                    new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                        @Override
+                        public boolean onMove(final RecyclerView recyclerView,
+                                              final RecyclerView.ViewHolder viewHolder,
+                                              final RecyclerView.ViewHolder target) {
+                            return false;
+                        }
 
-                    @Override
-                    public void onSwiped(final RecyclerView.ViewHolder viewHolder,
-                                         final int direction) {
-                        if (!(viewHolder instanceof DeckListViewHolder)) return;
-                        final AbstractDeck deck = adapter.getModels().get(viewHolder.getAdapterPosition());
-                        DeckRepository.deleteDeck(getContext(), deck.getId());
-                    }
-                });
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+                        @Override
+                        public void onSwiped(final RecyclerView.ViewHolder viewHolder,
+                                             final int direction) {
+                            if (!(viewHolder instanceof DeckListViewHolder)) return;
+                            final AbstractDeck deck = adapter.getModels().get(viewHolder.getAdapterPosition());
+                            DeckRepository.deleteDeck(getContext(), deck.getId());
+                        }
+                    });
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        }
         setHasOptionsMenu(true);
         getActivity().getSupportLoaderManager().initLoader(LoaderId.DeckListLoader, null, this);
         return view;

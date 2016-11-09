@@ -144,6 +144,7 @@
     <!--             Display End          -->
 
     <!--          Preference Start        -->
+    <string name="pref_swipe_remove" translatable="false">swipeRemove</string>
     <string name="pref_is_first" translatable="false">isFirst</string>
     <string name="pref_hide_normal" translatable="false">hideNormal</string>
     <string name="pref_auto_close" translatable="false">autoClose</string>
@@ -156,11 +157,13 @@
     <string name="pref_auto_close_title">Auto close select mode</string>
     <string name="pref_show_limit_title">Card limit shown</string>
     <string name="pref_add_if_not_exist_title">Add card if not exist</string>
+    <string name="pref_swipe_remove_title">Swipe remove</string>
 
     <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
     <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
     <string name="pref_show_limit_summary">Number of cards show at the same time.</string>
     <string name="pref_add_if_not_exist_summary">Add a card to deck only if it does not exist in deck.</string>
+    <string name="pref_swipe_remove_summary">Swipe from left to right to remove card and deck.</string>
 
     <string name="default_show_limit" translatable="false">200</string>
     <!--           Preference End         -->

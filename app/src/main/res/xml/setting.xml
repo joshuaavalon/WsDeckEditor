@@ -21,4 +21,9 @@
         android:key="@string/pref_add_if_not_exist"
         android:summary="@string/pref_add_if_not_exist_summary"
         android:title="@string/pref_add_if_not_exist_title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/pref_swipe_remove"
+        android:summary="@string/pref_swipe_remove_summary"
+        android:title="@string/pref_swipe_remove_title" />
 </PreferenceScreen>

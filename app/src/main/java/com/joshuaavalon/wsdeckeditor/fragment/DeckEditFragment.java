@@ -95,32 +95,34 @@ public class DeckEditFragment extends ImageListFragment implements LoaderManager
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(final RecyclerView recyclerView,
-                                          final RecyclerView.ViewHolder viewHolder,
-                                          final RecyclerView.ViewHolder target) {
-                        return false;
-                    }
+        if (PreferenceRepository.getSwipeRemove(getContext())) {
+            final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                    new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                        @Override
+                        public boolean onMove(final RecyclerView recyclerView,
+                                              final RecyclerView.ViewHolder viewHolder,
+                                              final RecyclerView.ViewHolder target) {
+                            return false;
+                        }
 
-                    @Override
-                    public void onSwiped(final RecyclerView.ViewHolder viewHolder,
-                                         final int direction) {
-                        if (!(viewHolder instanceof CardViewHolder)) return;
-                        final Multiset.Entry<Card> entry = adapter.getModels().get(viewHolder.getAdapterPosition());
-                        DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), 0);
-                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_remove_card, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.dialog_undo_button, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), entry.getCount());
-                                    }
-                                })
-                                .show();
-                    }
-                });
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+                        @Override
+                        public void onSwiped(final RecyclerView.ViewHolder viewHolder,
+                                             final int direction) {
+                            if (!(viewHolder instanceof CardViewHolder)) return;
+                            final Multiset.Entry<Card> entry = adapter.getModels().get(viewHolder.getAdapterPosition());
+                            DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), 0);
+                            Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_remove_card, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.dialog_undo_button, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), entry.getCount());
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        }
         setHasOptionsMenu(true);
         getActivity().getSupportLoaderManager().restartLoader(LoaderId.DeckLoader, getArguments(), this);
         getActivity().getSupportLoaderManager().restartLoader(LoaderId.DeckRecordLoader, getArguments(), this);
