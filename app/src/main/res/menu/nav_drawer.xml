@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_card_list"
@@ -16,7 +17,8 @@
         <item
             android:id="@+id/nav_update"
             android:icon="@drawable/ic_autorenew_black_24dp"
-            android:title="@string/nav_update" />
+            android:title="@string/nav_update"
+            app:actionLayout="@layout/icon_new_release"/>
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings_black_24dp"

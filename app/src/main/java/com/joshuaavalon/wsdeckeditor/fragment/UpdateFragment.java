@@ -15,16 +15,12 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.sdk.data.CardDatabase;
-import com.joshuaavalon.wsdeckeditor.sdk.data.ConfigConstant;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DownloadService;
+import com.joshuaavalon.wsdeckeditor.sdk.util.UpdateHandler;
 
 public class UpdateFragment extends BaseFragment implements Response.Listener<String>, Response.ErrorListener {
     private static final int CODE_CARD_DATABASE = 1;
@@ -64,14 +60,10 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
                 downloadImagesDialog();
             }
         });
-        updateCurrentVersion();
-        final RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(new StringRequest(Request.Method.GET, ConfigConstant.URL_VERSION, this, this));
+        final UpdateHandler updateHandler = new UpdateHandler(getContext());
+        updateHandler.getNetworkVersion(this, this);
+        currentTextView.setText(String.valueOf(updateHandler.getDatabaseVersion()));
         return view;
-    }
-
-    private void updateCurrentVersion() {
-        currentTextView.setText(String.valueOf(new CardDatabase(getContext()).getVersion()));
     }
 
     private void updateDatabaseDialog() {
@@ -176,7 +168,9 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
                 switch (resultCode) {
                     case CODE_CARD_DATABASE:
                         showMessage(R.string.msg_update_database);
-                        updateCurrentVersion();
+                        final UpdateHandler updateHandler = new UpdateHandler(getContext());
+                        currentTextView.setText(String.valueOf(updateHandler.getDatabaseVersion()));
+                        ((MainActivity) getActivity()).showUpdateNotification(false);
                         break;
                     case CODE_CARD_IMAGE:
                         showMessage(R.string.msg_update_image);

@@ -14,13 +14,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.android.volley.Response;
 import com.joshuaavalon.wsdeckeditor.fragment.AboutFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SearchFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.UpdateFragment;
+import com.joshuaavalon.wsdeckeditor.sdk.util.UpdateHandler;
 
 public class MainActivity extends AppCompatActivity implements SnackBarSupport,
         NavigationView.OnNavigationItemSelectedListener {
@@ -40,12 +43,24 @@ public class MainActivity extends AppCompatActivity implements SnackBarSupport,
                     .addToBackStack(INITIAL_STACK)
                     .commit();
         }
+        new UpdateHandler(this).getUpdateNeed(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(Boolean response) {
+               showUpdateNotification(response);
+            }
+        }, null);
     }
 
     private void initUi() {
         initToolbar();
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void showUpdateNotification(boolean show) {
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_update).getActionView()
+                .setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void initToolbar() {
