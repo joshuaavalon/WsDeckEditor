@@ -118,6 +118,7 @@
     <string name="dialog_update_db_button">Update Database</string>
     <string name="dialog_update_images_button">Update Images</string>
     <string name="dialog_download_all_images_button">Download All Images</string>
+    <string name="dialog_undo_button">Undo</string>
     <!--            Dialog End            -->
 
     <!--           Message Start          -->
@@ -132,6 +133,8 @@
     <string name="msg_network_err">Network error. Please check your network and try again.</string>
     <string name="msg_no_deck">No deck found.</string>
     <string name="msg_cards_deck">Too many cards in this deck.</string>
+    <string name="msg_set_fav">This favourite card is set.</string>
+    <string name="msg_remove_card">Card Removed.</string>
     <!--            Message End           -->
 
     <!--            Display Start         -->

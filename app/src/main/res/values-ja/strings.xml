@@ -141,4 +141,5 @@
     <string name="update_img_notice">画像を更新すると、欠落の画像が補充します。</string>
     <string name="download_img_notice"><b>全画像</b>をダウンロードすると、再ダウンロードを行われます。300ＭＢぐらいの容量が必要です。</string>
     <string name="msg_add_to_deck_single">デッキに入れました。(%d)</string>
+    <string name="msg_set_fav">お気入りのカードに登録しますた。</string>
 </resources>

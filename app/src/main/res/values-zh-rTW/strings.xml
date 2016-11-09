@@ -123,4 +123,5 @@
     <string name="update_db_notice">更新資料庫會下載最新的卡牌資料。大約使用10MB。</string>
     <string name="update_img_notice">更新圖牌會下載沒有的圖片。</string>
     <string name="msg_add_to_deck_single">已加到牌組。(%d)</string>
+    <string name="msg_set_fav">已設定為最喜愛的卡牌。</string>
 </resources>

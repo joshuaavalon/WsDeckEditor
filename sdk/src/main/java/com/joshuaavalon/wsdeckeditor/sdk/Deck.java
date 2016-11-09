@@ -3,10 +3,12 @@ package com.joshuaavalon.wsdeckeditor.sdk;
 
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
+import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,11 +20,14 @@ public class Deck {
     @NonNull
     private String name;
     private long id;
+    @Nullable
+    private String cover;
 
     public Deck() {
         name = "";
         id = NO_ID;
         cardList = HashMultiset.create();
+        cover = null;
     }
 
     @NonNull
@@ -40,6 +45,15 @@ public class Deck {
 
     public void setId(final long id) {
         this.id = id;
+    }
+
+    @Nullable
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(@Nullable final String cover) {
+        this.cover = cover;
     }
 
     @NonNull
@@ -115,5 +129,10 @@ public class Deck {
     public void addIfNotExist(@NonNull final Card card) {
         if (!cardList.contains(card))
             addCard(card);
+    }
+
+    @NonNull
+    public AbstractDeck toAbstract() {
+        return new AbstractDeck(id, name, cover);
     }
 }

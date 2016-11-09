@@ -52,7 +52,8 @@ public class DialogUtils {
                         new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                DeckRepository.updateDeckName(context, absDeck.getId(), input.toString());
+                                DeckRepository.updateDeck(context,
+                                        new AbstractDeck(absDeck.getId(), input.toString(), absDeck.getCover()));
                             }
                         }).show();
     }

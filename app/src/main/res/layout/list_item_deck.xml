@@ -6,12 +6,21 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
+    <ImageView
+        android:id="@+id/deck_image"
+        android:layout_width="@dimen/detail_item_icon_size"
+        android:layout_height="@dimen/detail_item_icon_size"
+        android:layout_marginEnd="@dimen/detail_item_icon_margin_right"
+        android:layout_marginStart="@dimen/detail_item_icon_margin_right"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/acb_card_image"
+        android:scaleType="centerInside"/>
+
     <TextView
         android:id="@+id/text_view"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"

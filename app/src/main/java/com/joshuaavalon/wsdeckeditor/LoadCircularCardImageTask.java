@@ -20,9 +20,9 @@ public class LoadCircularCardImageTask extends AsyncTask<Void, Void, Drawable> {
     @NonNull
     private final Context context;
     @Nullable
-    private final LruCache<Card, Bitmap> bitmapCache;
+    private final LruCache<String, Bitmap> bitmapCache;
 
-    public LoadCircularCardImageTask(@NonNull final Context context, @Nullable final LruCache<Card, Bitmap> bitmapCache,
+    public LoadCircularCardImageTask(@NonNull final Context context, @Nullable final LruCache<String, Bitmap> bitmapCache,
                                      @NonNull final CardImageHolder viewHolder, @NonNull final Card card) {
         this.context = context.getApplicationContext();
         this.bitmapCache = bitmapCache;
@@ -37,7 +37,7 @@ public class LoadCircularCardImageTask extends AsyncTask<Void, Void, Drawable> {
         final int dimension = context.getResources().getDimensionPixelSize(R.dimen.detail_item_icon_size);
         final Bitmap squareBitmap = ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
         if (bitmapCache != null)
-            bitmapCache.put(card, squareBitmap);
+            bitmapCache.put(card.getImage(), squareBitmap);
         return BitmapUtils.toRoundDrawable(context.getResources(), squareBitmap);
     }
 

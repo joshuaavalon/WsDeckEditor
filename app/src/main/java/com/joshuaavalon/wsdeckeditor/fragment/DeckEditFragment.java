@@ -4,14 +4,13 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.util.LruCache;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -32,15 +31,14 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
-import com.joshuaavalon.wsdeckeditor.BitmapUtils;
 import com.joshuaavalon.wsdeckeditor.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.CardOrder;
 import com.joshuaavalon.wsdeckeditor.DialogUtils;
-import com.joshuaavalon.wsdeckeditor.LoadCircularCardImageTask;
 import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.PreferenceRepository;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.SnackBarSupport;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
@@ -60,13 +58,12 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class DeckEditFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class DeckEditFragment extends ImageListFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         ResultTask.CallBack<List<Card>> {
     public static final int REQUEST_CARD_DETAIL = 1;
     private static final String ARG_ID = "DeckEditFragment.arg.Id";
     private RecyclerView recyclerView;
     private CardRecyclerViewAdapter adapter;
-    private LruCache<Card, Bitmap> bitmapCache;
     @Nullable
     private String title;
     private AbstractDeck abstractDeck;
@@ -86,7 +83,6 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bitmapCache = BitmapUtils.createBitmapCache();
         comparator = new SerialComparator();
     }
 
@@ -113,7 +109,15 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                                          final int direction) {
                         if (!(viewHolder instanceof CardViewHolder)) return;
                         final Multiset.Entry<Card> entry = adapter.getModels().get(viewHolder.getAdapterPosition());
-                        DeckRepository.updateDeckCount(getActivity(), deck.getId(), entry.getElement().getSerial(), 0);
+                        DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), 0);
+                        Snackbar.make(((SnackBarSupport) getActivity()).getCoordinatorLayout(), R.string.msg_remove_card, Snackbar.LENGTH_LONG)
+                                .setAction(R.string.dialog_undo_button, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DeckRepository.updateDeckCount(getContext(), deck.getId(), entry.getElement().getSerial(), entry.getCount());
+                                    }
+                                })
+                                .show();
                     }
                 });
         itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -226,12 +230,6 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         //no-ops
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        bitmapCache.evictAll();
     }
 
     @Override
@@ -377,13 +375,7 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                 }
             });
             imageName = card.getImage();
-            final Bitmap squareBitmap = bitmapCache.get(card);
-            if (squareBitmap != null) {
-                imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
-            } else {
-                imageView.setImageDrawable(null);
-                new LoadCircularCardImageTask(getContext(), bitmapCache, this, card).execute();
-            }
+            loadImage(card, this);
             nameTextView.setText(card.getName());
             serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
                     card.getLevel(), getString(card.getType().getStringId())));
@@ -395,6 +387,16 @@ public class DeckEditFragment extends BaseFragment implements LoaderManager.Load
                     showChangeCardCountDialog(entry);
                 }
             });
+            itemView.setOnLongClickListener(
+                    new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            deck.setCover(entry.getElement().getSerial());
+                            DeckRepository.updateDeck(getContext(), deck.toAbstract());
+                            showMessage(R.string.msg_set_fav);
+                            return true;
+                        }
+                    });
         }
 
         private void showChangeCardCountDialog(@NonNull final Multiset.Entry<Card> entry) {

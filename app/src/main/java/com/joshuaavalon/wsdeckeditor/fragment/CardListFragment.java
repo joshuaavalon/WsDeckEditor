@@ -4,7 +4,6 @@ package com.joshuaavalon.wsdeckeditor.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.util.LruCache;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -34,11 +32,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.joshuaavalon.wsdeckeditor.BitmapUtils;
 import com.joshuaavalon.wsdeckeditor.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.DeckUtils;
 import com.joshuaavalon.wsdeckeditor.DialogUtils;
-import com.joshuaavalon.wsdeckeditor.LoadCircularCardImageTask;
 import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.OnBackPressedListener;
@@ -64,7 +60,7 @@ import java.util.Stack;
 
 import static android.app.Activity.RESULT_OK;
 
-public class CardListFragment extends BaseFragment implements ActionMode.Callback, ActionModeListener,
+public class CardListFragment extends ImageListFragment implements ActionMode.Callback, ActionModeListener,
         SearchView.OnQueryTextListener, OnBackPressedListener, ResultTask.CallBack<List<Card>>, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int REQUEST_CARD_DETAIL = 1;
     private static final String ARG_FILTER = "CardListFragment.arg.Filter";
@@ -76,7 +72,6 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     private ArrayList<Card> resultCards;
     @Nullable
     private ActionMode actionMode;
-    private LruCache<Card, Bitmap> bitmapCache;
     @Nullable
     private String title;
     private Stack<CardRepository.Filter> argStack;
@@ -115,7 +110,6 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bitmapCache = BitmapUtils.createBitmapCache();
         argStack = new SizedStack<>(STACK_SIZE);
         titleStack = new SizedStack<>(STACK_SIZE);
         final CardRepository.Filter filter = getArguments().getParcelable(ARG_FILTER);
@@ -367,12 +361,6 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        bitmapCache.evictAll();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != REQUEST_CARD_DETAIL) return;
         if (resultCode != RESULT_OK) return;
@@ -409,7 +397,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
         final int count = PreferenceRepository.getAddIfNotExist(getContext()) ?
                 DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial()) :
                 DeckRepository.addCard(getContext(), id, card.getSerial());
-        if(count > 0)
+        if (count > 0)
             showMessage(getString(R.string.msg_add_to_deck_single, count));
         else
             showMessage(R.string.msg_deck_error);
@@ -508,13 +496,7 @@ public class CardListFragment extends BaseFragment implements ActionMode.Callbac
                 }
             });
             imageName = card.getImage();
-            final Bitmap squareBitmap = bitmapCache.get(card);
-            if (squareBitmap != null) {
-                imageView.setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
-            } else {
-                imageView.setImageDrawable(null);
-                new LoadCircularCardImageTask(getContext(), bitmapCache, this, card).execute();
-            }
+            loadImage(card, this);
             nameTextView.setText(card.getName());
             serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
                     card.getLevel(), getString(card.getType().getStringId())));

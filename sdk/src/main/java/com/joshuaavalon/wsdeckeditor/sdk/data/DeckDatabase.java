@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 public class DeckDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "deck.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     public DeckDatabase(@NonNull final Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -17,8 +17,8 @@ public class DeckDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL)",
-                        Table.Deck, Field.Id, Field.Name));
+                String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s TEXT)",
+                        Table.Deck, Field.Id, Field.Name, Field.Cover));
         sqLiteDatabase.execSQL(
                 String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s INTEGER, %s INTEGER, %s TEXT NOT NULL)",
                         Table.DeckRecord, Field.Id, Field.Count, Field.DeckId, Field.Serial));
@@ -44,5 +44,6 @@ public class DeckDatabase extends SQLiteOpenHelper {
         String Count = "Count";
         String DeckId = "DeckId";
         String Serial = "Serial";
+        String Cover = "Cover";
     }
 }

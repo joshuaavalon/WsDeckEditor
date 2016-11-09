@@ -40,6 +40,7 @@ public class DeckRepository {
         final ContentResolver contentResolver = context.getContentResolver();
         final ContentValues deckValues = new ContentValues();
         deckValues.put(DeckDatabase.Field.Name, deck.getName());
+        deckValues.put(DeckDatabase.Field.Cover, deck.getCover());
         final Uri uri = contentResolver.insert(DeckProvider.DECK_CONTENT_URI, deckValues);
         if (uri == null) return;
         final long id = ContentUris.parseId(uri);
@@ -50,7 +51,6 @@ public class DeckRepository {
     public static void deleteDeck(@NonNull final Context context, @NonNull final Deck deck) {
         deleteDeck(context, deck.getId());
     }
-
 
     public static void deleteDeck(@NonNull final Context context, final long id) {
         if (id == Deck.NO_ID) return;
@@ -119,13 +119,14 @@ public class DeckRepository {
         return count;
     }
 
-    public static void updateDeckName(@NonNull final Context context, final long id, @NonNull final String name) {
-        if (id == Deck.NO_ID) return;
+    public static void updateDeck(@NonNull final Context context,@NonNull final AbstractDeck deck) {
+        if (deck.getId() == Deck.NO_ID) return;
         final ContentResolver contentResolver = context.getContentResolver();
         final ContentValues deckValues = new ContentValues();
-        deckValues.put(DeckDatabase.Field.Name, name);
+        deckValues.put(DeckDatabase.Field.Name, deck.getName());
+        deckValues.put(DeckDatabase.Field.Cover, deck.getCover());
         contentResolver.update(ContentUris.withAppendedId(DeckProvider.DECK_CONTENT_URI,
-                id), deckValues, null, null);
+                deck.getId()), deckValues, null, null);
     }
 
     private static void insertCard(@NonNull final ContentResolver contentResolver, final long id,
@@ -174,7 +175,10 @@ public class DeckRepository {
 
     @NonNull
     private static AbstractDeck buildDeck(@NonNull final Cursor cursor) {
-        return new AbstractDeck(cursor.getLong(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Id)),
-                cursor.getString(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Name)));
+        return new AbstractDeck(
+                cursor.getLong(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Id)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Name)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DeckDatabase.Field.Cover))
+        );
     }
 }

@@ -19,10 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.joshuaavalon.wsdeckeditor.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.DialogUtils;
 import com.joshuaavalon.wsdeckeditor.LoaderId;
 import com.joshuaavalon.wsdeckeditor.MainActivity;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.sdk.Card;
+import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.data.DeckRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.util.AbstractDeck;
 import com.joshuaavalon.wsdeckeditor.view.AnimatedRecyclerAdapter;
@@ -31,7 +34,7 @@ import com.joshuaavalon.wsdeckeditor.view.BaseRecyclerViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener,
+public class DeckListFragment extends ImageListFragment implements SearchView.OnQueryTextListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private RecyclerView recyclerView;
     private DeckListAdapter adapter;
@@ -154,16 +157,19 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         }
     }
 
-    private class DeckListViewHolder extends BaseRecyclerViewHolder<AbstractDeck> {
+    private class DeckListViewHolder extends BaseRecyclerViewHolder<AbstractDeck> implements CardImageHolder {
         private final TextView textView;
         private final View itemView;
         private final ImageView imageView;
+        private final ImageView deckImageView;
+        private String imageName;
 
         public DeckListViewHolder(final View itemView) {
             super(itemView);
             this.itemView = itemView;
             textView = (TextView) itemView.findViewById(R.id.text_view);
             imageView = (ImageView) itemView.findViewById(R.id.image_view);
+            deckImageView = (ImageView) itemView.findViewById(R.id.deck_image);
         }
 
         @Override
@@ -181,6 +187,27 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                     DialogUtils.showRenameDeckDialog(getContext(), deck);
                 }
             });
+            imageView.setImageDrawable(null);
+            imageName = null;
+            if (deck.getCover() != null) {
+                final Card card = CardRepository.getCard(getContext(), deck.getCover());
+                if (card != null) {
+                    imageName = card.getImage();
+                    loadImage(card, this);
+                }
+            }
+        }
+
+        @NonNull
+        @Override
+        public ImageView getImageView() {
+            return deckImageView;
+        }
+
+        @NonNull
+        @Override
+        public String getImageName() {
+            return imageName;
         }
     }
 
