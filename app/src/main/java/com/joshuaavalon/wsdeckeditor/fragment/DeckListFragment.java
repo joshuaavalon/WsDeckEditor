@@ -197,8 +197,10 @@ public class DeckListFragment extends ImageListFragment implements SearchView.On
                 if (card != null) {
                     imageName = card.getImage();
                     loadImage(card, this);
+                    return;
                 }
             }
+            loadImage(null, this);
         }
 
         @NonNull

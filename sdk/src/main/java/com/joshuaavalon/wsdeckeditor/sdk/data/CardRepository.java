@@ -26,11 +26,15 @@ import java.util.Set;
 public class CardRepository {
 
     @NonNull
-    public static Bitmap getImage(@NonNull final Context context, @NonNull final Card card) {
-        Bitmap bitmap = getImage(context, card.getImage());
-        if (bitmap == null)
-            bitmap = BitmapFactory.decodeResource(context.getResources(),
-                    card.getType() != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
+    public static Bitmap getImage(@NonNull final Context context, @Nullable final Card card) {
+        Bitmap bitmap;
+        if (card != null) {
+            bitmap = getImage(context, card.getImage());
+            if (bitmap == null)
+                bitmap = BitmapFactory.decodeResource(context.getResources(),
+                        card.getType() != Card.Type.Climax ? R.drawable.dc_w00_00 : R.drawable.dc_w00_000, null);
+        } else
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.dc_w00_00, null);
         return bitmap;
     }
 

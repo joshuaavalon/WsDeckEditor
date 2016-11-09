@@ -13,7 +13,7 @@ public class DeckDatabase extends SQLiteOpenHelper {
     private static final int VERSION = 2;
 
     public DeckDatabase(@NonNull final Context context) {
-        super(context, DATABASE_NAME, new LeakLessCursorFactory(), VERSION);
+        super(context, DATABASE_NAME, null, VERSION);
     }
 
     @Override

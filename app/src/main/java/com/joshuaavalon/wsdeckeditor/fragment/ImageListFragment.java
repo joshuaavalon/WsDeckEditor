@@ -26,13 +26,15 @@ public abstract class ImageListFragment extends BaseFragment {
         bitmapCache.evictAll();
     }
 
-    protected void loadImage(@NonNull final Card card, @NonNull final CardImageHolder holder) {
-        final Bitmap squareBitmap = bitmapCache.get(card.getImage());
-        if (squareBitmap != null) {
-            holder.getImageView().setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
-        } else {
-            holder.getImageView().setImageDrawable(null);
-            new LoadCircularCardImageTask(getContext(), bitmapCache, holder, card).execute();
+    protected void loadImage(@Nullable final Card card, @NonNull final CardImageHolder holder) {
+        if (card != null) {
+            final Bitmap squareBitmap = bitmapCache.get(card.getImage());
+            if (squareBitmap != null) {
+                holder.getImageView().setImageDrawable(BitmapUtils.toRoundDrawable(getResources(), squareBitmap));
+                return;
+            }
         }
+        holder.getImageView().setImageDrawable(null);
+        new LoadCircularCardImageTask(getContext(), bitmapCache, holder, card).execute();
     }
 }
