@@ -1,4 +1,14 @@
 Changelog
+1.0.0 Publish
+Add swipe setting
+Add update notification
+Add deck cover
+Add undo removing card
+Fix database leakage
+Move bulid setting to setting.properties
+Update SDK to 25
+Update Translation
+
 1.0.1
 Update UI
 Fix card not add correctly
