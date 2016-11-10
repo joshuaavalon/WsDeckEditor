@@ -2,7 +2,7 @@
 [![Release](https://img.shields.io/github/release/joshuaavalon/WsDeckEditor.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/releases)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/blob/master/LICENSE)
 
-[![Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.joshuaavalon.wsdeckeditor)
+<a href='https://play.google.com/store/apps/details?id=com.joshuaavalon.wsdeckeditor&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height='45px' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 
 Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 
