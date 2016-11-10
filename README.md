@@ -2,6 +2,8 @@
 [![Release](https://img.shields.io/github/release/joshuaavalon/WsDeckEditor.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/releases)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/joshuaavalon/WsDeckEditor/blob/master/LICENSE)
 
+[![Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.joshuaavalon.wsdeckeditor)
+
 Android application to edit [Weiβ Schwarz](http://ws-tcg.com/) deck.
 
 ![](https://raw.githubusercontent.com/joshuaavalon/wsdeckeditor/master/screenshots/003.jpg)
