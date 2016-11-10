@@ -70,6 +70,7 @@ public class CardListLoadTask extends CardLoadTask {
                 result.add(buildCard(cursor));
             } while (cursor.moveToNext());
         cursor.close();
+        database.close();
         return result;
     }
 

@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
-import com.joshuaavalon.wsdeckeditor.sdk.LeakLessCursorFactory;
 import com.joshuaavalon.wsdeckeditor.sdk.R;
 
 import java.io.File;
@@ -24,7 +23,7 @@ public class CardDatabase extends SQLiteOpenHelper {
     private final File dbFile;
 
     public CardDatabase(@NonNull final Context context) {
-        super(context, DATABASE_NAME, new LeakLessCursorFactory(), VERSION);
+        super(context, DATABASE_NAME, null, VERSION);
         this.context = context;
         final String path = context.getDatabasePath(DATABASE_NAME).getPath();
         dbFile = new File(path);

@@ -37,6 +37,7 @@ public class StringLoadTask extends ResultTask<Context, List<String>> {
                 result.add(cursor.getString(0));
             } while (cursor.moveToNext());
         cursor.close();
+        database.close();
         return result;
     }
 }
