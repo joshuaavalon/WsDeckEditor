@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor;
 
-
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;

@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -393,7 +392,6 @@ public class CardListFragment extends ImageListFragment implements ActionMode.Ca
             showMessage(R.string.msg_cards_deck);
             return;
         }
-
         final int count = PreferenceRepository.getAddIfNotExist(getContext()) ?
                 DeckRepository.addCardIfNotExist(getContext(), id, card.getSerial()) :
                 DeckRepository.addCard(getContext(), id, card.getSerial());
@@ -464,7 +462,6 @@ public class CardListFragment extends ImageListFragment implements ActionMode.Ca
         private final ImageView actionView;
         @NonNull
         private String imageName;
-
 
         public CardViewHolder(@NonNull final View itemView, @Nullable final ActionModeListener actionModeListener) {
             super(itemView);

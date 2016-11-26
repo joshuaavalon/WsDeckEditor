@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -138,7 +137,6 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<St
     public void onResponse(String response) {
         latestTextView.setText(response);
     }
-
 
     private class DownloadReceiver extends ResultReceiver {
         public DownloadReceiver(Handler handler) {

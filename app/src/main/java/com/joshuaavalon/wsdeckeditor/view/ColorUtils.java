@@ -7,7 +7,6 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.sdk.Card;
 
 public class ColorUtils {
-
     @DrawableRes
     public static int getBackgroundDrawable(@NonNull final Card.Color color) {
         switch (color) {

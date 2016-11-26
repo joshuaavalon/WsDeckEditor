@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -64,21 +63,18 @@ public class SearchFragment extends BaseFragment implements ResultTask.CallBack<
         normalSwitch = (Switch) view.findViewById(R.id.search_hide);
         normalSwitch.setChecked(PreferenceRepository.getHideNormal(getContext()));
         expansionSpinner = (Spinner) view.findViewById(R.id.search_expansion);
-
         typeSpinner = (Spinner) view.findViewById(R.id.search_type);
         final List<String> typeItems = new ArrayList<>();
         typeItems.add("");
         for (Card.Type type : Card.Type.values())
             typeItems.add(getString(type.getStringId()));
         typeSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, typeItems));
-
         colorSpinner = (Spinner) view.findViewById(R.id.search_color);
         final List<String> colorItems = new ArrayList<>();
         colorItems.add("");
         for (Card.Color color : Card.Color.values())
             colorItems.add(getString(color.getStringId()));
         colorSpinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, colorItems));
-
         triggerSpinner = (Spinner) view.findViewById(R.id.search_trigger);
         final List<String> triggerItems = new ArrayList<>();
         triggerItems.add("");

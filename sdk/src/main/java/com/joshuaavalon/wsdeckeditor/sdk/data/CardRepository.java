@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.data;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 public class CardRepository {
-
     @NonNull
     public static Bitmap getImage(@NonNull final Context context, @Nullable final Card card) {
         Bitmap bitmap;
@@ -281,5 +279,4 @@ public class CardRepository {
             dest.writeString(this.expansion);
         }
     }
-
 }

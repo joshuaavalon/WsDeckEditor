@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -94,7 +93,6 @@ public class DeckEditFragment extends ImageListFragment implements LoaderManager
         adapter = new CardRecyclerViewAdapter(new ArrayList<Multiset.Entry<Card>>());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         if (PreferenceRepository.getSwipeRemove(getContext())) {
             final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                     new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -352,7 +350,6 @@ public class DeckEditFragment extends ImageListFragment implements LoaderManager
         private final View itemView, colorView;
         @NonNull
         private String imageName;
-
 
         public CardViewHolder(@NonNull final View itemView) {
             super(itemView);

@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.task;
 
-
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 

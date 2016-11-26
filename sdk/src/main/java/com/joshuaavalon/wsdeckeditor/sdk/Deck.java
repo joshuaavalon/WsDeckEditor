@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk;
 
-
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor;
 
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -93,19 +92,16 @@ public class DialogUtils {
         final TextView totalTextView = (TextView) view.findViewById(R.id.total_content_text_view);
         totalTextView.setText(DeckUtils.getStatusLabel(deck), TextView.BufferType.SPANNABLE);
         final List<String> tempList = new ArrayList<>();
-
         final TextView colorTextView = (TextView) view.findViewById(R.id.color_content_text_view);
         for (Card.Color color : Card.Color.values())
             tempList.add(String.valueOf(colorCount.count(color)));
         colorTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
         tempList.clear();
-
         final TextView typeTextView = (TextView) view.findViewById(R.id.type_content_text_view);
         for (Card.Type type : Card.Type.values())
             tempList.add(String.valueOf(typeCount.count(type)));
         typeTextView.setText(Joiner.on(INFO_DIALOG_LINE_SEPARATOR).join(tempList));
         tempList.clear();
-
         final TextView levelTextView = (TextView) view.findViewById(R.id.level_content_text_view);
         for (int i = 0; i <= 3; i++)
             tempList.add(String.valueOf(levelCount.count(i)));

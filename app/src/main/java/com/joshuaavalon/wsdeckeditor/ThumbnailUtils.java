@@ -9,7 +9,6 @@ import android.graphics.Rect;
  * Thumbnail generation routines for media provider.
  */
 public class ThumbnailUtils {
-
     /**
      * Constant used to indicate we should recycle the input in
      * {@link #extractThumbnail(Bitmap, int, int, int)} unless the output is the input.
@@ -44,7 +43,6 @@ public class ThumbnailUtils {
         if (source == null) {
             return null;
         }
-
         float scale;
         if (source.getWidth() < source.getHeight()) {
             scale = width / (float) source.getWidth();
@@ -67,7 +65,6 @@ public class ThumbnailUtils {
                                     int options) {
         boolean scaleUp = (options & OPTIONS_SCALE_UP) != 0;
         boolean recycle = (options & OPTIONS_RECYCLE_INPUT) != 0;
-
         int deltaX = source.getWidth() - targetWidth;
         int deltaY = source.getHeight() - targetHeight;
         if (!scaleUp && (deltaX < 0 || deltaY < 0)) {
@@ -80,7 +77,6 @@ public class ThumbnailUtils {
             Bitmap b2 = Bitmap.createBitmap(targetWidth, targetHeight,
                     Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b2);
-
             int deltaXHalf = Math.max(0, deltaX / 2);
             int deltaYHalf = Math.max(0, deltaY / 2);
             Rect src = new Rect(
@@ -104,10 +100,8 @@ public class ThumbnailUtils {
         }
         float bitmapWidthF = source.getWidth();
         float bitmapHeightF = source.getHeight();
-
         float bitmapAspect = bitmapWidthF / bitmapHeightF;
         float viewAspect = (float) targetWidth / targetHeight;
-
         if (bitmapAspect > viewAspect) {
             float scale = targetHeight / bitmapHeightF;
             if (scale < .9F || scale > 1F) {
@@ -123,7 +117,6 @@ public class ThumbnailUtils {
                 scaler = null;
             }
         }
-
         Bitmap b1;
         if (scaler != null) {
             // this is used for minithumb and crop, so we want to filter here.
@@ -132,27 +125,22 @@ public class ThumbnailUtils {
         } else {
             b1 = source;
         }
-
         if (recycle && b1 != source) {
             source.recycle();
         }
-
         int dx1 = Math.max(0, b1.getWidth() - targetWidth);
         int dy1 = 0;//Math.max(0, b1.getHeight() - targetHeight);
-
         Bitmap b2 = Bitmap.createBitmap(
                 b1,
                 dx1 / 2,
                 dy1 / 2,
                 targetWidth,
                 targetHeight);
-
         if (b2 != b1) {
             if (recycle || b1 != source) {
                 b1.recycle();
             }
         }
-
         return b2;
     }
 }

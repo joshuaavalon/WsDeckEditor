@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor;
 
-
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 

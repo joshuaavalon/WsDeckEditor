@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;

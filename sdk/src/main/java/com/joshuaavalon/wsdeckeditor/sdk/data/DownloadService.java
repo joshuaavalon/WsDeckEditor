@@ -81,7 +81,6 @@ public class DownloadService extends IntentService {
             } while (cursor.moveToNext());
             cursor.close();
             handleDownloadImages(receiver, requestCode, result, forced);
-
         } else if (ACTION_DOWNLOAD_DB.equals(action)) {
             final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_RECEIVER);
             final int requestCode = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
@@ -105,16 +104,13 @@ public class DownloadService extends IntentService {
                     final URL url = new URL(urlToDownload);
                     final URLConnection connection = url.openConnection();
                     connection.connect();
-
                     final InputStream input = new BufferedInputStream(connection.getInputStream());
                     final OutputStream output = new FileOutputStream(file);
-
                     final byte data[] = new byte[1024];
                     int count;
                     while ((count = input.read(data)) != -1) {
                         output.write(data, 0, count);
                     }
-
                     output.flush();
                     output.close();
                     input.close();
@@ -138,14 +134,12 @@ public class DownloadService extends IntentService {
         receiver.send(requestCode, resultData);
     }
 
-
     private void handleDownloadDatabase(@NonNull final ResultReceiver receiver, final int requestCode,
                                         @NonNull final String urlToDownload) {
         try {
             final URL url = new URL(urlToDownload);
             final URLConnection connection = url.openConnection();
             connection.connect();
-
             final InputStream input = new BufferedInputStream(connection.getInputStream());
             final File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                     CardDatabase.DATABASE_NAME);

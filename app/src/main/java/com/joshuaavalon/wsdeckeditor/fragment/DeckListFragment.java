@@ -215,6 +215,4 @@ public class DeckListFragment extends ImageListFragment implements SearchView.On
             return imageName;
         }
     }
-
-
 }

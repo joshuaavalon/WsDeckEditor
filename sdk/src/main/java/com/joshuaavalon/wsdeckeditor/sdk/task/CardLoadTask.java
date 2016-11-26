@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.task;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import com.joshuaavalon.wsdeckeditor.sdk.data.CardRepository;
 import java.util.List;
 
 public abstract class CardLoadTask extends ResultTask<Context, List<Card>> {
-
     protected CardLoadTask(@Nullable final CallBack<List<Card>> callBack) {
         super(callBack);
     }

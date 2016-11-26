@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.util;
 
-
 import android.support.annotation.NonNull;
 
 public class DeckRecord {

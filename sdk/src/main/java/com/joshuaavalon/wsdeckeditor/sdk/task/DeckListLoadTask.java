@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.task;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

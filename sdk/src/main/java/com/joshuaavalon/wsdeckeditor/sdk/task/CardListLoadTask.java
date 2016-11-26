@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.task;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -102,22 +101,18 @@ public class CardListLoadTask extends CardLoadTask {
                 }
                 selects.add("(" + Joiner.on(" OR ").join(keywords) + ")");
             }
-
         if (filter.getType() != null) {
             selects.add(String.format(equalSql, CardDatabase.Field.Type));
             selectArgs.add(filter.getType().toString());
         }
-
         if (filter.getTrigger() != null) {
             selects.add(String.format(equalSql, CardDatabase.Field.Trigger));
             selectArgs.add(filter.getTrigger().toString());
         }
-
         if (filter.getColor() != null) {
             selects.add(String.format(equalSql, CardDatabase.Field.Color));
             selectArgs.add(filter.getColor().toString());
         }
-
         if (!TextUtils.isEmpty(filter.getExpansion())) {
             selects.add(String.format(equalSql, CardDatabase.Field.Expansion));
             selectArgs.add(filter.getExpansion());

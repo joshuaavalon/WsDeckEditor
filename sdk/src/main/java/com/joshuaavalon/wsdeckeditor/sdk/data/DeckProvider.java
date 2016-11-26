@@ -117,7 +117,6 @@ public class DeckProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-
         if (rowID > 0) {
             final Context context = getContext();
             if (context != null)

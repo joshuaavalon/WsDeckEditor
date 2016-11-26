@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
-
 public class PreferenceRepository {
     public static void setFirstTime(@NonNull final Context context, final boolean bool) {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();

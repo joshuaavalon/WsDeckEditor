@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.sdk.data;
 
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
