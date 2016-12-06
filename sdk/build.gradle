@@ -21,13 +21,13 @@ android {
     buildTypes {
         debug {
             def setting = readSetting();
-            buildConfigField "String", "urlVersion", setting["urlVersion"]
-            buildConfigField "String", "urlDatabase", setting["urlDatabase"]
+            buildConfigField "String", "versionUrl", setting["versionUrl"]
+            buildConfigField "String", "databaseUrl", setting["databaseUrl"]
         }
         release {
             def setting = readSetting();
-            buildConfigField "String", "urlVersion", setting["urlVersion"]
-            buildConfigField "String", "urlDatabase", setting["urlDatabase"]
+            buildConfigField "String", "versionUrl", setting["versionUrl"]
+            buildConfigField "String", "databaseUrl", setting["databaseUrl"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

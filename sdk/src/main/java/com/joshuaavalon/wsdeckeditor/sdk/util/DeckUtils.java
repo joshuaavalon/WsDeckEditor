@@ -6,7 +6,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.joshuaavalon.wsdeckeditor.sdk.Deck;
+import com.joshuaavalon.wsdeckeditor.sdk.deck.Deck;
 
 public class DeckUtils {
     private static final int DECK_LIMIT = 50;
