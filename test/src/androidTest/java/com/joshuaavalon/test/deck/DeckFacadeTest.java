@@ -29,8 +29,8 @@ public class DeckFacadeTest {
     @BeforeClass
     public static void beforeClass() {
         final Context context = InstrumentationRegistry.getTargetContext();
-        deckRepository = DeckFacade.Repository(context);
         cardRepository = CardFacade.Repository(context);
+        deckRepository = DeckFacade.Repository(context, cardRepository);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class DeckFacadeTest {
         Assert.assertNotNull(deck);
         final Card card = cardRepository.find("DC/W01-001");
         Assert.assertEquals(1, deck.getCardList().count(card));
-        deckRepository.update(deck.getId(), "DC/W01-001",0);
+        deckRepository.update(deck.getId(), "DC/W01-001", 0);
         deck = deckRepository.deck(deck.getId());
         Assert.assertNotNull(deck);
         Assert.assertEquals(0, deck.getCardList().count(card));

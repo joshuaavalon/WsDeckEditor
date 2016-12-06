@@ -192,4 +192,20 @@ class DeckRepository implements IDeckRepository {
         }
         return deck;
     }
+
+    @Override
+    public int cardCount(long id) {
+        final SQLiteDatabase database = helper.getReadableDatabase();
+        final Cursor cursor = database.query(DeckScheme.Table.DeckRecord,
+                new String[]{String.format("SUM(%s)", DeckScheme.Field.Count)},
+                DeckScheme.Field.DeckId + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null);
+        int count = 0;
+        if (cursor.moveToFirst())
+            count = cursor.getInt(0);
+        cursor.close();
+        database.close();
+        return count;
+    }
 }

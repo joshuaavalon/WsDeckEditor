@@ -29,7 +29,7 @@ public class CardFacadeTest {
     @Test
     @MediumTest
     public void versionTest() {
-        Assert.assertEquals(1, repository.getVersion());
+        Assert.assertEquals(1, repository.version());
     }
 
     @After

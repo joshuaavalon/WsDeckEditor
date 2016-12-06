@@ -4,11 +4,13 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.android.volley.Response;
+
 import java.io.InputStream;
 import java.util.List;
 
 public interface ICardRepository {
-    int getVersion();
+    int version();
 
     @Nullable
     Card find(@NonNull String serial);
@@ -29,4 +31,10 @@ public interface ICardRepository {
 
     @NonNull
     List<String> expansions();
+
+    void networkVersion(@NonNull Response.Listener<Integer> listener,
+                        @Nullable Response.ErrorListener errorListener);
+
+    void needUpdated(@NonNull Response.Listener<Boolean> listener,
+                     @Nullable Response.ErrorListener errorListener);
 }

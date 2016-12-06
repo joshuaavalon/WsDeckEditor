@@ -22,4 +22,6 @@ public interface IDeckRepository {
 
     @Nullable
     Deck deck(long id);
+
+    int cardCount(long id);
 }

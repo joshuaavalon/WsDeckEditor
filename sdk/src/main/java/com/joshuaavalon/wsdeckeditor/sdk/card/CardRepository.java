@@ -12,25 +12,43 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.webkit.URLUtil;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
+import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
 import com.joshuaavalon.wsdeckeditor.sdk.R;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class CardRepository implements ICardRepository {
     @NonNull
     private final AbstractCardDatabase database;
     @NonNull
     private final Context context;
+    private int version, networkVersion;
+    @Nullable
+    private RequestQueue requestQueue;
+    @Nullable
+    private Calendar lastUpdated;
+    private final static int CacheTime = 15; // In minutes
 
     CardRepository(@NonNull final Context context, @NonNull final AbstractCardDatabase database) {
         this.context = context.getApplicationContext();
         this.database = database;
+        version = -1;
+        networkVersion = -1;
+        requestQueue = null;
+        lastUpdated = null;
     }
 
     @NonNull
@@ -74,7 +92,9 @@ class CardRepository implements ICardRepository {
     }
 
     @Override
-    public int getVersion() {
+    public int version() {
+        if (version > 0)
+            return version;
         final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         final Cursor cursor = sqLiteDatabase.query(CardScheme.Table.Version,
                 new String[]{CardScheme.Field.Version},
@@ -84,6 +104,7 @@ class CardRepository implements ICardRepository {
             result = cursor.getInt(0);
         cursor.close();
         sqLiteDatabase.close();
+        version = result;
         return result;
     }
 
@@ -150,6 +171,7 @@ class CardRepository implements ICardRepository {
 
     @Override
     public void updateDatabase(@NonNull InputStream in) {
+        version = -1;
         database.copyDatabase(in);
     }
 
@@ -210,6 +232,35 @@ class CardRepository implements ICardRepository {
         return result;
     }
 
+    @Override
+    public void networkVersion(@NonNull final Response.Listener<Integer> listener, @Nullable final Response.ErrorListener errorListener) {
+        final Calendar now = Calendar.getInstance();
+        final boolean needUpdate = lastUpdated == null ||
+                TimeUnit.MILLISECONDS.toMinutes(now.getTimeInMillis() - lastUpdated.getTimeInMillis()) > CacheTime;
+        if (!needUpdate && networkVersion > 0)
+            listener.onResponse(networkVersion);
+        else
+            getRequestQueue().add(new StringRequest(Request.Method.GET, BuildConfig.versionUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    // Not frequently updated, memory cache is fine
+                    networkVersion = Integer.valueOf(response);
+                    lastUpdated = Calendar.getInstance();
+                    listener.onResponse(networkVersion);
+                }
+            }, errorListener));
+    }
+
+    @Override
+    public void needUpdated(@NonNull final Response.Listener<Boolean> listener, @Nullable final Response.ErrorListener errorListener) {
+        networkVersion(new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+                listener.onResponse(response > version());
+            }
+        }, errorListener);
+    }
+
     private void prepareArgument(@NonNull final Filter filter, @NonNull final List<String> selects,
                                  @NonNull final List<String> selectArgs) {
         final String likeSql = "%s LIKE ?";
@@ -266,5 +317,12 @@ class CardRepository implements ICardRepository {
             selectArgs.add("RRR");
             selectArgs.add("XR");
         }
+    }
+
+    @NonNull
+    private RequestQueue getRequestQueue() {
+        if (requestQueue == null)
+            requestQueue = Volley.newRequestQueue(context);
+        return requestQueue;
     }
 }
