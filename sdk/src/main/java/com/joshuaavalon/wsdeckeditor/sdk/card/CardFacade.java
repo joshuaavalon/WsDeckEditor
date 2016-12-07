@@ -9,6 +9,8 @@ public final class CardFacade {
 
     @NonNull
     public static ICardRepository Repository(@NonNull final Context context) {
-        return new CardRepository(context, new CardDatabase(context));
+        return CacheCardRepository
+                .builder(new CardRepository(context, new CardDatabase(context)))
+                .build();
     }
 }

@@ -12,8 +12,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.fragment.AboutFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.UpdateFragment;
 
 import butterknife.BindView;
+import timber.log.Timber;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,23 +28,36 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationView.setNavigationItemSelectedListener(this);
+        fragmentTransaction(new AboutFragment());
+        if (getPreference().getFirstTime()) {
+            getPreference().setFirstTime(false);
+            Timber.i("First time usage.");
+        }
         checkUpdate();
-        //TODO: Setup First Time Visit
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         final int id = item.getItemId();
-        Fragment fragment = null;
         switch (id) {
-            case R.id.nav_card_list:
+            case R.id.nav_about:
+                fragmentTransaction(new AboutFragment());
+                break;
+            case R.id.nav_update:
+                fragmentTransaction(new UpdateFragment());
+                break;
+            case R.id.nav_setting:
+                fragmentTransaction(new SettingFragment());
+                break;
+            case R.id.nav_search:
+                SearchActivity.start(this, null);
                 break;
             default:
                 return false;
         }
         if (drawerLayout != null)
             drawerLayout.closeDrawer(GravityCompat.START);
-        return false;
+        return true;
     }
 
     private void enableUpdateNotification(boolean show) {
@@ -66,10 +83,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
+        // Close drawer if it is opened
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
         super.onBackPressed();
+    }
+
+    private void fragmentTransaction(@NonNull final Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, fragment, null)
+                .commit();
     }
 }

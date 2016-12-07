@@ -16,8 +16,6 @@ import timber.log.Timber;
 
 public class WsApplication extends Application {
     @Nullable
-    private LruCache<String, Bitmap> bitmapLruCache;
-    @Nullable
     private ICardRepository cardRepository;
     @Nullable
     private IDeckRepository deckRepository;
@@ -29,21 +27,6 @@ public class WsApplication extends Application {
         super.onCreate();
         if (BuildConfig.DEBUG)
             Timber.plant(new Timber.DebugTree());
-    }
-
-    @NonNull
-    public LruCache<String, Bitmap> getBitmapCache() {
-        if (bitmapLruCache == null) {
-            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-            final int cacheSize = maxMemory / 8;
-            bitmapLruCache = new LruCache<String, Bitmap>(cacheSize) {
-                @Override
-                protected int sizeOf(String key, Bitmap bitmap) {
-                    return bitmap.getByteCount() / 1024;
-                }
-            };
-        }
-        return bitmapLruCache;
     }
 
     @NonNull

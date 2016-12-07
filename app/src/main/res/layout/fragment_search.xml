@@ -1,204 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        style="@style/Container">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/search_keyword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/filter_keyword" />
+                android:hint="@string/filter_keyword"/>
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
+            style="@style/SingleLineListItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_serial" />
+                android:text="@string/filter_serial"/>
 
             <Switch
                 android:id="@+id/search_serial"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:checked="true" />
+                android:checked="true"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_name" />
+                android:text="@string/filter_name"/>
 
             <Switch
                 android:id="@+id/search_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:checked="true" />
+                android:checked="true"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_attr" />
+                android:text="@string/filter_attr"/>
 
             <Switch
                 android:id="@+id/search_attr"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:checked="true" />
+                android:checked="true"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_text" />
+                android:text="@string/filter_text"/>
 
             <Switch
                 android:id="@+id/search_text"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:checked="true" />
+                android:checked="true"/>
         </LinearLayout>
 
-        <include layout="@layout/divider" />
+        <include layout="@layout/divider"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_expansion" />
+                android:text="@string/filter_expansion"/>
 
             <Spinner
                 android:id="@+id/search_expansion"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="3"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_type" />
+                android:text="@string/filter_type"/>
 
             <Spinner
                 android:id="@+id/search_type"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="3"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_color" />
+                android:text="@string/filter_color"/>
 
             <Spinner
                 android:id="@+id/search_color"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="3"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_trigger" />
+                android:text="@string/filter_trigger"/>
 
             <Spinner
                 android:id="@+id/search_trigger"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3" />
+                android:layout_weight="3"/>
         </LinearLayout>
 
-        <include layout="@layout/divider" />
+        <include layout="@layout/divider"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
@@ -210,7 +191,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_level_min"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -223,7 +204,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_level_max"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -232,10 +213,8 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
@@ -247,7 +226,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_cost_min"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -260,7 +239,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_cost_max"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -269,10 +248,8 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
@@ -284,7 +261,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_power_min"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -297,7 +274,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_power_max"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -306,10 +283,8 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
@@ -321,7 +296,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_soul_min"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -334,32 +309,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/filter_soul_max"
-                    android:inputType="number" />
+                    android:inputType="number"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
-        <include layout="@layout/divider" />
+        <include layout="@layout/divider"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/single_line_list_item_height"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/detail_item_padding"
-            android:paddingTop="@dimen/detail_item_padding">
+            style="@style/SingleLineListItem"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_normal_only" />
+                android:text="@string/filter_normal_only"/>
 
             <Switch
                 android:id="@+id/search_hide"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <Button
@@ -368,6 +341,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Search" />
+            android:text="@string/dialog_search_button"/>
     </LinearLayout>
 </ScrollView>

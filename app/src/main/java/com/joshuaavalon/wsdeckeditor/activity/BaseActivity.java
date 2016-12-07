@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.util.LruCache;
@@ -43,6 +44,10 @@ public abstract class BaseActivity extends AbstractActivity {
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
+        initializeActionBar(actionBar);
+    }
+
+    protected void initializeActionBar(@NonNull final ActionBar actionBar) {
         actionBar.setDisplayShowTitleEnabled(true);
     }
 
@@ -54,23 +59,27 @@ public abstract class BaseActivity extends AbstractActivity {
         toggle.syncState();
     }
 
-    protected WsApplication application() {
+    public WsApplication application() {
         return (WsApplication) getApplication();
     }
 
-    protected LruCache<String, Bitmap> getBitmapCache() {
-        return application().getBitmapCache();
-    }
-
-    protected ICardRepository getCardRepository() {
+    @NonNull
+    public ICardRepository getCardRepository() {
         return application().getCardRepository();
     }
 
-    protected IDeckRepository getDeckRepository() {
+    @NonNull
+    public IDeckRepository getDeckRepository() {
         return application().getDeckRepository();
     }
 
-    protected PreferenceRepository getPreference() {
+    @NonNull
+    public PreferenceRepository getPreference() {
         return application().getPreference();
+    }
+
+    @Nullable
+    public CoordinatorLayout getCoordinatorLayout() {
+        return coordinatorLayout;
     }
 }

@@ -9,4 +9,5 @@
     <color name="cardRed">#c62828</color>
     <color name="cardBlue">#0277BD</color>
     <color name="commonBackground">#DDDDDD</color>
+    <color name="iconWhite">#FFFFFF</color>
 </resources>

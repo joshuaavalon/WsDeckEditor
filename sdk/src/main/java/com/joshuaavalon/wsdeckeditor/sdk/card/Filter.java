@@ -1,14 +1,18 @@
 package com.joshuaavalon.wsdeckeditor.sdk.card;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.base.Objects;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class Filter {
+public class Filter implements Parcelable {
     @NonNull
     private Set<String> keyword;
     private boolean hasName, hasChara, hasText, hasSerial, normalOnly;
@@ -175,7 +179,7 @@ public class Filter {
                 type, trigger, color, expansion, level, cost, power, soul);
     }
 
-    public static class Range {
+    public static class Range implements Parcelable {
         private int max;
         private int min;
 
@@ -212,5 +216,91 @@ public class Filter {
         public int hashCode() {
             return Objects.hashCode(max, min);
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.max);
+            dest.writeInt(this.min);
+        }
+
+        protected Range(Parcel in) {
+            this.max = in.readInt();
+            this.min = in.readInt();
+        }
+
+        public static final Creator<Range> CREATOR = new Creator<Range>() {
+            @Override
+            public Range createFromParcel(Parcel source) {
+                return new Range(source);
+            }
+
+            @Override
+            public Range[] newArray(int size) {
+                return new Range[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringList(new ArrayList<>(keyword));
+        dest.writeByte(hasName ? (byte) 1 : (byte) 0);
+        dest.writeByte(hasChara ? (byte) 1 : (byte) 0);
+        dest.writeByte(hasText ? (byte) 1 : (byte) 0);
+        dest.writeByte(hasSerial ? (byte) 1 : (byte) 0);
+        dest.writeByte(normalOnly ? (byte) 1 : (byte) 0);
+        dest.writeInt(type == null ? -1 : type.ordinal());
+        dest.writeInt(trigger == null ? -1 : trigger.ordinal());
+        dest.writeInt(color == null ? -1 : color.ordinal());
+        dest.writeParcelable(level, flags);
+        dest.writeParcelable(cost, flags);
+        dest.writeParcelable(power, flags);
+        dest.writeParcelable(soul, flags);
+        dest.writeString(expansion);
+    }
+
+    protected Filter(Parcel in) {
+        keyword = new HashSet<>();
+        final List<String> keywords = new ArrayList<>();
+        in.readStringList(keywords);
+        keyword.addAll(keywords);
+        hasName = in.readByte() != 0;
+        hasChara = in.readByte() != 0;
+        hasText = in.readByte() != 0;
+        hasSerial = in.readByte() != 0;
+        normalOnly = in.readByte() != 0;
+        int tmpType = in.readInt();
+        type = tmpType == -1 ? null : Card.Type.values()[tmpType];
+        int tmpTrigger = in.readInt();
+        trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
+        int tmpColor = in.readInt();
+        color = tmpColor == -1 ? null : Card.Color.values()[tmpColor];
+        level = in.readParcelable(Range.class.getClassLoader());
+        cost = in.readParcelable(Range.class.getClassLoader());
+        power = in.readParcelable(Range.class.getClassLoader());
+        soul = in.readParcelable(Range.class.getClassLoader());
+        expansion = in.readString();
+    }
+
+    public static final Parcelable.Creator<Filter> CREATOR = new Parcelable.Creator<Filter>() {
+        @Override
+        public Filter createFromParcel(Parcel source) {
+            return new Filter(source);
+        }
+
+        @Override
+        public Filter[] newArray(int size) {
+            return new Filter[size];
+        }
+    };
 }

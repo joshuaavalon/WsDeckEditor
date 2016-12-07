@@ -94,6 +94,7 @@
     <string name="dialog_update_images">Update Images</string>
     <string name="dialog_download_all_images">Download All Images</string>
     <string name="dialog_count">Count</string>
+    <string name="dialog_search_button">Search</string>
     <string name="dialog_update_button">Update</string>
     <string name="dialog_download_button">Download</string>
     <string name="dialog_cancel_button">Cancel</string>
@@ -134,11 +135,11 @@
     <string name="pref_sort_order" translatable="false">sortOrder</string>
     <string name="pref_add_if_not_exist" translatable="false">addIfNotExist</string>
     <string name="pref_deck_id" translatable="false">deckId</string>
-    <string name="pref_hide_normal_title">Show normal card only</string>
-    <string name="pref_auto_close_title">Auto close select mode</string>
-    <string name="pref_show_limit_title">Card limit shown</string>
-    <string name="pref_add_if_not_exist_title">Add card if not exist</string>
-    <string name="pref_swipe_remove_title">Swipe remove</string>
+    <string name="pref_hide_normal_title">Show Normal Card Only</string>
+    <string name="pref_auto_close_title">Auto Close Select Mode</string>
+    <string name="pref_show_limit_title">Card Limit Shown</string>
+    <string name="pref_add_if_not_exist_title">Add Card If Not Exist</string>
+    <string name="pref_swipe_remove_title">Swipe Remove</string>
     <string name="pref_hide_normal_summary">Hide all the RRR, SR, XR, SP.</string>
     <string name="pref_auto_close_summary">Close select mode after adding cards to deck or no card is selected.</string>
     <string name="pref_show_limit_summary">Number of cards show at the same time.</string>
