@@ -28,7 +28,8 @@ public class LoadCircularCardImageTask extends AsyncTask<Resources, Void, Drawab
     @Override
     @NonNull
     protected Drawable doInBackground(Resources... params) {
-        return BitmapUtils.toRoundDrawable(params[0], cardRepository.thumbnailOf(card));
+        return BitmapUtils.toRoundDrawable(params[0],
+                cardRepository.thumbnailOf(cardRepository.imageOf(card)));
     }
 
     @Override

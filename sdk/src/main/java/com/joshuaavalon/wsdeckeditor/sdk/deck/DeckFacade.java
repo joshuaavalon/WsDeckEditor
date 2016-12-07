@@ -3,7 +3,6 @@ package com.joshuaavalon.wsdeckeditor.sdk.deck;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.joshuaavalon.wsdeckeditor.sdk.card.CardFacade;
 import com.joshuaavalon.wsdeckeditor.sdk.card.ICardRepository;
 
 public class DeckFacade {
@@ -13,6 +12,7 @@ public class DeckFacade {
     @NonNull
     public static IDeckRepository Repository(@NonNull final Context context,
                                              @NonNull final ICardRepository repository) {
-        return new DeckRepository(new DeckDatabase(context), repository);
+        return CacheDeckRepository.builder(new DeckRepository(new DeckDatabase(context), repository))
+                .build();
     }
 }

@@ -118,7 +118,7 @@ class DeckRepository implements IDeckRepository {
 
     @NonNull
     @Override
-    public List<DeckMeta> abstractDecks() {
+    public List<DeckMeta> meta() {
         final SQLiteDatabase database = helper.getReadableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.Deck, null, null, null, null, null, DeckScheme.Field.Id);
         final List<DeckMeta> deckMetas = new ArrayList<>();
@@ -133,7 +133,7 @@ class DeckRepository implements IDeckRepository {
 
     @Nullable
     @Override
-    public DeckMeta abstractDeck(final long id) {
+    public DeckMeta metaOf(final long id) {
         final SQLiteDatabase database = helper.getReadableDatabase();
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(DeckScheme.Table.Deck);
@@ -169,7 +169,7 @@ class DeckRepository implements IDeckRepository {
     @Nullable
     @Override
     public Deck deck(final long id) {
-        final DeckMeta deckMeta = abstractDeck(id);
+        final DeckMeta deckMeta = metaOf(id);
         if (deckMeta == null) return null;
         final List<DeckRecord> deckRecords = deckRecords(id);
         final List<String> serials = Lists.newArrayList(Iterables.transform(deckRecords,

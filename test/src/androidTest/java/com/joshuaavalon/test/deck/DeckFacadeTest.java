@@ -42,9 +42,9 @@ public class DeckFacadeTest {
         final Card card = cardRepository.find("DC/W01-001");
         Assert.assertNotNull(card);
         deck.setCardCount(card, 3);
-        Assert.assertEquals(0, deckRepository.abstractDecks().size());
+        Assert.assertEquals(0, deckRepository.meta().size());
         deckRepository.save(deck);
-        final List<DeckMeta> deckMetas = deckRepository.abstractDecks();
+        final List<DeckMeta> deckMetas = deckRepository.meta();
         Assert.assertEquals(1, deckMetas.size());
         final DeckMeta meta = deckMetas.get(0);
         Assert.assertEquals("a", meta.getName());
@@ -69,11 +69,11 @@ public class DeckFacadeTest {
         final Card card = cardRepository.find("DC/W01-001");
         Assert.assertNotNull(card);
         deck.setCardCount(card, 3);
-        Assert.assertEquals(0, deckRepository.abstractDecks().size());
+        Assert.assertEquals(0, deckRepository.meta().size());
         deckRepository.save(deck);
-        Assert.assertEquals(1, deckRepository.abstractDecks().size());
+        Assert.assertEquals(1, deckRepository.meta().size());
         deckRepository.remove(deck);
-        Assert.assertEquals(0, deckRepository.abstractDecks().size());
+        Assert.assertEquals(0, deckRepository.meta().size());
     }
 
     @Test
@@ -81,9 +81,9 @@ public class DeckFacadeTest {
     public void addCardTest() {
         Deck deck = new Deck();
         deck.setName("a");
-        Assert.assertEquals(0, deckRepository.abstractDecks().size());
+        Assert.assertEquals(0, deckRepository.meta().size());
         deckRepository.save(deck);
-        Assert.assertEquals(1, deckRepository.abstractDecks().size());
+        Assert.assertEquals(1, deckRepository.meta().size());
         deckRepository.add(deck.getId(), "DC/W01-001", true);
         deck = deckRepository.deck(deck.getId());
         Assert.assertNotNull(deck);
@@ -108,9 +108,9 @@ public class DeckFacadeTest {
     public void updateCardTest() {
         Deck deck = new Deck();
         deck.setName("a");
-        Assert.assertEquals(0, deckRepository.abstractDecks().size());
+        Assert.assertEquals(0, deckRepository.meta().size());
         deckRepository.save(deck);
-        Assert.assertEquals(1, deckRepository.abstractDecks().size());
+        Assert.assertEquals(1, deckRepository.meta().size());
         deckRepository.update(deck.getId(), "DC/W01-001", 1);
         deck = deckRepository.deck(deck.getId());
         Assert.assertNotNull(deck);

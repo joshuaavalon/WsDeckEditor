@@ -10,9 +10,11 @@ import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.common.base.Objects;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.AboutFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.UpdateFragment;
 
@@ -48,6 +50,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.nav_setting:
                 fragmentTransaction(new SettingFragment());
+                break;
+            case R.id.nav_card_list:
+                fragmentTransaction(new ExpansionFragment());
                 break;
             case R.id.nav_search:
                 SearchActivity.start(this, null);
@@ -92,8 +97,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void fragmentTransaction(@NonNull final Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment, fragment, null)
-                .commit();
+        final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (currentFragment == null || !Objects.equal(currentFragment.getClass(), fragment.getClass()))
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, fragment, null)
+                    .commit();
     }
 }

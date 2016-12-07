@@ -148,12 +148,6 @@ class CardRepository implements ICardRepository {
 
     @NonNull
     @Override
-    public Bitmap thumbnailOf(@Nullable final Card card) {
-        return thumbnailOf(imageOf(card));
-    }
-
-    @NonNull
-    @Override
     public Bitmap thumbnailOf(@NonNull final Bitmap bitmap) {
         final int dimension = context.getResources()
                 .getDimensionPixelSize(R.dimen.thumbnail_size);

@@ -1,15 +1,16 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.util.LruCache;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.joshuaavalon.android.view.AbstractActivity;
 import com.joshuaavalon.wsdeckeditor.R;
@@ -81,5 +82,19 @@ public abstract class BaseActivity extends AbstractActivity {
     @Nullable
     public CoordinatorLayout getCoordinatorLayout() {
         return coordinatorLayout;
+    }
+
+    public void showMessage(@StringRes final int resId) {
+        if (coordinatorLayout != null)
+            Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, resId, Toast.LENGTH_LONG).show();
+    }
+
+    public void showMessage(@NonNull final String message) {
+        if (coordinatorLayout != null)
+            Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

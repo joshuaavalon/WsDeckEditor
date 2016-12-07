@@ -366,7 +366,6 @@
         android:layout_gravity="bottom|end"
         android:src="@drawable/ic_search_black_24dp"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_behavior="@string/fab_scroll_behavour"
         android:tint="@color/iconWhite"
         app:fabSize="normal"/>
 </android.support.design.widget.CoordinatorLayout>

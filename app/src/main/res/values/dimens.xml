@@ -14,4 +14,6 @@
     <dimen name="double_line_list_item_height_dense">60dp</dimen>
     <dimen name="vertical_color_bar_width">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="recycler_item_padding">16dp</dimen>
+    <dimen name="recycler_container_padding">0dp</dimen>
 </resources>

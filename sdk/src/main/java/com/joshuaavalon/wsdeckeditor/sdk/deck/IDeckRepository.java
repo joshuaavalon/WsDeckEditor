@@ -15,10 +15,10 @@ public interface IDeckRepository {
     void update(long id, @NonNull String serial, int count);
 
     @NonNull
-    List<DeckMeta> abstractDecks();
+    List<DeckMeta> meta();
 
     @Nullable
-    DeckMeta abstractDeck(long id);
+    DeckMeta metaOf(long id);
 
     @Nullable
     Deck deck(long id);

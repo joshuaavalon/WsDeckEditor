@@ -22,7 +22,7 @@ class CacheCardRepository implements ICardRepository {
     @NonNull
     private final LruCache<String, Bitmap> bitmapLruCache;
     @NonNull
-    private final LruCache<String, Bitmap> thumbnailLruCache;
+    private final LruCache<Integer, Bitmap> thumbnailLruCache;
     @NonNull
     private final LruCache<String, Card> cardLruCache;
     private int version;
@@ -99,21 +99,13 @@ class CacheCardRepository implements ICardRepository {
 
     @NonNull
     @Override
-    public Bitmap thumbnailOf(@Nullable Card card) {
-        Bitmap bitmap = null;
-        if (card != null)
-            bitmap = thumbnailLruCache.get(card.getImage());
-        if (bitmap == null)
-            bitmap = cardRepository.thumbnailOf(card);
-        if (card != null)
-            thumbnailLruCache.put(card.getImage(), bitmap);
-        return thumbnailOf(bitmap);
-    }
-
-    @NonNull
-    @Override
     public Bitmap thumbnailOf(@NonNull Bitmap bitmap) {
-        return cardRepository.thumbnailOf(bitmap);
+        final int key =bitmap.hashCode();
+        Bitmap thumbnail = thumbnailLruCache.get(key);
+        if(thumbnail == null)
+            thumbnail = cardRepository.thumbnailOf(bitmap);
+        thumbnailLruCache.put(key, thumbnail);
+        return thumbnail;
     }
 
     @Override
@@ -209,7 +201,7 @@ class CacheCardRepository implements ICardRepository {
         @NonNull
         private LruCache<String, Bitmap> bitmapLruCache;
         @NonNull
-        private LruCache<String, Bitmap> thumbnailLruCache;
+        private LruCache<Integer, Bitmap> thumbnailLruCache;
         @IntRange(from = 1)
         private int cardCacheSize;
         @IntRange(from = 1)
@@ -227,9 +219,9 @@ class CacheCardRepository implements ICardRepository {
                     return bitmap.getByteCount() / 1024;
                 }
             };
-            thumbnailLruCache = new LruCache<String, Bitmap>(cacheSize / 2) {
+            thumbnailLruCache = new LruCache<Integer, Bitmap>(cacheSize / 2) {
                 @Override
-                protected int sizeOf(String key, Bitmap bitmap) {
+                protected int sizeOf(Integer key, Bitmap bitmap) {
                     return bitmap.getByteCount() / 1024;
                 }
             };
@@ -243,7 +235,7 @@ class CacheCardRepository implements ICardRepository {
             return this;
         }
 
-        public void setThumbnailLruCache(@NonNull final LruCache<String, Bitmap> thumbnailLruCache) {
+        public void setThumbnailLruCache(@NonNull final LruCache<Integer, Bitmap> thumbnailLruCache) {
             this.thumbnailLruCache = thumbnailLruCache;
         }
 

@@ -22,9 +22,6 @@ public interface ICardRepository {
     Bitmap imageOf(@Nullable Card card);
 
     @NonNull
-    Bitmap thumbnailOf(@Nullable Card card);
-
-    @NonNull
     Bitmap thumbnailOf(@NonNull Bitmap bitmap);
 
     void updateDatabase(@NonNull InputStream in);
