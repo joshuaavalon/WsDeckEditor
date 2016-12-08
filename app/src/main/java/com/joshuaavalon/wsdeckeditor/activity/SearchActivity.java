@@ -130,7 +130,12 @@ public class SearchActivity extends BaseActivity {
         triggerSpinner.setSelection(position);
         setRange(filter.getLevel(), levelRangeBar);
         setRange(filter.getCost(), costRangeBar);
-        setRange(filter.getPower(), powerRangeBar);
+        final Filter.Range powerRange = filter.getPower();
+        if (powerRange != null) {
+            powerRange.setMax(powerRange.getMax() / 1000);
+            powerRange.setMin(powerRange.getMin() / 1000);
+        }
+        setRange(powerRange, powerRangeBar);
         setRange(filter.getSoul(), soulRangeBar);
         normalSwitch.setChecked(filter.isNormalOnly());
     }
@@ -200,7 +205,10 @@ public class SearchActivity extends BaseActivity {
             filter.setTrigger(Card.Trigger.values()[triggerSpinner.getSelectedItemPosition() - 1]);
         filter.setLevel(createRange(levelRangeBar));
         filter.setCost(createRange(costRangeBar));
-        filter.setPower(createRange(powerRangeBar));
+        final Filter.Range powerRange = createRange(powerRangeBar);
+        powerRange.setMax(powerRange.getMax() * 1000);
+        powerRange.setMin(powerRange.getMin() * 1000);
+        filter.setPower(powerRange);
         filter.setSoul(createRange(soulRangeBar));
         filter.setNormalOnly(normalSwitch.isChecked());
         ResultActivity.start(this, filter);
