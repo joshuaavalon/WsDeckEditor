@@ -29,8 +29,6 @@ import butterknife.OnClick;
 public class UpdateFragment extends BaseFragment implements Response.Listener<Integer>, Response.ErrorListener {
     private static final int CODE_CARD_DATABASE = 1;
     private static final int CODE_CARD_IMAGE = 2;
-    private DownloadReceiver receiver;
-    private ProgressDialog progressDialog;
     @BindView(R.id.latest_text_view)
     TextView latestTextView;
     @BindView(R.id.current_text_view)
@@ -41,6 +39,8 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
     Button updateImagesButton;
     @BindView(R.id.download_all_images_button)
     Button downloadImagesButton;
+    private DownloadReceiver receiver;
+    private ProgressDialog progressDialog;
 
     @NonNull
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +53,12 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
         progressDialog.setCancelable(false);
         checkUpdate();
         return view;
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.nav_update);
     }
 
     private void checkUpdate() {
@@ -114,12 +120,6 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
                     }
                 })
                 .show();
-    }
-
-    @NonNull
-    @Override
-    public String getTitle() {
-        return getString(R.string.nav_update);
     }
 
     private void toggleButton(final boolean enable) {

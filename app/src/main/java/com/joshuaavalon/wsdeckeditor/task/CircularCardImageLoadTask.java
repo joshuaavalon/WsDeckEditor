@@ -10,7 +10,7 @@ import com.joshuaavalon.wsdeckeditor.sdk.card.ICardRepository;
 import com.joshuaavalon.wsdeckeditor.util.BitmapUtils;
 import com.joshuaavalon.wsdeckeditor.view.CardImageHolder;
 
-public class LoadCircularCardImageTask extends AsyncTask<Resources, Void, Drawable> {
+public class CircularCardImageLoadTask extends AsyncTask<Resources, Void, Drawable> {
     @NonNull
     private final CardImageHolder viewHolder;
     @NonNull
@@ -18,7 +18,7 @@ public class LoadCircularCardImageTask extends AsyncTask<Resources, Void, Drawab
     @NonNull
     private final Card card;
 
-    public LoadCircularCardImageTask(@NonNull final ICardRepository cardRepository,
+    public CircularCardImageLoadTask(@NonNull final ICardRepository cardRepository,
                                      @NonNull final CardImageHolder viewHolder, @NonNull final Card card) {
         this.cardRepository = cardRepository;
         this.viewHolder = viewHolder;
@@ -35,6 +35,6 @@ public class LoadCircularCardImageTask extends AsyncTask<Resources, Void, Drawab
     @Override
     protected void onPostExecute(@NonNull final Drawable drawable) {
         if (card.getImage().equals(viewHolder.getImageName()))
-            viewHolder.getImageView().setImageDrawable(drawable);
+            viewHolder.setImage(drawable);
     }
 }

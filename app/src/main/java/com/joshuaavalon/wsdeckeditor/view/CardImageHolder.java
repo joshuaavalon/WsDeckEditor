@@ -1,11 +1,13 @@
 package com.joshuaavalon.wsdeckeditor.view;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.widget.ImageView;
 
 public interface CardImageHolder {
-    @NonNull
-    ImageView getImageView();
+    void setImage(@NonNull Bitmap bitmap);
+
+    void setImage(@NonNull Drawable drawable);
 
     @NonNull
     String getImageName();

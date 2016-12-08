@@ -71,7 +71,8 @@
     <string name="menu_add_to_deck">デッキに加えます</string>　　
     <!--             Menu End             -->
     <!--           Dialog Start           -->
-    <string name="dialog_info_level" tools:ignore="TypographyFractions">レベル (0 / 1 / 2 / 3)</string>
+    <string name="dialog_info_level"
+        tools:ignore="TypographyFractions">レベル (0 / 1 / 2 / 3)</string>
     <string name="dialog_info_color">色 (黃 / 緑 / 赤 / 青)</string>
     <string name="dialog_info_type">種類 (キャラ / イベント / クライマックス)</string>
     <string name="dialog_select_your_deck">デッキ選択</string>

@@ -7,9 +7,6 @@ import android.support.annotation.NonNull;
 
 import com.joshuaavalon.wsdeckeditor.R;
 
-import butterknife.BindString;
-import butterknife.ButterKnife;
-
 public class PreferenceRepository {
     private final String KEY_FIRST_TIME;
     private final String KEY_SWIPE_REMOVE;
@@ -35,24 +32,33 @@ public class PreferenceRepository {
         KEY_DECK_ID = context.getString(R.string.pref_deck_id);
     }
 
-    public void setFirstTime(final boolean bool) {
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_FIRST_TIME, bool);
-        editor.apply();
+    public static PreferenceRepository fromDefault(@NonNull final Context context) {
+        return PreferenceRepository.from(context, PreferenceManager.getDefaultSharedPreferences(context));
+    }
+
+    public static PreferenceRepository from(@NonNull final Context context,
+                                            @NonNull final SharedPreferences sharedPreferences) {
+        return new PreferenceRepository(context, sharedPreferences);
     }
 
     public boolean getFirstTime() {
         return sharedPreferences.getBoolean(KEY_FIRST_TIME, true);
     }
 
-    public void setSwipeRemove(final boolean bool) {
+    public void setFirstTime(final boolean bool) {
         final SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_SWIPE_REMOVE, bool);
+        editor.putBoolean(KEY_FIRST_TIME, bool);
         editor.apply();
     }
 
     public boolean getSwipeRemove() {
         return sharedPreferences.getBoolean(KEY_SWIPE_REMOVE, false);
+    }
+
+    public void setSwipeRemove(final boolean bool) {
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_SWIPE_REMOVE, bool);
+        editor.apply();
     }
 
     public boolean getHideNormal() {
@@ -89,14 +95,5 @@ public class PreferenceRepository {
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(KEY_DECK_ID, id);
         editor.apply();
-    }
-
-    public static PreferenceRepository fromDefault(@NonNull final Context context) {
-        return PreferenceRepository.from(context, PreferenceManager.getDefaultSharedPreferences(context));
-    }
-
-    public static PreferenceRepository from(@NonNull final Context context,
-                                            @NonNull final SharedPreferences sharedPreferences) {
-        return new PreferenceRepository(context, sharedPreferences);
     }
 }

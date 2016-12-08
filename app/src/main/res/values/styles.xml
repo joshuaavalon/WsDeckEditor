@@ -1,6 +1,7 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.Design.Light.NoActionBar">
+    <style name="AppTheme"
+        parent="Theme.Design.Light.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -12,13 +13,16 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="error_appearance" parent="@android:style/TextAppearance">
+    <style name="error_appearance"
+        parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorError</item>
     </style>
 
-    <style name="AppTheme.SectionHeading" parent="@style/TextAppearance.AppCompat.Medium">
+    <style name="AppTheme.SectionHeading"
+        parent="@style/TextAppearance.AppCompat.Medium">
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -27,17 +31,20 @@
         <item name="android:paddingBottom">@dimen/detail_item_padding</item>
         <item name="android:paddingTop">@dimen/detail_item_padding</item>
     </style>
+
     <style name="SingleLineRecyclerItem">
         <item name="android:minHeight">@dimen/single_line_list_item_height</item>
         <item name="android:paddingLeft">@dimen/recycler_item_padding</item>
         <item name="android:paddingRight">@dimen/recycler_item_padding</item>
     </style>
+
     <style name="Container">
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
         <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
     </style>
+
     <style name="RecyclerContainer">
         <item name="android:clipToPadding">false</item>
         <item name="android:paddingBottom">@dimen/recycler_container_padding</item>

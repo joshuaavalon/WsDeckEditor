@@ -40,6 +40,12 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
         return view;
     }
 
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.card_expansion);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -72,12 +78,6 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
             }
         }
         return filteredModelList;
-    }
-
-    @NonNull
-    @Override
-    public String getTitle() {
-        return getString(R.string.card_expansion);
     }
 
     private void initializeExpansions() {

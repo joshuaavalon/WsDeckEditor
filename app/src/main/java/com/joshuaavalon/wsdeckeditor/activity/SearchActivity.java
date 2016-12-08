@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -81,6 +80,17 @@ public class SearchActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
+    private static Filter.Range createRange(@NonNull final EditText min, @NonNull final EditText max) {
+        final Filter.Range range = new Filter.Range();
+        final String minString = min.getText().toString();
+        if (!TextUtils.isEmpty(minString) && TextUtils.isDigitsOnly(minString))
+            range.setMin(Integer.valueOf(minString));
+        final String maxString = max.getText().toString();
+        if (!TextUtils.isEmpty(maxString) && TextUtils.isDigitsOnly(maxString))
+            range.setMax(Integer.valueOf(maxString));
+        return range;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,19 +111,6 @@ public class SearchActivity extends BaseActivity {
         super.initializeActionBar(actionBar);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
     }
 
     private void initializeFilter(@NonNull final Filter filter) {
@@ -213,17 +210,6 @@ public class SearchActivity extends BaseActivity {
         filter.setPower(createRange(minPowerEditText, maxPowerEditText));
         filter.setSoul(createRange(minSoulEditText, maxSoulEditText));
         filter.setNormalOnly(normalSwitch.isChecked());
-        //((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(filter), true);
-    }
-
-    private static Filter.Range createRange(@NonNull final EditText min, @NonNull final EditText max) {
-        final Filter.Range range = new Filter.Range();
-        final String minString = min.getText().toString();
-        if (!TextUtils.isEmpty(minString) && TextUtils.isDigitsOnly(minString))
-            range.setMin(Integer.valueOf(minString));
-        final String maxString = max.getText().toString();
-        if (!TextUtils.isEmpty(maxString) && TextUtils.isDigitsOnly(maxString))
-            range.setMax(Integer.valueOf(maxString));
-        return range;
+        ResultActivity.start(this, filter);
     }
 }

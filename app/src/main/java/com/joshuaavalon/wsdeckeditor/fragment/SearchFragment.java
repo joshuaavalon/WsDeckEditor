@@ -80,6 +80,17 @@ public class SearchFragment extends BaseFragment {
         return fragment;
     }
 
+    private static Filter.Range createRange(@NonNull final EditText min, @NonNull final EditText max) {
+        final Filter.Range range = new Filter.Range();
+        final String minString = min.getText().toString();
+        if (!TextUtils.isEmpty(minString) && TextUtils.isDigitsOnly(minString))
+            range.setMin(Integer.valueOf(minString));
+        final String maxString = max.getText().toString();
+        if (!TextUtils.isEmpty(maxString) && TextUtils.isDigitsOnly(maxString))
+            range.setMax(Integer.valueOf(maxString));
+        return range;
+    }
+
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,6 +107,12 @@ public class SearchFragment extends BaseFragment {
                 initializeFilter(filter);
         }
         return view;
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.nav_search);
     }
 
     private void initializeFilter(@NonNull final Filter filter) {
@@ -200,22 +217,5 @@ public class SearchFragment extends BaseFragment {
         filter.setSoul(createRange(minSoulEditText, maxSoulEditText));
         filter.setNormalOnly(normalSwitch.isChecked());
         //((MainActivity) getActivity()).transactTo(CardListFragment.newInstance(filter), true);
-    }
-
-    private static Filter.Range createRange(@NonNull final EditText min, @NonNull final EditText max) {
-        final Filter.Range range = new Filter.Range();
-        final String minString = min.getText().toString();
-        if (!TextUtils.isEmpty(minString) && TextUtils.isDigitsOnly(minString))
-            range.setMin(Integer.valueOf(minString));
-        final String maxString = max.getText().toString();
-        if (!TextUtils.isEmpty(maxString) && TextUtils.isDigitsOnly(maxString))
-            range.setMax(Integer.valueOf(maxString));
-        return range;
-    }
-
-    @NonNull
-    @Override
-    public String getTitle() {
-        return getString(R.string.nav_search);
     }
 }

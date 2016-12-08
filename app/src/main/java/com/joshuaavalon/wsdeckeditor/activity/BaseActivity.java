@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.joshuaavalon.android.view.AbstractActivity;
@@ -31,6 +32,19 @@ public abstract class BaseActivity extends AbstractActivity {
     @Nullable
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,11 +91,6 @@ public abstract class BaseActivity extends AbstractActivity {
     @NonNull
     public PreferenceRepository getPreference() {
         return application().getPreference();
-    }
-
-    @Nullable
-    public CoordinatorLayout getCoordinatorLayout() {
-        return coordinatorLayout;
     }
 
     public void showMessage(@StringRes final int resId) {

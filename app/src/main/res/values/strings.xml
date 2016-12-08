@@ -41,13 +41,20 @@
     <!--        Data Metadata End         -->
     <!--      Condition Related Start     -->
     <string name="filter_keyword">Keyword</string>
-    <string name="filter_serial" translatable="false">@string/card_serial</string>
-    <string name="filter_name" translatable="false">@string/card_name</string>
-    <string name="filter_attr" translatable="false">@string/card_attribute</string>
-    <string name="filter_text" translatable="false">@string/card_text</string>
-    <string name="filter_expansion" translatable="false">@string/card_expansion</string>
-    <string name="filter_type" translatable="false">@string/card_type</string>
-    <string name="filter_color" translatable="false">@string/card_color</string>
+    <string name="filter_serial"
+        translatable="false">@string/card_serial</string>
+    <string name="filter_name"
+        translatable="false">@string/card_name</string>
+    <string name="filter_attr"
+        translatable="false">@string/card_attribute</string>
+    <string name="filter_text"
+        translatable="false">@string/card_text</string>
+    <string name="filter_expansion"
+        translatable="false">@string/card_expansion</string>
+    <string name="filter_type"
+        translatable="false">@string/card_type</string>
+    <string name="filter_color"
+        translatable="false">@string/card_color</string>
     <string name="filter_level_max">Max Level</string>
     <string name="filter_level_min">Min Level</string>
     <string name="filter_cost_max">Max Cost</string>
@@ -56,7 +63,8 @@
     <string name="filter_power_min">Min Power</string>
     <string name="filter_soul_max">Max Soul</string>
     <string name="filter_soul_min">Min Soul</string>
-    <string name="filter_trigger" translatable="false">@string/card_trigger</string>
+    <string name="filter_trigger"
+        translatable="false">@string/card_trigger</string>
     <string name="filter_normal_only">Normal Only</string>
     <!--       Condition Related End      -->
     <!--            Menu Start            -->
@@ -79,7 +87,8 @@
     <string name="menu_add_to_deck">Add To Deck</string>
     <!--             Menu End             -->
     <!--           Dialog Start           -->
-    <string name="dialog_info_level" tools:ignore="TypographyFractions">Level (0 / 1 / 2 / 3)</string>
+    <string name="dialog_info_level"
+        tools:ignore="TypographyFractions">Level (0 / 1 / 2 / 3)</string>
     <string name="dialog_info_color">Color (Yellow / Green / Red / Blue)</string>
     <string name="dialog_info_type">Type (Character / Event / Climax)</string>
     <string name="dialog_select_your_deck">Select Deck</string>
@@ -124,17 +133,26 @@
     <!--            Message End           -->
     <!--            Display Start         -->
     <string name="format_card_detail">%1$s Lv.%2$d %3$s</string>
-    <string name="not_applicable_value" translatable="false">-</string>
+    <string name="not_applicable_value"
+        translatable="false">-</string>
     <!--             Display End          -->
     <!--          Preference Start        -->
-    <string name="pref_swipe_remove" translatable="false">swipeRemove</string>
-    <string name="pref_is_first" translatable="false">isFirst</string>
-    <string name="pref_hide_normal" translatable="false">hideNormal</string>
-    <string name="pref_auto_close" translatable="false">autoClose</string>
-    <string name="pref_show_limit" translatable="false">showLimit</string>
-    <string name="pref_sort_order" translatable="false">sortOrder</string>
-    <string name="pref_add_if_not_exist" translatable="false">addIfNotExist</string>
-    <string name="pref_deck_id" translatable="false">deckId</string>
+    <string name="pref_swipe_remove"
+        translatable="false">swipeRemove</string>
+    <string name="pref_is_first"
+        translatable="false">isFirst</string>
+    <string name="pref_hide_normal"
+        translatable="false">hideNormal</string>
+    <string name="pref_auto_close"
+        translatable="false">autoClose</string>
+    <string name="pref_show_limit"
+        translatable="false">showLimit</string>
+    <string name="pref_sort_order"
+        translatable="false">sortOrder</string>
+    <string name="pref_add_if_not_exist"
+        translatable="false">addIfNotExist</string>
+    <string name="pref_deck_id"
+        translatable="false">deckId</string>
     <string name="pref_hide_normal_title">Show Normal Card Only</string>
     <string name="pref_auto_close_title">Auto Close Select Mode</string>
     <string name="pref_show_limit_title">Card Limit Shown</string>
@@ -145,18 +163,21 @@
     <string name="pref_show_limit_summary">Number of cards show at the same time.</string>
     <string name="pref_add_if_not_exist_summary">Add a card to deck only if it does not exist in deck.</string>
     <string name="pref_swipe_remove_summary">Swipe from left to right to remove card and deck.</string>
-    <string name="default_show_limit" translatable="false">200</string>
+    <string name="default_show_limit"
+        translatable="false">200</string>
     <!--           Preference End         -->
     <!--         Accessibility Start      -->
     <string name="acb_ws_logo">Weib Schwarz Logo</string>
     <string name="acb_card_image">Card Image</string>
     <string name="acb_icon">Icon</string>
     <!--          Accessibility End       -->
-    <string name="placeholder_text" translatable="false">Place Holder</string>
+    <string name="placeholder_text"
+        translatable="false">Place Holder</string>
     <string name="search_result">Search Result</string>
     <string name="latest_version">Latest Version</string>
     <string name="current_version">Current Version</string>
-    <string name="question_mark" translatable="false">\?</string>
+    <string name="question_mark"
+        translatable="false">\?</string>
     <string-array name="sort_type">
         <item>@string/card_serial</item>
         <item>@string/card_level</item>

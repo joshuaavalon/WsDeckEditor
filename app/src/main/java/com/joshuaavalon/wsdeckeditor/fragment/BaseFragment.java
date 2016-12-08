@@ -26,18 +26,15 @@ public class BaseFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
+        final String title = getTitle();
+        if (title != null)
+            getActivity().setTitle(title);
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().setTitle(getTitle());
-    }
-
-    @NonNull
+    @Nullable
     public String getTitle() {
-        return "";
+        return null;
     }
 
     @NonNull
