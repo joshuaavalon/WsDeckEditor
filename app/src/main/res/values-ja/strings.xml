@@ -130,7 +130,6 @@
     <string name="latest_version">最新バージョン</string>
     <string name="current_version">バージョン</string>
     <string name="about_text">こちらは <a href="https://github.com/joshuaavalon/WsDeckEditor">Github</a>が開発したオープンソースプロジェクトでごさいます。よくある質問、何かのアドバス、お問い合わせしてお願いいたします。</string>
-
     <string-array name="sort_type">
         <item>@string/card_serial</item>
         <item>@string/card_level</item>

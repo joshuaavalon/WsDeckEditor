@@ -44,8 +44,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -53,14 +51,13 @@ import timber.log.Timber;
 @ContentView(R.layout.activity_deck)
 public class DeckActivity extends BaseActivity {
     public static final String ARG_ID = "DeckActivity.Id";
-    private Deck deck;
+    private static final int REQ_CARD = 2;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    private Deck deck;
     private LruCache<String, Drawable> drawableLruCache;
     private Comparator<Multiset.Entry<Card>> comparator;
     private AnimatedRecyclerAdapter<Multiset.Entry<Card>> adapter;
-    private long id;
-    private static final int REQ_CARD = 2;
 
     public static void start(@NonNull final Context context, final long id) {
         final Intent intent = new Intent(context, DeckActivity.class);
@@ -73,7 +70,7 @@ public class DeckActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = getIntent().getLongExtra(ARG_ID, -1);
+        long id = getIntent().getLongExtra(ARG_ID, -1);
         if (id < 0) {
             Timber.w("DeckActivity: Empty Argument");
             finish();
@@ -158,7 +155,8 @@ public class DeckActivity extends BaseActivity {
                 .title(R.string.dialog_sort_by)
                 .items(R.array.sort_type)
                 .itemsCallbackSingleChoice(getPreference().getSortOrder().ordinal(), callback)
-                .positiveText(R.string.dialog_select_button)
+                .positiveText(R.string.dialog_sort_button)
+                .negativeText(R.string.dialog_cancel_button)
                 .show();
     }
 

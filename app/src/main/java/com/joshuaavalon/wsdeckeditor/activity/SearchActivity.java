@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.appyvet.rangebar.RangeBar;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.joshuaavalon.android.view.ContentView;
@@ -41,22 +42,14 @@ public class SearchActivity extends BaseActivity {
     Switch normalSwitch;
     @BindView(R.id.search_keyword)
     EditText keywordEditText;
-    @BindView(R.id.search_min_level)
-    EditText minLevelEditText;
-    @BindView(R.id.search_max_level)
-    EditText maxLevelEditText;
-    @BindView(R.id.search_min_cost)
-    EditText minCostEditText;
-    @BindView(R.id.search_max_cost)
-    EditText maxCostEditText;
-    @BindView(R.id.search_min_power)
-    EditText minPowerEditText;
-    @BindView(R.id.search_max_power)
-    EditText maxPowerEditText;
-    @BindView(R.id.search_min_soul)
-    EditText minSoulEditText;
-    @BindView(R.id.search_max_soul)
-    EditText maxSoulEditText;
+    @BindView(R.id.level_range_bar)
+    RangeBar levelRangeBar;
+    @BindView(R.id.cost_range_bar)
+    RangeBar costRangeBar;
+    @BindView(R.id.power_range_bar)
+    RangeBar powerRangeBar;
+    @BindView(R.id.soul_range_bar)
+    RangeBar soulRangeBar;
     @BindView(R.id.search_expansion)
     Spinner expansionSpinner;
     @BindView(R.id.search_type)
@@ -80,12 +73,12 @@ public class SearchActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private static Filter.Range createRange(@NonNull final EditText min, @NonNull final EditText max) {
+    private static Filter.Range createRange(@NonNull final RangeBar rangeBar) {
         final Filter.Range range = new Filter.Range();
-        final String minString = min.getText().toString();
+        final String minString = rangeBar.getLeftPinValue();
         if (!TextUtils.isEmpty(minString) && TextUtils.isDigitsOnly(minString))
             range.setMin(Integer.valueOf(minString));
-        final String maxString = max.getText().toString();
+        final String maxString = rangeBar.getRightPinValue();
         if (!TextUtils.isEmpty(maxString) && TextUtils.isDigitsOnly(maxString))
             range.setMax(Integer.valueOf(maxString));
         return range;
@@ -135,21 +128,21 @@ public class SearchActivity extends BaseActivity {
         if (position < 0)
             position = 0;
         triggerSpinner.setSelection(position);
-        setRange(filter.getLevel(), minLevelEditText, maxLevelEditText);
-        setRange(filter.getCost(), minCostEditText, maxCostEditText);
-        setRange(filter.getPower(), minPowerEditText, maxPowerEditText);
-        setRange(filter.getSoul(), minSoulEditText, maxSoulEditText);
+        setRange(filter.getLevel(), levelRangeBar);
+        setRange(filter.getCost(), costRangeBar);
+        setRange(filter.getPower(), powerRangeBar);
+        setRange(filter.getSoul(), soulRangeBar);
         normalSwitch.setChecked(filter.isNormalOnly());
     }
 
-    private void setRange(@Nullable final Filter.Range range,
-                          @NonNull final EditText minText,
-                          @NonNull final EditText maxText) {
+    private void setRange(@Nullable final Filter.Range range, @NonNull final RangeBar rangeBar) {
         if (range == null) return;
+        int min = 0, max = 0;
         if (range.getMin() >= 0)
-            minText.setText(String.valueOf(range.getMin()));
+            min = range.getMin();
         if (range.getMax() >= 0)
-            maxText.setText(String.valueOf(range.getMax()));
+            max = range.getMax();
+        rangeBar.setRangePinsByValue(min, max);
     }
 
     private void initializeTypeSpinner() {
@@ -205,10 +198,10 @@ public class SearchActivity extends BaseActivity {
             filter.setColor(Card.Color.values()[colorSpinner.getSelectedItemPosition() - 1]);
         if (triggerSpinner.getSelectedItemPosition() != 0)
             filter.setTrigger(Card.Trigger.values()[triggerSpinner.getSelectedItemPosition() - 1]);
-        filter.setLevel(createRange(minLevelEditText, maxLevelEditText));
-        filter.setCost(createRange(minCostEditText, maxCostEditText));
-        filter.setPower(createRange(minPowerEditText, maxPowerEditText));
-        filter.setSoul(createRange(minSoulEditText, maxSoulEditText));
+        filter.setLevel(createRange(levelRangeBar));
+        filter.setCost(createRange(costRangeBar));
+        filter.setPower(createRange(powerRangeBar));
+        filter.setSoul(createRange(soulRangeBar));
         filter.setNormalOnly(normalSwitch.isChecked());
         ResultActivity.start(this, filter);
     }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -40,10 +41,10 @@ import butterknife.ButterKnife;
 
 @ContentView(R.layout.fragment_deck_list)
 public class DeckListFragment extends BaseFragment implements SearchView.OnQueryTextListener {
+    private static final int REQ_DECK = 1;
     private RecyclerView recyclerView;
     private AnimatedRecyclerAdapter<DeckMeta> adapter;
     private List<DeckMeta> decks;
-    private static final int REQ_DECK = 1;
 
     @NonNull
     @Override
@@ -80,14 +81,22 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                                              final int direction) {
                             if (!(viewHolder instanceof DeckListViewHolder)) return;
                             final DeckMeta deck = adapter.getModels().get(viewHolder.getAdapterPosition());
-                            getDeckRepository().remove(deck.getId());
-                            refreshDecks();
+                            removeDeck(deck);
                         }
                     });
             itemTouchHelper.attachToRecyclerView(recyclerView);
         }
         setHasOptionsMenu(true);
         return view;
+    }
+
+    private void renameDeck(@NonNull final DeckMeta deck) {
+        DialogUtils.showRenameDeckDialog(getContext(), deck, getDeckRepository());
+    }
+
+    private void removeDeck(@NonNull final DeckMeta deck) {
+        getDeckRepository().remove(deck.getId());
+        refreshDecks();
     }
 
     private void refreshDecks() {
@@ -192,7 +201,24 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogUtils.showRenameDeckDialog(getContext(), deck, getDeckRepository());
+                    final PopupMenu popup = new PopupMenu(getContext(), imageView);
+                    popup.getMenuInflater().inflate(R.menu.deck_popup, popup.getMenu());
+                    popup.setOnMenuItemClickListener(
+                            new PopupMenu.OnMenuItemClickListener() {
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    final int id = item.getItemId();
+                                    switch (id) {
+                                        case R.id.popup_rename:
+                                            renameDeck(deck);
+                                            break;
+                                        case R.id.popup_delete:
+                                            removeDeck(deck);
+                                            break;
+                                    }
+                                    return true;
+                                }
+                            });
+                    popup.show();
                 }
             });
             deckImageView.setImageDrawable(null);

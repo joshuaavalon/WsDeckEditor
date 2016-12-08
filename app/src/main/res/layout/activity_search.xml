@@ -62,6 +62,7 @@
                     android:id="@+id/search_serial"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/detail_item_padding"
                     android:layout_weight="1"
                     android:checked="true" />
 
@@ -96,6 +97,7 @@
                     android:id="@+id/search_attr"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/detail_item_padding"
                     android:layout_weight="1"
                     android:checked="true" />
 
@@ -112,7 +114,6 @@
                     android:layout_weight="1"
                     android:checked="true" />
             </LinearLayout>
-
 
             <LinearLayout
                 style="@style/SingleLineListItem"
@@ -218,145 +219,77 @@
 
             <include layout="@layout/divider" />
 
-            <LinearLayout
-                style="@style/SingleLineListItem"
+            <com.appyvet.rangebar.RangeBar
+                android:id="@+id/level_range_bar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                app:connectingLineColor="@color/colorAccent"
+                app:pinColor="@color/colorAccent"
+                app:pinMaxFont="16sp"
+                app:selectorColor="@color/colorAccent"
+                app:tickColor="@color/colorAccent"
+                app:tickEnd="3"
+                app:tickInterval="1"
+                app:tickStart="0" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="@string/card_level" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+            <com.appyvet.rangebar.RangeBar
+                android:id="@+id/cost_range_bar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                app:connectingLineColor="@color/colorAccent"
+                app:pinColor="@color/colorAccent"
+                app:pinMaxFont="16sp"
+                app:selectorColor="@color/colorAccent"
+                app:tickColor="@color/colorAccent"
+                app:tickEnd="10"
+                app:tickInterval="1"
+                app:tickStart="0" />
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_min_level"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_level_min"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_max_level"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_level_max"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/SingleLineListItem"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="@string/card_cost" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+            <com.appyvet.rangebar.RangeBar
+                android:id="@+id/power_range_bar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                app:connectingLineColor="@color/colorAccent"
+                app:pinColor="@color/colorAccent"
+                app:pinMaxFont="16sp"
+                app:selectorColor="@color/colorAccent"
+                app:tickColor="@color/colorAccent"
+                app:tickEnd="20"
+                app:tickInterval="1"
+                app:tickStart="0" />
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_min_cost"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_cost_min"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_max_cost"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_cost_max"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/SingleLineListItem"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="@string/card_power_1000" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+            <com.appyvet.rangebar.RangeBar
+                android:id="@+id/soul_range_bar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                app:connectingLineColor="@color/colorAccent"
+                app:pinColor="@color/colorAccent"
+                app:pinMaxFont="16sp"
+                app:selectorColor="@color/colorAccent"
+                app:tickColor="@color/colorAccent"
+                app:tickEnd="3"
+                app:tickInterval="1"
+                app:tickStart="0" />
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_min_power"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_power_min"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_max_power"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_power_max"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/SingleLineListItem"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_min_soul"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_soul_min"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/search_max_soul"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/filter_soul_max"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
+                android:text="@string/card_soul" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

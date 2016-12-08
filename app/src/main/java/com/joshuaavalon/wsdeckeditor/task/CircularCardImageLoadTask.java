@@ -35,7 +35,7 @@ public class CircularCardImageLoadTask extends AsyncTask<Resources, Void, Drawab
 
     @Override
     protected void onPostExecute(@NonNull final Drawable drawable) {
-        if (card ==null || card.getImage().equals(viewHolder.getImageName()))
+        if (card == null || card.getImage().equals(viewHolder.getImageName()))
             viewHolder.setImage(drawable);
     }
 }

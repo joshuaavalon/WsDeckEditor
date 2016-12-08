@@ -96,7 +96,7 @@
     <string name="dialog_rename_deck">Rename Deck</string>
     <string name="dialog_change_card_count">Change Card Count</string>
     <string name="dialog_deck_name">Name</string>
-    <string name="dialog_sort_by">Sort By</string>
+    <string name="dialog_sort_by">Sort Order</string>
     <string name="dialog_deck_info">Information</string>
     <string name="dialog_delete_deck">Delete this deck?</string>
     <string name="dialog_update_database">Update Database</string>
@@ -111,6 +111,7 @@
     <string name="dialog_create_button">Create</string>
     <string name="dialog_change_button">Change</string>
     <string name="dialog_select_button">Select</string>
+    <string name="dialog_sort_button">Sort</string>
     <string name="dialog_update_db_button">Update Database</string>
     <string name="dialog_update_images_button">Update Images</string>
     <string name="dialog_download_all_images_button">Download All Images</string>
@@ -187,4 +188,8 @@
     <string name="download_img_notice">Download image downloads <b>ALL</b> images. It cost around 300MB.</string>
     <string name="update_img_notice">Update image downloads missing images.</string>
     <string name="update_db_notice">Update database downloads the latest card data from internet. It costs around 10MB.</string>
+    <string name="placeholder_number">0</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="card_power_1000">Power (1000)</string>
 </resources>

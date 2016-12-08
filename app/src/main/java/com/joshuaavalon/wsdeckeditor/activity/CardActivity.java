@@ -156,10 +156,12 @@ public class CardActivity extends BaseActivity {
         private int colorFrom;
         private int currentPage;
         private Animator animator;
+        private boolean inti;
 
         private ColorListener(@NonNull List<String> serials, int colorFrom) {
             this.serials = serials;
             this.colorFrom = colorFrom;
+            inti = true;
         }
 
         public int getCurrentPage() {
@@ -177,11 +179,14 @@ public class CardActivity extends BaseActivity {
         }
 
         private void changeColor(final int colorTo) {
-            if (colorTo == colorFrom) return;
             if (animator != null && animator.isRunning())
                 animator.cancel();
             toolbarBackground.setBackgroundColor(colorFrom);
             toolbar.setBackgroundColor(colorTo);
+            if (inti) {
+                inti = false;
+                return;
+            }
             animator = ViewAnimationUtils.createCircularReveal(
                     toolbar,
                     toolbar.getWidth() / 2,

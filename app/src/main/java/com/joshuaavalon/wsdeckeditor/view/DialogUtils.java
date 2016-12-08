@@ -66,10 +66,6 @@ public class DialogUtils {
                 .show();
     }
 
-    public interface CreateDeckCallback {
-        void onCreate(@NonNull final Deck deck);
-    }
-
     public static void showDeckInfoDialog(@NonNull final Context context, @NonNull final Deck deck) {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(R.string.dialog_deck_info)
@@ -128,5 +124,9 @@ public class DialogUtils {
         builder.append(" / ");
         builder.append(String.valueOf(Constant.DeckSize));
         return builder;
+    }
+
+    public interface CreateDeckCallback {
+        void onCreate(@NonNull final Deck deck);
     }
 }
