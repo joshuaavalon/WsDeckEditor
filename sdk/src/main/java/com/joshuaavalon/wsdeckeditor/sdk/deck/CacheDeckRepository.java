@@ -34,10 +34,26 @@ public class CacheDeckRepository implements IDeckRepository {
     }
 
     @Override
+    public void save(@NonNull final DeckMeta meta) {
+        if (meta.getId() == Deck.NO_ID) return;
+        deckRepository.save(meta);
+        deckLruCache.remove(meta.getId());
+        this.meta = null;
+    }
+
+    @Override
     public void remove(@NonNull Deck deck) {
-        deckLruCache.remove(deck.getId());
         deckRepository.remove(deck);
+        deckLruCache.remove(deck.getId());
         countLruCache.remove(deck.getId());
+        meta = null;
+    }
+
+    @Override
+    public void remove(final long id) {
+        deckRepository.remove(id);
+        deckLruCache.remove(id);
+        countLruCache.remove(id);
         meta = null;
     }
 

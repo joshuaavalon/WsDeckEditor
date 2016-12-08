@@ -260,6 +260,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
             Timber.w("ResultActivity: Empty argument");
             return;
         }
+        drawableLruCache = new LruCache<>(Constant.DrawableCache);
         Filter filter;
         if (intent.hasExtra(ARG_EXPANSION)) {
             final String title = intent.getStringExtra(ARG_EXPANSION);
@@ -276,7 +277,6 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateSelectedPosition();
-        drawableLruCache = new LruCache<>(Constant.DrawableCache);
     }
 
     @Override
@@ -373,7 +373,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
                                     }
                                 })
                         );
-                        CardActivity.start(ResultActivity.this, serials, serials.indexOf(card.getSerial()));
+                        CardActivity.start(ResultActivity.this, serials, serials.indexOf(card.getSerial()), false);
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());

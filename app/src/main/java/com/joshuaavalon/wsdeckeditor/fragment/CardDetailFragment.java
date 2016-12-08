@@ -1,11 +1,9 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -22,6 +20,7 @@ import android.widget.TextView;
 import com.google.common.base.Function;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.activity.ResultActivity;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
 import com.joshuaavalon.wsdeckeditor.task.CardImageLoadTask;
@@ -35,12 +34,8 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import timber.log.Timber;
 
-import static android.app.Activity.RESULT_OK;
-
 @ContentView(R.layout.fragment_card_detail)
 public class CardDetailFragment extends BaseFragment implements CardImageHolder {
-    public static final String RESULT_FILTER = "CardDetailFragment.extra.Filter";
-    public static final String RESULT_TITLE = "CardDetailFragment.extra.Title";
     private static final String ARG_SERIAL = "CardDetailFragment.Serial";
     //region Views
     @BindView(R.id.card_detail_image)
@@ -171,7 +166,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(chara);
                 cardFilter.setKeyword(keywords);
-                startSearch(chara, cardFilter);
+                ResultActivity.start(getContext(), cardFilter);
             }
 
             @Override
@@ -194,7 +189,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(name);
                 cardFilter.setKeyword(keywords);
-                startSearch(name, cardFilter);
+                ResultActivity.start(getContext(), cardFilter);
             }
 
             @Override
@@ -234,15 +229,5 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
     @Override
     public String getImageName() {
         return card.getImage();
-    }
-
-    public void startSearch(@NonNull final String title, @NonNull final Filter filter) {
-        getFragmentManager().popBackStackImmediate();
-        final Fragment target = getTargetFragment();
-        if (target == null) return;
-        final Intent resultIntent = new Intent();
-        resultIntent.putExtra(RESULT_FILTER, filter);
-        resultIntent.putExtra(RESULT_TITLE, title);
-        target.onActivityResult(getTargetRequestCode(), RESULT_OK, resultIntent);
     }
 }

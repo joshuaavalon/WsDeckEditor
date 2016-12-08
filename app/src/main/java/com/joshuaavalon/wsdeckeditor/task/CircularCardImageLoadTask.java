@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.card.ICardRepository;
@@ -15,11 +16,11 @@ public class CircularCardImageLoadTask extends AsyncTask<Resources, Void, Drawab
     private final CardImageHolder viewHolder;
     @NonNull
     private final ICardRepository cardRepository;
-    @NonNull
+    @Nullable
     private final Card card;
 
     public CircularCardImageLoadTask(@NonNull final ICardRepository cardRepository,
-                                     @NonNull final CardImageHolder viewHolder, @NonNull final Card card) {
+                                     @NonNull final CardImageHolder viewHolder, @Nullable final Card card) {
         this.cardRepository = cardRepository;
         this.viewHolder = viewHolder;
         this.card = card;
@@ -34,7 +35,7 @@ public class CircularCardImageLoadTask extends AsyncTask<Resources, Void, Drawab
 
     @Override
     protected void onPostExecute(@NonNull final Drawable drawable) {
-        if (card.getImage().equals(viewHolder.getImageName()))
+        if (card ==null || card.getImage().equals(viewHolder.getImageName()))
             viewHolder.setImage(drawable);
     }
 }

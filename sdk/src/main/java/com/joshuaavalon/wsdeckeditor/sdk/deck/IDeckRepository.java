@@ -7,8 +7,11 @@ import java.util.List;
 
 public interface IDeckRepository {
     void save(@NonNull Deck deck);
+    void save(@NonNull DeckMeta meta);
 
     void remove(@NonNull Deck deck);
+
+    void remove(long id);
 
     void add(long id, @NonNull String serial, boolean requireNone);
 

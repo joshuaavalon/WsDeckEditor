@@ -14,6 +14,7 @@
         android:layout_marginEnd="@dimen/detail_item_icon_margin_right"
         android:layout_marginStart="@dimen/detail_item_icon_margin_right"
         android:adjustViewBounds="true"
+        android:src="@drawable/dc_w00_00"
         android:contentDescription="@string/acb_card_image"
         android:scaleType="centerInside" />
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -35,21 +36,25 @@ import timber.log.Timber;
 
 @ContentView(R.layout.activity_card)
 public class CardActivity extends BaseActivity {
-    private static final String ARG_SERIALS = "CardActivity.Serials";
-    private static final String ARG_POSITION = "CardActivity.Position";
+    public static final String ARG_SERIALS = "CardActivity.Serials";
+    public static final String ARG_POSITION = "CardActivity.Position";
+    public static final String ARG_DECK = "CardActivity.Deck";
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    @BindView(R.id.fab)
+    FloatingActionButton floatingActionButton;
     private CardPagerAdapter adapter;
     private PositionListener listener;
 
     public static void start(@NonNull final Context context, @NonNull final ArrayList<String> serials,
-                             final int position) {
+                             final int position, final boolean isDeck) {
         final Intent intent = new Intent(context, CardActivity.class);
         final Bundle args = new Bundle();
         args.putStringArrayList(ARG_SERIALS, serials);
         args.putInt(ARG_POSITION, position);
+        args.putBoolean(ARG_DECK, isDeck);
         intent.putExtras(args);
         context.startActivity(intent);
     }
@@ -95,7 +100,21 @@ public class CardActivity extends BaseActivity {
             if (tab == null || card == null) continue;
             final int color = ContextCompat.getColor(this, card.getColor().getColorId());
             tab.setBackgroundColor(color);
+            if (position == i)
+                tabLayout.setBackgroundColor(color);
         }
+        final boolean isDeck = intent.getBooleanExtra(ARG_DECK, true);
+        if (isDeck)
+            coordinatorLayout.removeView(floatingActionButton);
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                final Card card = getCardRepository().find(serials.get(position));
+                if (card == null) return;
+                final int color = ContextCompat.getColor(CardActivity.this, card.getColor().getColorId());
+                tabLayout.setBackgroundColor(color);
+            }
+        });
     }
 
     @Override

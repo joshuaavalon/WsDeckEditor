@@ -131,7 +131,7 @@ public class Deck {
     }
 
     @NonNull
-    public DeckMeta toAbstract() {
+    public DeckMeta meta() {
         return new DeckMeta(id, name, cover);
     }
 }

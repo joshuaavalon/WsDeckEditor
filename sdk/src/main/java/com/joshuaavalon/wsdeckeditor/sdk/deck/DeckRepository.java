@@ -68,6 +68,18 @@ class DeckRepository implements IDeckRepository {
     }
 
     @Override
+    public void save(@NonNull final DeckMeta meta) {
+        if (meta.getId() == Deck.NO_ID) return;
+        final SQLiteDatabase database = helper.getWritableDatabase();
+        final ContentValues deckValues = new ContentValues();
+        deckValues.put(DeckScheme.Field.Name, meta.getName());
+        deckValues.put(DeckScheme.Field.Cover, meta.getCover());
+        database.update(DeckScheme.Table.Deck, deckValues, DeckScheme.Field.Id + "=?",
+                new String[]{String.valueOf(meta.getId())});
+        database.close();
+    }
+
+    @Override
     public void remove(@NonNull final Deck deck) {
         if (deck.getId() == Deck.NO_ID) return;
         final SQLiteDatabase database = helper.getWritableDatabase();
@@ -76,6 +88,17 @@ class DeckRepository implements IDeckRepository {
         database.delete(DeckScheme.Table.DeckRecord, DeckScheme.Field.DeckId + "=?",
                 new String[]{String.valueOf(deck.getId())});
         deck.setId(Deck.NO_ID);
+        database.close();
+    }
+
+    @Override
+    public void remove(final long id) {
+        if (id == Deck.NO_ID) return;
+        final SQLiteDatabase database = helper.getWritableDatabase();
+        database.delete(DeckScheme.Table.Deck, DeckScheme.Field.Id + "=?",
+                new String[]{String.valueOf(id)});
+        database.delete(DeckScheme.Table.DeckRecord, DeckScheme.Field.DeckId + "=?",
+                new String[]{String.valueOf(id)});
         database.close();
     }
 

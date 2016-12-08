@@ -14,6 +14,7 @@ import com.google.common.base.Objects;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.AboutFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.UpdateFragment;
@@ -56,6 +57,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.nav_search:
                 SearchActivity.start(this, null);
+                break;
+            case R.id.nav_deck_edit:
+                fragmentTransaction(new DeckListFragment());
                 break;
             default:
                 return false;
