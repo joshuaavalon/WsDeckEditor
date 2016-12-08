@@ -1,1 +1,1 @@
-include ':sdk', ':app', ':test', ':deprecation'
+include ':sdk', ':app', ':test'
