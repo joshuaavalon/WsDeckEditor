@@ -26,7 +26,6 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AbstractActivity {
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
-    @Nullable
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @Nullable
@@ -55,7 +54,6 @@ public abstract class BaseActivity extends AbstractActivity {
     }
 
     private void initializeToolbar() {
-        if (toolbar == null) return;
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
@@ -67,7 +65,7 @@ public abstract class BaseActivity extends AbstractActivity {
     }
 
     private void initializeDrawerLayout() {
-        if (drawerLayout == null || toolbar == null) return;
+        if (drawerLayout == null) return;
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
         drawerLayout.addDrawerListener(toggle);

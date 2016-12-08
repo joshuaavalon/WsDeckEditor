@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -25,7 +27,6 @@ import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.DeckMeta;
 import com.joshuaavalon.wsdeckeditor.view.DialogUtils;
 import com.joshuaavalon.wsdeckeditor.view.tab.CardPagerAdapter;
-import com.joshuaavalon.wsdeckeditor.view.tab.PositionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,12 @@ public class CardActivity extends BaseActivity {
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    @BindView(R.id.reveal_background)
+    View toolbarBackground;
     @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
     private CardPagerAdapter adapter;
-    private PositionListener listener;
+    private ColorListener listener;
 
     public static void start(@NonNull final Context context, @NonNull final ArrayList<String> serials,
                              final int position, final boolean isDeck) {
@@ -74,47 +77,28 @@ public class CardActivity extends BaseActivity {
         adapter = new CardPagerAdapter(getSupportFragmentManager(), serials);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        listener = new PositionListener();
         viewPager.setCurrentItem(position);
-        viewPager.addOnPageChangeListener(listener);
-        final ViewPager.SimpleOnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                final String serial = serials.get(position);
-                final Card card = getCardRepository().find(serial);
-                if (card == null) return;
-                setTitle(card.getName());
-                if (toolbar == null) return;
-                final int color = ContextCompat.getColor(CardActivity.this, card.getColor().getColorId());
-                toolbar.setBackgroundColor(color);
-            }
-        };
-        viewPager.addOnPageChangeListener(listener);
-        listener.onPageSelected(position);
         final View view = tabLayout.getChildAt(0);
         if (view == null || !(view instanceof ViewGroup)) return;
         final ViewGroup tabs = (ViewGroup) view;
+        int initialColor = ContextCompat.getColor(this, R.color.card_yellow);
         for (int i = 0; i < serials.size(); i++) {
             final Card card = getCardRepository().find(serials.get(i));
             final View tab = tabs.getChildAt(i);
             if (tab == null || card == null) continue;
             final int color = ContextCompat.getColor(this, card.getColor().getColorId());
             tab.setBackgroundColor(color);
-            if (position == i)
-                tabLayout.setBackgroundColor(color);
+            if (position != i) continue;
+            initialColor = color;
+            tabLayout.setBackgroundColor(initialColor);
+            toolbar.setBackgroundColor(initialColor);
         }
         final boolean isDeck = intent.getBooleanExtra(ARG_DECK, true);
         if (isDeck)
             coordinatorLayout.removeView(floatingActionButton);
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                final Card card = getCardRepository().find(serials.get(position));
-                if (card == null) return;
-                final int color = ContextCompat.getColor(CardActivity.this, card.getColor().getColorId());
-                tabLayout.setBackgroundColor(color);
-            }
-        });
+        listener = new ColorListener(serials, initialColor);
+        viewPager.addOnPageChangeListener(listener);
+        listener.onPageSelected(position);
     }
 
     @Override
@@ -164,5 +148,65 @@ public class CardActivity extends BaseActivity {
         if (result)
             showMessage(R.string.msg_cards_deck);
         return result;
+    }
+
+    private class ColorListener extends ViewPager.SimpleOnPageChangeListener {
+        @NonNull
+        private final List<String> serials;
+        private int colorFrom;
+        private int currentPage;
+        private Animator animator;
+
+        private ColorListener(@NonNull List<String> serials, int colorFrom) {
+            this.serials = serials;
+            this.colorFrom = colorFrom;
+        }
+
+        public int getCurrentPage() {
+            return currentPage;
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            currentPage = position;
+            final Card card = getCardRepository().find(serials.get(position));
+            if (card == null) return;
+            setTitle(card.getName());
+            final int color = ContextCompat.getColor(CardActivity.this, card.getColor().getColorId());
+            changeColor(color);
+        }
+
+        private void changeColor(final int colorTo) {
+            if (colorTo == colorFrom) return;
+            if (animator != null && animator.isRunning())
+                animator.cancel();
+            toolbarBackground.setBackgroundColor(colorFrom);
+            toolbar.setBackgroundColor(colorTo);
+            animator = ViewAnimationUtils.createCircularReveal(
+                    toolbar,
+                    toolbar.getWidth() / 2,
+                    toolbar.getHeight() / 2, 0,
+                    toolbar.getWidth() / 2);
+            animator.setDuration(200);
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    colorFrom = colorTo;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+                }
+            });
+            animator.start();
+        }
     }
 }

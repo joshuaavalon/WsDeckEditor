@@ -97,6 +97,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
         return rootView;
     }
 
+    //region Bind
     public void bind() {
         new CardImageLoadTask(getCardRepository(), this, card).execute();
         nameTextView.setText(card.getName());
@@ -121,19 +122,13 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
             soulTextView.setText(R.string.not_applicable_value);
         }
         triggerTextView.setText(card.getTrigger().getStringId());
-        final String first = card.getAttribute1();
-        SpannableString firstSpan = new SpannableString(first);
-        firstSpan.setSpan(getCharaSpan(first), 0, first.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        final String second = card.getAttribute2();
-        if (second.equals(""))
-            attributeTextView.setText(firstSpan);
-        else {
-            SpannableString secondSpan = new SpannableString(second);
-            secondSpan.setSpan(getCharaSpan(second), 0, second.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            attributeTextView.setText(TextUtils.concat(firstSpan, "・", secondSpan));
-        }
-        attributeTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        String cardText = card.getText();
+        bindAttribute();
+        bindText();
+        flavorTextView.setText(card.getFlavor());
+    }
+
+    private void bindText() {
+        final String cardText = card.getText();
         SpannableStringBuilder spannableStringBuilder = regexSpan(new SpannableStringBuilder(cardText),
                 "「.*?」",
                 new Function<String, ClickableSpan>() {
@@ -151,9 +146,28 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 });
         textTextView.setText(spannableStringBuilder);
         textTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        flavorTextView.setText(card.getFlavor());
     }
 
+    private void bindAttribute() {
+        final String first = card.getAttribute1();
+        final String second = card.getAttribute2();
+        if (TextUtils.isEmpty(first) && TextUtils.isEmpty(second)) {
+            attributeTextView.setText(R.string.not_applicable_value);
+            return;
+        }
+        SpannableString firstSpan = new SpannableString(first);
+        firstSpan.setSpan(getCharaSpan(first), 0, first.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (second.equals(""))
+            attributeTextView.setText(firstSpan);
+        else {
+            SpannableString secondSpan = new SpannableString(second);
+            secondSpan.setSpan(getCharaSpan(second), 0, second.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            attributeTextView.setText(TextUtils.concat(firstSpan, "・", secondSpan));
+        }
+        attributeTextView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    //endregion
     private ClickableSpan getCharaSpan(@NonNull final String chara) {
         return new ClickableSpan() {
             @Override

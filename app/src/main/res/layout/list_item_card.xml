@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_background"
+    style="@style/CardItem"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/single_line_list_item_height">
+    android:layout_height="60dp"
+    android:background="?attr/selectableItemBackground">
 
     <View
         android:id="@+id/color_bar"
@@ -12,10 +15,8 @@
         android:background="@color/card_yellow" />
 
     <LinearLayout
-        android:id="@+id/card_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

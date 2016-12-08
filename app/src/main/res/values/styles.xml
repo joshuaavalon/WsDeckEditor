@@ -32,6 +32,25 @@
         <item name="android:paddingTop">@dimen/detail_item_padding</item>
     </style>
 
+    <style name="IconItem">
+        <item name="android:minHeight">60dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
+
+    <style name="NoIconItem">
+        <item name="android:minHeight">60dp</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
+
+
+    <style name="CardItem">
+        <item name="android:minHeight">60dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
     <style name="SingleLineRecyclerItem">
         <item name="android:minHeight">@dimen/single_line_list_item_height</item>
         <item name="android:paddingLeft">@dimen/recycler_item_padding</item>

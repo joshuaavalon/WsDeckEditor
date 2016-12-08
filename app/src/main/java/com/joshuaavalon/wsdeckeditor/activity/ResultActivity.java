@@ -19,7 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -106,7 +106,8 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
 
     @Override
     public boolean onItemLongClicked(final int position) {
-        if (!startActionMode()) return false;
+        if (actionMode == null)
+            actionMode = startSupportActionMode(this);
         toggleSelection(position);
         return true;
     }
@@ -304,11 +305,6 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
         }
     }
 
-    private boolean startActionMode() {
-        actionMode = startSupportActionMode(this);
-        return true;
-    }
-
     private void addCardToDeck(@NonNull final Card card) {
         final List<DeckMeta> decks = getDeckRepository().meta();
         if (decks.size() == 0) {
@@ -343,7 +339,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
         @BindView(R.id.card_serial)
         TextView serialTextView;
         @BindView(R.id.card_background)
-        LinearLayout linearLayout;
+        RelativeLayout relativeLayout;
         @BindView(R.id.color_bar)
         View colorView;
         @BindView(R.id.image_view)
@@ -360,7 +356,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
 
         @Override
         public void bind(final Card card) {
-            linearLayout.setActivated(adapter.isSelected(getAdapterPosition()));
+            relativeLayout.setActivated(adapter.isSelected(getAdapterPosition()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -391,7 +387,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
             serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
                     card.getLevel(), getString(card.getType().getStringId())));
             colorView.setBackgroundResource(card.getColor().getColorId());
-            linearLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
+            relativeLayout.setBackgroundResource(ColorUtils.getBackgroundDrawable(card.getColor()));
             actionView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
