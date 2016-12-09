@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -79,6 +78,7 @@ public class CardActivity extends BaseActivity {
         adapter = new CardPagerAdapter(getSupportFragmentManager(), serials);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(serials.size() <= 3 ? TabLayout.MODE_FIXED : TabLayout.MODE_SCROLLABLE);
         viewPager.setCurrentItem(position);
         final View view = tabLayout.getChildAt(0);
         if (view == null || !(view instanceof ViewGroup)) return;
@@ -181,6 +181,7 @@ public class CardActivity extends BaseActivity {
         }
 
         private void changeColor(final int colorTo) {
+            if (colorFrom == colorTo) return;
             if (animator != null && animator.isRunning())
                 animator.cancel();
             toolbarBackground.setBackgroundColor(colorFrom);

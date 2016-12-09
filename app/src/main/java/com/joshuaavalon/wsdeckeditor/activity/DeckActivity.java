@@ -118,6 +118,7 @@ public class DeckActivity extends BaseActivity {
                                     @Override
                                     public void onClick(View v) {
                                         getDeckRepository().update(deck.getId(), entry.getElement().getSerial(), entry.getCount());
+                                        reload();
                                     }
                                 })
                                 .show();
@@ -212,6 +213,7 @@ public class DeckActivity extends BaseActivity {
     }
 
     private void resetDeck() {
+        deck = getDeckRepository().deck(deck.getId());
         final List<Multiset.Entry<Card>> cardEntries = Lists.newArrayList(deck.getCardList().entrySet());
         Collections.sort(cardEntries, comparator);
         adapter.setModels(cardEntries);

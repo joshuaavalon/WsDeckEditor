@@ -109,14 +109,26 @@ class CardRepository implements ICardRepository {
         Cursor cursor;
         if (recordCount < 0) {
             cursor = sqLiteDatabase.query(CardScheme.Table.Card, new String[]{"COUNT(*)"},
-                    null, null, null, null, null);
+                    String.format("%s NOT IN (?,?,?,?)", CardScheme.Field.Rarity),
+                    new String[]{"SR", "SP", "RRR", "XR"},
+                    null, null, null);
             if (cursor.moveToFirst())
                 recordCount = cursor.getInt(0);
             cursor.close();
         }
         Card card = null;
+        long id = -1;
         if (recordCount > 0) {
-            final long id = ThreadLocalRandom.current().nextLong(recordCount) + 1;
+            final long filterId = ThreadLocalRandom.current().nextLong(recordCount) + 1;
+            cursor = sqLiteDatabase.query(CardScheme.Table.Card, new String[]{"_id"},
+                    String.format("%s NOT IN (?,?,?,?)", CardScheme.Field.Rarity),
+                    new String[]{"SR", "SP", "RRR", "XR"},
+                    null, null, null, filterId + "," + 1);
+            if (cursor.moveToFirst())
+                id = cursor.getInt(0);
+            cursor.close();
+        }
+        if (id > 0) {
             cursor = sqLiteDatabase.query(CardScheme.Table.Card, null,
                     "_id = ?", new String[]{String.valueOf(id)}, null, null, null);
             if (cursor.moveToFirst())

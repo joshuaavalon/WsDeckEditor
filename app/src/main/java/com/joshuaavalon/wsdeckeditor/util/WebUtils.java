@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.Preference;
+import android.view.View;
 
 import com.joshuaavalon.wsdeckeditor.R;
 
@@ -25,6 +26,15 @@ public final class WebUtils {
             public boolean onPreferenceClick(Preference preference) {
                 launchUrl(context, url);
                 return true;
+            }
+        };
+    }
+
+    public static View.OnClickListener launchUrlFromClick(@NonNull final Context context, @NonNull final String url) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchUrl(context, url);
             }
         };
     }

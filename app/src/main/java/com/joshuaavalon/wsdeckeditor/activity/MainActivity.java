@@ -3,6 +3,7 @@ package com.joshuaavalon.wsdeckeditor.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.common.base.Objects;
 import com.joshuaavalon.android.view.ContentView;
+import com.joshuaavalon.android.view.fab.ScrollAwareFabBehavior;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
@@ -55,10 +57,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
                 View view = MainActivity.this.getCurrentFocus();
                 if (view != null) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
@@ -72,7 +73,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
     }
-
 
     private void initializeDrawerLayout() {
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -147,10 +147,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void fragmentTransaction(@NonNull final Fragment fragment, final boolean anim) {
-        if (fragment instanceof DeckListFragment)
+        if (fragment instanceof DeckListFragment) {
+            final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+            params.setBehavior(new ScrollAwareFabBehavior(this, null));
+            fab.requestLayout();
             fab.show();
-        else
+        } else {
+            final CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+            params.setBehavior(null);
+            fab.requestLayout();
             fab.hide();
+        }
         final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (currentFragment != null && Objects.equal(currentFragment.getClass(), fragment.getClass()))
             return;

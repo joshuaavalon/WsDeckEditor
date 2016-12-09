@@ -92,7 +92,7 @@
     <string name="dialog_info_color">Color (Yellow / Green / Red / Blue)</string>
     <string name="dialog_info_type">Type (Character / Event / Climax)</string>
     <string name="dialog_select_your_deck">Select Deck</string>
-    <string name="dialog_create_a_new_deck">Create A New Deck</string>
+    <string name="dialog_create_a_new_deck">New Deck</string>
     <string name="dialog_rename_deck">Rename Deck</string>
     <string name="dialog_change_card_count">Change Card Count</string>
     <string name="dialog_deck_name">Name</string>

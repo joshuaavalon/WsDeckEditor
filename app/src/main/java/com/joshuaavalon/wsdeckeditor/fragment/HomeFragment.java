@@ -1,10 +1,12 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +21,33 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.activity.CardActivity;
 import com.joshuaavalon.wsdeckeditor.activity.ResultActivity;
 import com.joshuaavalon.wsdeckeditor.config.CardSuggestionProvider;
 import com.joshuaavalon.wsdeckeditor.config.ISuggestionProvider;
+import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
+import com.joshuaavalon.wsdeckeditor.util.WebUtils;
 import com.joshuaavalon.wsdeckeditor.view.search.AbstractSuggestion;
 import com.joshuaavalon.wsdeckeditor.view.search.KeywordSuggestion;
 
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 @ContentView(R.layout.fragment_home)
 public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQueryChangeListener,
         FloatingSearchView.OnSearchListener, FloatingSearchView.OnFocusChangeListener,
-        SearchSuggestionsAdapter.OnBindSuggestionCallback {
+        SearchSuggestionsAdapter.OnBindSuggestionCallback, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.floating_search_view)
     FloatingSearchView floatingSearchView;
+    @BindView(R.id.card_detail_name)
+    TextView nameTextView;
+    @BindView(R.id.card_detail_flavor_text)
+    TextView flavorTextView;
+    @BindView(R.id.github_view)
+    ImageView githubImageView;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
     private ISuggestionProvider cardSuggestionProvider;
     private String lastQuery = "";
 
@@ -44,10 +56,12 @@ public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQ
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
-        final TextView textView = ButterKnife.findById(view, R.id.text_view);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
         initializeSearchView();
+        initializeTextView();
+        githubImageView.setOnClickListener(WebUtils.launchUrlFromClick(getContext(), getString(R.string.source_url)));
         cardSuggestionProvider = new CardSuggestionProvider(getContext(), getCardRepository());
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
         return view;
     }
 
@@ -56,6 +70,24 @@ public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQ
         floatingSearchView.setOnSearchListener(this);
         floatingSearchView.setOnBindSuggestionCallback(this);
         floatingSearchView.setOnFocusChangeListener(this);
+    }
+
+    private void initializeTextView() {
+        final Card card = getCardRepository().random();
+        if (card == null) {
+            nameTextView.setText(null);
+            return;
+        }
+        final Drawable drawable = new BitmapDrawable(getResources(), getCardRepository().imageOf(card));
+        nameTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+        nameTextView.setText(card.getName());
+        nameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CardActivity.start(getContext(), Lists.newArrayList(card.getSerial()), 0, nameTextView);
+            }
+        });
+        flavorTextView.setText(card.getFlavor());
     }
 
     @NonNull
@@ -131,5 +163,11 @@ public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQ
         } else
             leftIcon.setImageBitmap(null);
         textView.setText(item.getBody());
+    }
+
+    @Override
+    public void onRefresh() {
+        initializeTextView();
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

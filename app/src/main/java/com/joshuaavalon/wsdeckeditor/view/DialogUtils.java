@@ -54,7 +54,10 @@ public class DialogUtils {
                         if (callback != null)
                             callback.onCreate(deck);
                     }
-                }).show();
+                })
+                .positiveText(R.string.dialog_create_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .show();
     }
 
     public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,

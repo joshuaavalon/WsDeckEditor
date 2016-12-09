@@ -26,6 +26,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.ResultActivity;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
+import com.joshuaavalon.wsdeckeditor.task.CardImageLoadTask;
 import com.joshuaavalon.wsdeckeditor.util.WebUtils;
 import com.joshuaavalon.wsdeckeditor.view.CardImageHolder;
 
@@ -121,7 +122,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
 
     //region Bind
     public void bind() {
-        //new CardImageLoadTask(getCardRepository(), this, card).execute();
+        new CardImageLoadTask(getCardRepository(), this, card).execute();
         nameTextView.setText(card.getName());
         serialTextView.setText(card.getSerial());
         expansionTextView.setText(card.getExpansion());
