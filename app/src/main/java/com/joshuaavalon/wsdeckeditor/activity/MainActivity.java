@@ -2,6 +2,7 @@ package com.joshuaavalon.wsdeckeditor.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,9 +15,9 @@ import com.android.volley.VolleyError;
 import com.google.common.base.Objects;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.fragment.HomeFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.HomeFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.UpdateFragment;
 
@@ -27,6 +28,8 @@ import timber.log.Timber;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     @BindView(R.id.nav_view)
     NavigationView navigationView;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +109,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void fragmentTransaction(@NonNull final Fragment fragment, final boolean anim) {
+        if (fragment instanceof DeckListFragment)
+            fab.show();
+        else
+            fab.hide();
         final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (currentFragment != null && Objects.equal(currentFragment.getClass(), fragment.getClass()))
             return;

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -88,7 +89,24 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             itemTouchHelper.attachToRecyclerView(recyclerView);
         }
         setHasOptionsMenu(true);
+        initializeFab();
         return view;
+    }
+
+    private void initializeFab(){
+        final FloatingActionButton fab = ButterKnife.findById(getActivity(),R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtils.showCreateDeckDialog(getContext(), getDeckRepository(),
+                        new DialogUtils.CreateDeckCallback() {
+                            @Override
+                            public void onCreate(@NonNull Deck deck) {
+                                refreshDecks();
+                            }
+                        });
+            }
+        });
     }
 
     private void renameDeck(@NonNull final DeckMeta deck) {
@@ -137,24 +155,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             }
         }
         return filteredModelList;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        final int id = item.getItemId();
-        switch (id) {
-            case R.id.action_add:
-                DialogUtils.showCreateDeckDialog(getContext(), getDeckRepository(),
-                        new DialogUtils.CreateDeckCallback() {
-                            @Override
-                            public void onCreate(@NonNull Deck deck) {
-                                refreshDecks();
-                            }
-                        });
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @NonNull

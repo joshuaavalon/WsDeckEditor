@@ -144,14 +144,14 @@ class DeckRepository implements IDeckRepository {
     public List<DeckMeta> meta() {
         final SQLiteDatabase database = helper.getReadableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.Deck, null, null, null, null, null, DeckScheme.Field.Id);
-        final List<DeckMeta> deckMetas = new ArrayList<>();
+        final List<DeckMeta> deckMetaList = new ArrayList<>();
         if (cursor.moveToFirst())
             do {
-                deckMetas.add(buildDeck(cursor));
+                deckMetaList.add(buildDeck(cursor));
             } while (cursor.moveToNext());
         cursor.close();
         database.close();
-        return deckMetas;
+        return deckMetaList;
     }
 
     @Nullable
