@@ -28,9 +28,6 @@ public abstract class BaseActivity extends AbstractActivity {
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Nullable
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -50,7 +47,6 @@ public abstract class BaseActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         initializeToolbar();
-        initializeDrawerLayout();
     }
 
     private void initializeToolbar() {
@@ -62,14 +58,6 @@ public abstract class BaseActivity extends AbstractActivity {
 
     protected void initializeActionBar(@NonNull final ActionBar actionBar) {
         actionBar.setDisplayShowTitleEnabled(true);
-    }
-
-    private void initializeDrawerLayout() {
-        if (drawerLayout == null) return;
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
     public WsApplication application() {

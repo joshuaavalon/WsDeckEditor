@@ -16,6 +16,7 @@ public class PreferenceRepository {
     private final String KEY_ADD_IF_NOT_EXIST;
     private final String KEY_SORT_ORDER;
     private final String KEY_DECK_ID;
+    private final String KEY_QUICK_HISTORY;
     @NonNull
     private final SharedPreferences sharedPreferences;
 
@@ -30,6 +31,7 @@ public class PreferenceRepository {
         KEY_ADD_IF_NOT_EXIST = context.getString(R.string.pref_add_if_not_exist);
         KEY_SORT_ORDER = context.getString(R.string.pref_sort_order);
         KEY_DECK_ID = context.getString(R.string.pref_deck_id);
+        KEY_QUICK_HISTORY = context.getString(R.string.pref_quick_search_history);
     }
 
     public static PreferenceRepository fromDefault(@NonNull final Context context) {
@@ -75,6 +77,9 @@ public class PreferenceRepository {
 
     public boolean getAddIfNotExist() {
         return sharedPreferences.getBoolean(KEY_ADD_IF_NOT_EXIST, false);
+    }
+    public boolean getEnableQuickSearchHistory() {
+        return sharedPreferences.getBoolean(KEY_QUICK_HISTORY, true);
     }
 
     public CardOrder getSortOrder() {

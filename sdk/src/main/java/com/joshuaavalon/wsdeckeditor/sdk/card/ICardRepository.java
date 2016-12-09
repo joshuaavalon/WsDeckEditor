@@ -38,6 +38,8 @@ public interface ICardRepository {
     @NonNull
     List<String> expansions();
 
+    List<String> keywords(@NonNull String query, int limit);
+
     void networkVersion(@NonNull Response.Listener<Integer> listener,
                         @Nullable Response.ErrorListener errorListener);
 

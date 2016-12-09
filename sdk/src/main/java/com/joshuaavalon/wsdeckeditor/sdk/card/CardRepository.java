@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
 import com.joshuaavalon.wsdeckeditor.sdk.R;
 import com.joshuaavalon.wsdeckeditor.sdk.card.util.ThumbnailUtils;
@@ -27,7 +28,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 class CardRepository implements ICardRepository {
@@ -246,6 +249,35 @@ class CardRepository implements ICardRepository {
         final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
                 new String[]{CardScheme.Field.Expansion},
                 null, null, null, null, null, null);
+        final List<String> result = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        cursor.close();
+        sqLiteDatabase.close();
+        return result;
+    }
+
+    @Override
+    public List<String> keywords(@NonNull final String query, int limit) {
+        final Set<String> result = new HashSet<>();
+        result.addAll(keywordsByField(query, CardScheme.Field.Serial, limit));
+        if (result.size() < limit)
+            result.addAll(keywordsByField(query, CardScheme.Field.Name, limit));
+        if (result.size() < limit)
+            result.addAll(keywordsByField(query, CardScheme.Field.FirstChara, limit));
+        if (result.size() < limit)
+            result.addAll(keywordsByField(query, CardScheme.Field.SecondChara, limit));
+        return Lists.newArrayList(Iterables.limit(result, limit));
+    }
+
+    private List<String> keywordsByField(@NonNull final String query, @NonNull final String field,
+                                         final int limit) {
+        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
+        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
+                new String[]{field}, String.format("%s LIKE ?", field), new String[]{query},
+                null, null, "_id DESC", String.valueOf(limit));
         final List<String> result = new ArrayList<>();
         if (cursor.moveToFirst())
             do {

@@ -158,6 +158,11 @@ class CacheCardRepository implements ICardRepository {
     }
 
     @Override
+    public List<String> keywords(@NonNull String query, int limit) {
+        return cardRepository.keywords(query, limit);
+    }
+
+    @Override
     public void networkVersion(@NonNull final Response.Listener<Integer> listener,
                                @Nullable final Response.ErrorListener errorListener) {
         final Calendar now = Calendar.getInstance();
