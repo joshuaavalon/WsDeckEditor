@@ -141,7 +141,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 new Function<String, ClickableSpan>() {
                     @Override
                     public ClickableSpan apply(String arg) {
-                        return getCharaSpan(arg);
+                        return getCharaSpan(arg, textTextView);
                     }
                 });
         textTextView.setText(spannableStringBuilder);
@@ -156,19 +156,19 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
             return;
         }
         SpannableString firstSpan = new SpannableString(first);
-        firstSpan.setSpan(getCharaSpan(first), 0, first.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        firstSpan.setSpan(getCharaSpan(first, attributeTextView), 0, first.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         if (second.equals(""))
             attributeTextView.setText(firstSpan);
         else {
             SpannableString secondSpan = new SpannableString(second);
-            secondSpan.setSpan(getCharaSpan(second), 0, second.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            secondSpan.setSpan(getCharaSpan(second, attributeTextView), 0, second.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             attributeTextView.setText(TextUtils.concat(firstSpan, "・", secondSpan));
         }
         attributeTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     //endregion
-    private ClickableSpan getCharaSpan(@NonNull final String chara) {
+    private ClickableSpan getCharaSpan(@NonNull final String chara, @NonNull final View view) {
         return new ClickableSpan() {
             @Override
             public void onClick(View view) {
@@ -180,7 +180,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(chara);
                 cardFilter.setKeyword(keywords);
-                ResultActivity.start(getContext(), cardFilter);
+                ResultActivity.start(getContext(), cardFilter, view);
             }
 
             @Override
@@ -203,7 +203,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
                 final Set<String> keywords = new HashSet<>();
                 keywords.add(name);
                 cardFilter.setKeyword(keywords);
-                ResultActivity.start(getContext(), cardFilter);
+                ResultActivity.start(getContext(), cardFilter, textTextView);
             }
 
             @Override

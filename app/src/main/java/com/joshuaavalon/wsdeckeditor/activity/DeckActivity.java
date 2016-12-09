@@ -1,6 +1,5 @@
 package com.joshuaavalon.wsdeckeditor.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -58,14 +57,6 @@ public class DeckActivity extends BaseActivity {
     private LruCache<String, Drawable> drawableLruCache;
     private Comparator<Multiset.Entry<Card>> comparator;
     private AnimatedRecyclerAdapter<Multiset.Entry<Card>> adapter;
-
-    public static void start(@NonNull final Context context, final long id) {
-        final Intent intent = new Intent(context, DeckActivity.class);
-        final Bundle args = new Bundle();
-        args.putLong(ARG_ID, id);
-        intent.putExtras(args);
-        context.startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -37,6 +37,7 @@ import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.DeckMeta;
 import com.joshuaavalon.wsdeckeditor.task.CircularCardImageLoadTask;
+import com.joshuaavalon.wsdeckeditor.util.AnimeUtils;
 import com.joshuaavalon.wsdeckeditor.util.ColorUtils;
 import com.joshuaavalon.wsdeckeditor.view.ActionModeListener;
 import com.joshuaavalon.wsdeckeditor.view.CardImageHolder;
@@ -64,21 +65,23 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
     private int selectedPosition = -1;
     private LruCache<String, Drawable> drawableLruCache;
 
-    public static void start(@NonNull final Context context, @Nullable Filter filter) {
+    public static void start(@NonNull final Context context, @Nullable Filter filter,
+                             @NonNull final View view) {
         final Intent intent = new Intent(context, ResultActivity.class);
         final Bundle args = new Bundle();
         if (filter != null)
             args.putParcelable(ARG_FILTER, filter);
         intent.putExtras(args);
-        context.startActivity(intent);
+        context.startActivity(intent, AnimeUtils.createRevealOption(view));
     }
 
-    public static void start(@NonNull final Context context, @NonNull final String expansion) {
+    public static void start(@NonNull final Context context, @NonNull final String expansion,
+                             @NonNull final View view) {
         final Intent intent = new Intent(context, ResultActivity.class);
         final Bundle args = new Bundle();
         args.putString(ARG_EXPANSION, expansion);
         intent.putExtras(args);
-        context.startActivity(intent);
+        context.startActivity(intent, AnimeUtils.createRevealOption(view));
     }
 
     @Override
@@ -369,7 +372,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
                                     }
                                 })
                         );
-                        CardActivity.start(ResultActivity.this, serials, serials.indexOf(card.getSerial()), false);
+                        CardActivity.start(ResultActivity.this, serials, serials.indexOf(card.getSerial()), itemView);
                     } else {
                         if (actionModeListener == null) return;
                         actionModeListener.onItemClicked(getAdapterPosition());

@@ -30,6 +30,7 @@ import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.Deck;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.DeckMeta;
 import com.joshuaavalon.wsdeckeditor.task.CircularCardImageLoadTask;
+import com.joshuaavalon.wsdeckeditor.util.AnimeUtils;
 import com.joshuaavalon.wsdeckeditor.view.CardImageHolder;
 import com.joshuaavalon.wsdeckeditor.view.DialogUtils;
 
@@ -195,7 +196,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
                     final Bundle args = new Bundle();
                     args.putLong(DeckActivity.ARG_ID, deck.getId());
                     intent.putExtras(args);
-                    startActivityForResult(intent, REQ_DECK);
+                    startActivityForResult(intent, REQ_DECK, AnimeUtils.createRevealOption(itemView));
                 }
             });
             imageView.setOnClickListener(new View.OnClickListener() {

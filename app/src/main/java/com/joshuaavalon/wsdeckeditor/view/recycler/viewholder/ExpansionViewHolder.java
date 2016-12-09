@@ -22,7 +22,7 @@ public class ExpansionViewHolder extends BaseViewHolder<String> {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ResultActivity.start(itemView.getContext(), title);
+                ResultActivity.start(itemView.getContext(), title, itemView);
             }
         });
     }

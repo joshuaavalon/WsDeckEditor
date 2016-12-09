@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,6 +21,7 @@ import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
+import com.joshuaavalon.wsdeckeditor.util.AnimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,19 +61,22 @@ public class SearchActivity extends BaseActivity {
     Spinner colorSpinner;
     @BindView(R.id.search_trigger)
     Spinner triggerSpinner;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
     //endregion
     private ArrayAdapter<String> typeAdapter;
     private ArrayAdapter<String> colorAdapter;
     private ArrayAdapter<String> expansionAdapter;
     private ArrayAdapter<String> triggerAdapter;
 
-    public static void start(@NonNull final Context context, @Nullable Filter filter) {
+    public static void start(@NonNull final Context context, @Nullable Filter filter,
+                             @NonNull final View view) {
         final Intent intent = new Intent(context, SearchActivity.class);
         final Bundle args = new Bundle();
         if (filter != null)
             args.putParcelable(ARG_FILTER, filter);
         intent.putExtras(args);
-        context.startActivity(intent);
+        context.startActivity(intent, AnimeUtils.createRevealOption(view));
     }
 
     private static Filter.Range createRange(@NonNull final RangeBar rangeBar) {
@@ -211,6 +217,6 @@ public class SearchActivity extends BaseActivity {
         filter.setPower(powerRange);
         filter.setSoul(createRange(soulRangeBar));
         filter.setNormalOnly(normalSwitch.isChecked());
-        ResultActivity.start(this, filter);
+        ResultActivity.start(this, filter,fab);
     }
 }

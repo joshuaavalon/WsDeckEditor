@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +32,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationView.setNavigationItemSelectedListener(this);
-        fragmentTransaction(new AboutFragment());
+        fragmentTransaction(new AboutFragment(), false);
         if (getPreference().getFirstTime()) {
             getPreference().setFirstTime(false);
             Timber.i("First time usage.");
@@ -56,7 +57,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 fragmentTransaction(new ExpansionFragment());
                 break;
             case R.id.nav_search:
-                SearchActivity.start(this, null);
+                SearchActivity.start(this, null, coordinatorLayout);
                 break;
             case R.id.nav_deck_edit:
                 fragmentTransaction(new DeckListFragment());
@@ -101,10 +102,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void fragmentTransaction(@NonNull final Fragment fragment) {
+        fragmentTransaction(fragment, true);
+    }
+
+    private void fragmentTransaction(@NonNull final Fragment fragment, final boolean anim) {
         final Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
-        if (currentFragment == null || !Objects.equal(currentFragment.getClass(), fragment.getClass()))
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, fragment, null)
-                    .commit();
+        if (currentFragment != null && Objects.equal(currentFragment.getClass(), fragment.getClass()))
+            return;
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (anim)
+            transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right,
+                    R.anim.enter_from_right, R.anim.exit_to_left);
+        transaction.replace(R.id.fragment, fragment, null).commit();
     }
 }

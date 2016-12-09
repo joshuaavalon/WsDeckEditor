@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.config.Constant;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.DeckMeta;
+import com.joshuaavalon.wsdeckeditor.util.AnimeUtils;
 import com.joshuaavalon.wsdeckeditor.view.DialogUtils;
 import com.joshuaavalon.wsdeckeditor.view.tab.CardPagerAdapter;
 
@@ -52,14 +54,14 @@ public class CardActivity extends BaseActivity {
     private ColorListener listener;
 
     public static void start(@NonNull final Context context, @NonNull final ArrayList<String> serials,
-                             final int position, final boolean isDeck) {
+                             final int position, @NonNull final View view) {
         final Intent intent = new Intent(context, CardActivity.class);
         final Bundle args = new Bundle();
         args.putStringArrayList(ARG_SERIALS, serials);
         args.putInt(ARG_POSITION, position);
-        args.putBoolean(ARG_DECK, isDeck);
+        args.putBoolean(ARG_DECK, false);
         intent.putExtras(args);
-        context.startActivity(intent);
+        context.startActivity(intent, AnimeUtils.createRevealOption(view));
     }
 
     @Override
