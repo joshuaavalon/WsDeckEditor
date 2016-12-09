@@ -1,40 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/swipe_refresh_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        style="@style/Container"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/acb_icon"
-            android:src="@mipmap/ic_launcher" />
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/text_view"
-            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:id="@+id/card_detail_name"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/about_text" />
-    </LinearLayout>
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/acb_card_image"
+            android:drawablePadding="10dp"
+            android:drawableTop="@drawable/dc_w00_00"
+            android:gravity="center"
+            android:text="@string/placeholder_text" />
 
+        <TextView
+            android:id="@+id/card_detail_flavor_text"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_detail_name"
+            android:gravity="center"
+            android:text="@string/placeholder_text" />
 
+        <ImageView
+            android:id="@+id/github_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/acb_icon"
+            android:src="@drawable/ic_github_logo" />
 
-    <com.arlib.floatingsearchview.FloatingSearchView
-        android:id="@+id/floating_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:floatingSearch_close_search_on_keyboard_dismiss="true"
-        app:floatingSearch_leftActionMode="showSearch"
-        app:floatingSearch_searchHint="@string/search_hint"
-        app:floatingSearch_showSearchKey="true"
-        app:floatingSearch_suggestionsListAnimDuration="250" />
-</RelativeLayout>
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/floating_search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_searchHint="@string/search_hint"
+            app:floatingSearch_showSearchKey="true"
+            app:floatingSearch_suggestionsListAnimDuration="250" />
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
