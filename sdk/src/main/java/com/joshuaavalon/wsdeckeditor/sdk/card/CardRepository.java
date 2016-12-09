@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 class CardRepository implements ICardRepository {
     @NonNull
@@ -36,6 +37,7 @@ class CardRepository implements ICardRepository {
     private final Context context;
     @Nullable
     private RequestQueue requestQueue;
+    private int recordCount = -1;
 
     CardRepository(@NonNull final Context context, @NonNull final AbstractCardDatabase database) {
         this.context = context.getApplicationContext();
@@ -95,6 +97,31 @@ class CardRepository implements ICardRepository {
         cursor.close();
         sqLiteDatabase.close();
         return result;
+    }
+
+    @Nullable
+    @Override
+    public Card random() {
+        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
+        Cursor cursor;
+        if (recordCount < 0) {
+            cursor = sqLiteDatabase.query(CardScheme.Table.Card, new String[]{"COUNT(*)"},
+                    null, null, null, null, null);
+            if (cursor.moveToFirst())
+                recordCount = cursor.getInt(0);
+            cursor.close();
+        }
+        Card card = null;
+        if (recordCount > 0) {
+            final long id = ThreadLocalRandom.current().nextLong(recordCount) + 1;
+            cursor = sqLiteDatabase.query(CardScheme.Table.Card, null,
+                    "_id = ?", new String[]{String.valueOf(id)}, null, null, null);
+            if (cursor.moveToFirst())
+                card = buildCard(cursor);
+            cursor.close();
+        }
+        sqLiteDatabase.close();
+        return card;
     }
 
     @Nullable
@@ -169,6 +196,7 @@ class CardRepository implements ICardRepository {
     @Override
     public void updateDatabase(@NonNull InputStream in) {
         database.copyDatabase(in);
+        recordCount = -1;
     }
 
     @NonNull

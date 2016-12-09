@@ -56,6 +56,12 @@ class CacheCardRepository implements ICardRepository {
 
     @Nullable
     @Override
+    public Card random() {
+        return cardRepository.random();
+    }
+
+    @Nullable
+    @Override
     public Card find(@NonNull final String serial) {
         Card card = cardLruCache.get(serial);
         if (card != null) return card;
@@ -100,9 +106,9 @@ class CacheCardRepository implements ICardRepository {
     @NonNull
     @Override
     public Bitmap thumbnailOf(@NonNull Bitmap bitmap) {
-        final int key =bitmap.hashCode();
+        final int key = bitmap.hashCode();
         Bitmap thumbnail = thumbnailLruCache.get(key);
-        if(thumbnail == null)
+        if (thumbnail == null)
             thumbnail = cardRepository.thumbnailOf(bitmap);
         thumbnailLruCache.put(key, thumbnail);
         return thumbnail;

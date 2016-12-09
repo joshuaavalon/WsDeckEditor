@@ -14,7 +14,7 @@ import com.android.volley.VolleyError;
 import com.google.common.base.Objects;
 import com.joshuaavalon.android.view.ContentView;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.fragment.AboutFragment;
+import com.joshuaavalon.wsdeckeditor.fragment.HomeFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.DeckListFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.ExpansionFragment;
 import com.joshuaavalon.wsdeckeditor.fragment.SettingFragment;
@@ -32,7 +32,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationView.setNavigationItemSelectedListener(this);
-        fragmentTransaction(new AboutFragment(), false);
+        fragmentTransaction(new HomeFragment(), false);
         if (getPreference().getFirstTime()) {
             getPreference().setFirstTime(false);
             Timber.i("First time usage.");
@@ -44,8 +44,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         final int id = item.getItemId();
         switch (id) {
-            case R.id.nav_about:
-                fragmentTransaction(new AboutFragment());
+            case R.id.nav_home:
+                fragmentTransaction(new HomeFragment());
                 break;
             case R.id.nav_update:
                 fragmentTransaction(new UpdateFragment());

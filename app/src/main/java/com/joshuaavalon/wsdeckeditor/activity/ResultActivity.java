@@ -373,10 +373,8 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
                                 })
                         );
                         CardActivity.start(ResultActivity.this, serials, serials.indexOf(card.getSerial()), itemView);
-                    } else {
-                        if (actionModeListener == null) return;
+                    } else if (actionModeListener != null)
                         actionModeListener.onItemClicked(getAdapterPosition());
-                    }
                 }
             });
             imageView.setImageBitmap(null);

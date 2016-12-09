@@ -27,4 +27,20 @@
         android:key="@string/pref_swipe_remove"
         android:summary="@string/pref_swipe_remove_summary"
         android:title="@string/pref_swipe_remove_title" />
+
+    <PreferenceCategory android:title="@string/pref_cat_about">
+        <PreferenceScreen
+            android:key="@string/pref_version"
+            android:summary="@string/versionName"
+            android:title="@string/pref_version_title" />
+
+        <PreferenceScreen
+            android:key="@string/pref_license"
+            android:summary="MIT"
+            android:title="@string/pref_license_title" />
+        <PreferenceScreen
+            android:key="@string/pref_source_code"
+            android:summary="GitHub"
+            android:title="@string/pref_source_code_title" />
+    </PreferenceCategory>
 </PreferenceScreen>

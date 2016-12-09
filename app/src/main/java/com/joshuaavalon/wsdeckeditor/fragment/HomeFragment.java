@@ -13,8 +13,8 @@ import com.joshuaavalon.wsdeckeditor.R;
 
 import butterknife.ButterKnife;
 
-@ContentView(R.layout.fragment_about)
-public class AboutFragment extends BaseFragment {
+@ContentView(R.layout.fragment_home)
+public class HomeFragment extends BaseFragment {
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

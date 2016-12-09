@@ -13,6 +13,9 @@ public interface ICardRepository {
     int version();
 
     @Nullable
+    Card random();
+
+    @Nullable
     Card find(@NonNull String serial);
 
     @NonNull

@@ -6,12 +6,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +26,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
@@ -279,8 +285,21 @@ public class DeckActivity extends BaseActivity {
             else
                 new CircularCardImageLoadTask(getCardRepository(), this, card).execute(getResources());
             nameTextView.setText(card.getName());
-            serialTextView.setText(getString(R.string.format_card_detail, card.getSerial(),
-                    card.getLevel(), getString(card.getType().getStringId())));
+            final String detailString = getString(R.string.format_card_detail, card.getSerial(),
+                    card.getLevel(), getString(card.getType().getStringId()));
+            if (!Objects.equal(deck.getCover(), card.getSerial()))
+                serialTextView.setText(detailString);
+            else {
+                final String star = "★";
+                final SpannableStringBuilder builder = new SpannableStringBuilder();
+                builder.append(detailString);
+                builder.append(" ");
+                final SpannableString starSpannable = new SpannableString(star);
+                final int color = ContextCompat.getColor(DeckActivity.this, R.color.highlight_icon);
+                starSpannable.setSpan(new ForegroundColorSpan(color), 0, star.length(), 0);
+                builder.append(starSpannable);
+                serialTextView.setText(builder, TextView.BufferType.SPANNABLE);
+            }
             colorView.setBackgroundResource(card.getColor().getColorId());
             countTextView.setText(String.valueOf(entry.getCount()));
             countTextView.setOnClickListener(new View.OnClickListener() {
@@ -293,8 +312,19 @@ public class DeckActivity extends BaseActivity {
                     new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
+                            final String previousCover = deck.getCover();
                             deck.setCover(entry.getElement().getSerial());
                             getDeckRepository().save(deck.meta());
+                            adapter.notifyItemChanged(getAdapterPosition());
+                            final int previousIndex = Iterables.indexOf(adapter.getModels(),
+                                    new Predicate<Multiset.Entry<Card>>() {
+                                        @Override
+                                        public boolean apply(Multiset.Entry<Card> input) {
+                                            return Objects.equal(input.getElement().getSerial(), previousCover);
+                                        }
+                                    });
+                            if (previousIndex >= 0)
+                                adapter.notifyItemChanged(previousIndex);
                             showMessage(R.string.msg_set_fav);
                             return true;
                         }

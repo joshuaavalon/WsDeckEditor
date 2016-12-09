@@ -206,6 +206,7 @@ class DeckRepository implements IDeckRepository {
         final Deck deck = new Deck();
         deck.setId(deckMeta.getId());
         deck.setName(deckMeta.getName());
+        deck.setCover(deckMeta.getCover());
         for (DeckRecord record : deckRecords) {
             for (Card card : cardRepository.findAll(serials)) {
                 if (!Objects.equals(card.getSerial(), record.getSerial())) continue;

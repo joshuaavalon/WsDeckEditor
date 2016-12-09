@@ -12,6 +12,9 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,7 +26,7 @@ import com.joshuaavalon.wsdeckeditor.R;
 import com.joshuaavalon.wsdeckeditor.activity.ResultActivity;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Card;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
-import com.joshuaavalon.wsdeckeditor.task.CardImageLoadTask;
+import com.joshuaavalon.wsdeckeditor.util.WebUtils;
 import com.joshuaavalon.wsdeckeditor.view.CardImageHolder;
 
 import java.util.HashSet;
@@ -94,7 +97,26 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
         }
         card = getCardRepository().find(serial);
         bind();
+        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_card_detail, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        final int id = item.getItemId();
+        switch (id) {
+            case R.id.action_web:
+                WebUtils.launchUrl(getContext(), getString(R.string.web_url, card.getSerial()));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     //region Bind
