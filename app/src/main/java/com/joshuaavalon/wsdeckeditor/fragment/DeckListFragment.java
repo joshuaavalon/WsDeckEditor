@@ -234,12 +234,14 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
 
         @Override
         public void setImage(@NonNull Bitmap bitmap) {
-            deckImageView.setImageBitmap(bitmap);
+            if (deckImageView != null)
+                deckImageView.setImageBitmap(bitmap);
         }
 
         @Override
         public void setImage(@NonNull Drawable drawable) {
-            deckImageView.setImageDrawable(drawable);
+            if (deckImageView != null)
+                deckImageView.setImageDrawable(drawable);
         }
 
         @NonNull

@@ -403,12 +403,14 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
 
         @Override
         public void setImage(@NonNull Bitmap bitmap) {
-            imageView.setImageBitmap(bitmap);
+            if (imageView != null)
+                imageView.setImageBitmap(bitmap);
         }
 
         @Override
         public void setImage(@NonNull Drawable drawable) {
-            imageView.setImageDrawable(drawable);
+            if (imageView != null)
+                imageView.setImageDrawable(drawable);
             drawableLruCache.put(getImageName(), drawable);
         }
 
