@@ -192,6 +192,9 @@ public class DeckActivity extends BaseActivity {
                 getDeckRepository().save(deck);
                 showMessage(R.string.msg_deck_duplicated);
                 return true;
+            case R.id.action_image:
+                DeckImageActivity.start(this, deck.getId(), coordinatorLayout);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

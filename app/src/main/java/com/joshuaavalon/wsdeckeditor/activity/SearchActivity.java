@@ -217,6 +217,6 @@ public class SearchActivity extends BaseActivity {
         filter.setPower(powerRange);
         filter.setSoul(createRange(soulRangeBar));
         filter.setNormalOnly(normalSwitch.isChecked());
-        ResultActivity.start(this, filter,fab);
+        ResultActivity.start(this, filter, fab);
     }
 }

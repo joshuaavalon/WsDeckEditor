@@ -3,6 +3,8 @@ package com.joshuaavalon.wsdeckeditor.sdk.deck;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Objects;
+
 public class DeckMeta {
     @NonNull
     private final String name;
@@ -35,6 +37,6 @@ public class DeckMeta {
         if (!(obj instanceof DeckMeta)) return false;
         if (obj == this) return true;
         final DeckMeta that = (DeckMeta) obj;
-        return name.equals(that.name) && id == that.id;
+        return name.equals(that.name) && id == that.id && Objects.equal(cover, that.cover);
     }
 }

@@ -121,6 +121,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 new Response.Listener<Boolean>() {
                     @Override
                     public void onResponse(Boolean response) {
+                        if (!response)
+                            checkAppVersion();
+                        else
+                            enableUpdateNotification(true);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        checkAppVersion();
+                    }
+                });
+    }
+
+    private void checkAppVersion() {
+        getPreference().needUpdated(
+                new Response.Listener<Boolean>() {
+                    @Override
+                    public void onResponse(Boolean response) {
                         enableUpdateNotification(response);
                     }
                 },

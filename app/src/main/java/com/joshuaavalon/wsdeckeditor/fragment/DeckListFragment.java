@@ -93,8 +93,8 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         return view;
     }
 
-    private void initializeFab(){
-        final FloatingActionButton fab = ButterKnife.findById(getActivity(),R.id.fab);
+    private void initializeFab() {
+        final FloatingActionButton fab = ButterKnife.findById(getActivity(), R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -7,8 +7,27 @@ import com.google.common.collect.Sets;
 import com.joshuaavalon.wsdeckeditor.sdk.card.Filter;
 
 public class KeywordSuggestion extends AbstractSuggestion {
+    public static final Creator<KeywordSuggestion> CREATOR = new Creator<KeywordSuggestion>() {
+        @Override
+        public KeywordSuggestion createFromParcel(Parcel source) {
+            return new KeywordSuggestion(source);
+        }
+
+        @Override
+        public KeywordSuggestion[] newArray(int size) {
+            return new KeywordSuggestion[size];
+        }
+    };
     @NonNull
     private final String keywords;
+
+    public KeywordSuggestion(@NonNull final String keywords) {
+        this.keywords = keywords;
+    }
+
+    protected KeywordSuggestion(Parcel in) {
+        this.keywords = in.readString();
+    }
 
     @Override
     public String getBody() {
@@ -35,26 +54,6 @@ public class KeywordSuggestion extends AbstractSuggestion {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.keywords);
     }
-
-    public KeywordSuggestion(@NonNull final String keywords) {
-        this.keywords = keywords;
-    }
-
-    protected KeywordSuggestion(Parcel in) {
-        this.keywords = in.readString();
-    }
-
-    public static final Creator<KeywordSuggestion> CREATOR = new Creator<KeywordSuggestion>() {
-        @Override
-        public KeywordSuggestion createFromParcel(Parcel source) {
-            return new KeywordSuggestion(source);
-        }
-
-        @Override
-        public KeywordSuggestion[] newArray(int size) {
-            return new KeywordSuggestion[size];
-        }
-    };
 
     @Override
     public boolean equals(Object o) {

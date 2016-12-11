@@ -11,6 +11,7 @@ public interface ISuggestionProvider {
 
     @NonNull
     List<SearchSuggestion> history(@NonNull String query, int limit);
+
     @NonNull
     List<SearchSuggestion> history(int limit);
 

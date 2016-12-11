@@ -27,7 +27,6 @@
         android:key="@string/pref_swipe_remove"
         android:summary="@string/pref_swipe_remove_summary"
         android:title="@string/pref_swipe_remove_title" />
-
     <PreferenceCategory android:title="@string/pref_cat_privacy">
         <SwitchPreference
             android:defaultValue="true"
@@ -39,12 +38,13 @@
             android:summary="@string/pref_clear_quick_history_summary"
             android:title="@string/pref_clear_quick_history_title" />
     </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/pref_cat_about">
         <PreferenceScreen
             android:key="@string/pref_version"
-            android:summary="@string/versionName"
             android:title="@string/pref_version_title" />
+        <PreferenceScreen
+            android:key="@string/pref_database_version"
+            android:title="@string/pref_database_version_title" />
         <PreferenceScreen
             android:key="@string/pref_license"
             android:summary="MIT"

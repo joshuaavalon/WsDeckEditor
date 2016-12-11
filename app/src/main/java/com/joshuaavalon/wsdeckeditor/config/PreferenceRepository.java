@@ -4,8 +4,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.joshuaavalon.wsdeckeditor.R;
+import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import timber.log.Timber;
 
 public class PreferenceRepository {
     private final String KEY_FIRST_TIME;
@@ -19,9 +31,12 @@ public class PreferenceRepository {
     private final String KEY_QUICK_HISTORY;
     @NonNull
     private final SharedPreferences sharedPreferences;
+    @NonNull
+    private RequestQueue requestQueue;
 
     private PreferenceRepository(@NonNull final Context context,
                                  @NonNull final SharedPreferences sharedPreferences) {
+        requestQueue = Volley.newRequestQueue(context);
         this.sharedPreferences = sharedPreferences;
         KEY_FIRST_TIME = context.getString(R.string.pref_is_first);
         KEY_SWIPE_REMOVE = context.getString(R.string.pref_swipe_remove);
@@ -57,12 +72,6 @@ public class PreferenceRepository {
         return sharedPreferences.getBoolean(KEY_SWIPE_REMOVE, false);
     }
 
-    public void setSwipeRemove(final boolean bool) {
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_SWIPE_REMOVE, bool);
-        editor.apply();
-    }
-
     public boolean getHideNormal() {
         return sharedPreferences.getBoolean(KEY_HIDE_NORMAL, true);
     }
@@ -78,6 +87,7 @@ public class PreferenceRepository {
     public boolean getAddIfNotExist() {
         return sharedPreferences.getBoolean(KEY_ADD_IF_NOT_EXIST, false);
     }
+
     public boolean getEnableQuickSearchHistory() {
         return sharedPreferences.getBoolean(KEY_QUICK_HISTORY, true);
     }
@@ -100,5 +110,37 @@ public class PreferenceRepository {
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(KEY_DECK_ID, id);
         editor.apply();
+    }
+
+    public void networkVersion(@NonNull final Response.Listener<Version> listener, @Nullable final Response.ErrorListener errorListener) {
+        requestQueue.add(new StringRequest(Request.Method.GET, BuildConfig.versionUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Version version = null;
+                try {
+                    final JSONObject jsonObject = new JSONObject(response);
+                    final String tag = jsonObject.getString("tag_name");
+                    Timber.i("GitHub Version: %s", tag);
+                    version = new Version(tag);
+                } catch (JSONException | IllegalArgumentException e) {
+                    Timber.e(e, "GitHub Version Error");
+                }
+                listener.onResponse(version);
+            }
+        }, errorListener));
+    }
+
+    public void needUpdated(@NonNull final Response.Listener<Boolean> listener, @Nullable final Response.ErrorListener errorListener) {
+        networkVersion(new Response.Listener<Version>() {
+            @Override
+            public void onResponse(Version response) {
+                if (response == null) {
+                    listener.onResponse(false);
+                    return;
+                }
+                final Version currentVersion = new Version(BuildConfig.VERSION_NAME);
+                listener.onResponse(currentVersion.compareTo(response) < 0);
+            }
+        }, errorListener);
     }
 }
