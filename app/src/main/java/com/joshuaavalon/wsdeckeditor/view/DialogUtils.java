@@ -35,7 +35,8 @@ public class DialogUtils {
                 .title(R.string.dialog_select_your_deck)
                 .items(deckNames)
                 .itemsCallbackSingleChoice(selectedPosition, callback)
-                .positiveText(R.string.dialog_select_button)
+                .positiveText(R.string.dialog_choose_button)
+                .negativeText(R.string.dialog_cancel_button)
                 .show();
     }
 
@@ -63,7 +64,7 @@ public class DialogUtils {
     public static void showDeckSelectDialog(@NonNull final Context context, @NonNull final List<String> deckNames,
                                             @NonNull final MaterialDialog.ListCallback callback) {
         new MaterialDialog.Builder(context)
-                .title(R.string.dialog_select_your_deck)
+                .title(R.string.dialog_add_to_deck)
                 .items(deckNames)
                 .itemsCallback(callback)
                 .show();
@@ -73,6 +74,7 @@ public class DialogUtils {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(R.string.dialog_deck_info)
                 .customView(R.layout.dialog_deck_info, true)
+                .positiveText(R.string.dialog_close_button)
                 .show();
         final View view = dialog.getCustomView();
         if (view == null) return;
@@ -112,7 +114,10 @@ public class DialogUtils {
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 deckRepository.save(new DeckMeta(meta.getId(), input.toString(), meta.getCover()));
                             }
-                        }).show();
+                        })
+                .positiveText(R.string.dialog_rename_button)
+                .negativeText(R.string.dialog_cancel_button)
+                .show();
     }
 
     private static CharSequence getStatusLabel(@NonNull final Deck deck) {

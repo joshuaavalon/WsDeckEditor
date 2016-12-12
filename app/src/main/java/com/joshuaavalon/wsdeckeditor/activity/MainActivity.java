@@ -31,54 +31,34 @@ import butterknife.BindView;
 import timber.log.Timber;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener,
+        DrawerLayout.DrawerListener {
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initializeDrawerLayout();
-        navigationView.setNavigationItemSelectedListener(this);
-        fragmentTransaction(new HomeFragment(), false);
-        if (getPreference().getFirstTime()) {
-            getPreference().setFirstTime(false);
-            Timber.i("First time usage.");
-        }
-        checkUpdate();
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                View view = MainActivity.this.getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-            }
-        });
+    public void onDrawerSlide(View drawerView, float slideOffset) {
     }
 
-    private void initializeDrawerLayout() {
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        final View view = MainActivity.this.getCurrentFocus();
+        if (view == null) return;
+        // Close keyboard
+        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
     }
 
     @Override
@@ -111,11 +91,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-    private void enableUpdateNotification(boolean show) {
-        navigationView.getMenu().findItem(R.id.nav_update).getActionView()
-                .setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
     public void checkUpdate() {
         getCardRepository().needUpdated(
                 new Response.Listener<Boolean>() {
@@ -135,6 +110,43 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Close drawer if it is opened
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initializeDrawerLayout();
+        navigationView.setNavigationItemSelectedListener(this);
+        fragmentTransaction(new HomeFragment(), false);
+        if (getPreference().getFirstTime()) {
+            getPreference().setFirstTime(false);
+            Timber.tag("I001");
+            Timber.i("First time usage.");
+        }
+        checkUpdate();
+    }
+
+    private void initializeDrawerLayout() {
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        drawerLayout.addDrawerListener(this);
+        toggle.syncState();
+    }
+
+    private void enableUpdateNotification(boolean show) {
+        navigationView.getMenu().findItem(R.id.nav_update).getActionView()
+                .setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void checkAppVersion() {
         getPreference().needUpdated(
                 new Response.Listener<Boolean>() {
@@ -149,16 +161,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         enableUpdateNotification(false);
                     }
                 });
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Close drawer if it is opened
-        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return;
-        }
-        super.onBackPressed();
     }
 
     private void fragmentTransaction(@NonNull final Fragment fragment) {

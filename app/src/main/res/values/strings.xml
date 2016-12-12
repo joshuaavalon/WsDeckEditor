@@ -55,45 +55,35 @@
         translatable="false">@string/card_type</string>
     <string name="filter_color"
         translatable="false">@string/card_color</string>
-    <string name="filter_level_max">Max Level</string>
-    <string name="filter_level_min">Min Level</string>
-    <string name="filter_cost_max">Max Cost</string>
-    <string name="filter_cost_min">Min Cost</string>
-    <string name="filter_power_max">Max Power</string>
-    <string name="filter_power_min">Min Power</string>
-    <string name="filter_soul_max">Max Soul</string>
-    <string name="filter_soul_min">Min Soul</string>
     <string name="filter_trigger"
         translatable="false">@string/card_trigger</string>
     <string name="filter_normal_only">Normal Only</string>
     <!--       Condition Related End      -->
     <!--            Menu Start            -->
     <string name="nav_search">Search</string>
-    <string name="nav_card_list">Card Lists</string>
+    <string name="nav_expansions">Expansions</string>
     <string name="nav_update">Update</string>
     <string name="nav_setting">Setting</string>
-    <string name="nav_about">About</string>
-    <string name="nav_deck_edit">Deck Edit</string>
-    <string name="nav_drawer_open">Open Navigation Drawer</string>
-    <string name="nav_drawer_close">Close Navigation Drawer</string>
-    <string name="menu_filter_exp">Filter Expansions</string>
-    <string name="menu_select_all">Select All</string>
-    <string name="menu_filter_cards">Filter Cards</string>
-    <string name="menu_sorting">Sorting</string>
-    <string name="menu_delete_deck">Delete Deck</string>
-    <string name="menu_duplicate_deck">Duplicate Deck</string>
-    <string name="menu_deck_info">Deck Info</string>
-    <string name="menu_add_deck">Add Deck</string>
-    <string name="menu_add_to_deck">Add To Deck</string>
+    <string name="nav_deck_edit">Decks</string>
+    <string name="nav_drawer_open">Open navigation drawer</string>
+    <string name="nav_drawer_close">Close navigation drawer</string>
+    <string name="menu_filter_exp">Search expansions</string>
+    <string name="menu_select_all">Select all</string>
+    <string name="menu_filter_cards">Search cards</string>
+    <string name="menu_sorting">Sort</string>
+    <string name="menu_delete_deck">Delete</string>
+    <string name="menu_duplicate_deck">Duplicate</string>
+    <string name="menu_deck_info">Information</string>
+    <string name="menu_add_to_deck">Add to deck</string>
     <!--             Menu End             -->
     <!--           Dialog Start           -->
     <string name="dialog_info_level"
         tools:ignore="TypographyFractions">Level (0 / 1 / 2 / 3)</string>
     <string name="dialog_info_color">Color (Yellow / Green / Red / Blue)</string>
     <string name="dialog_info_type">Type (Character / Event / Climax)</string>
-    <string name="dialog_select_your_deck">Select Deck</string>
-    <string name="dialog_create_a_new_deck">New Deck</string>
-    <string name="dialog_rename_deck">Rename Deck</string>
+    <string name="dialog_select_your_deck">Choose a deck</string>
+    <string name="dialog_create_a_new_deck">Create a deck</string>
+    <string name="dialog_rename_deck">Rename your deck</string>
     <string name="dialog_change_card_count">Change Card Count</string>
     <string name="dialog_deck_name">Name</string>
     <string name="dialog_sort_by">Sort Order</string>
@@ -103,14 +93,13 @@
     <string name="dialog_update_images">Update Images</string>
     <string name="dialog_download_all_images">Download All Images</string>
     <string name="dialog_count">Count</string>
-    <string name="dialog_search_button">Search</string>
     <string name="dialog_update_button">Update</string>
     <string name="dialog_download_button">Download</string>
     <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_delete_button">Delete</string>
     <string name="dialog_create_button">Create</string>
     <string name="dialog_change_button">Change</string>
-    <string name="dialog_select_button">Select</string>
+    <string name="dialog_choose_button">Choose</string>
     <string name="dialog_sort_button">Sort</string>
     <string name="dialog_update_db_button">Update Database</string>
     <string name="dialog_update_images_button">Update Images</string>
@@ -118,12 +107,10 @@
     <string name="dialog_undo_button">Undo</string>
     <!--            Dialog End            -->
     <!--           Message Start          -->
-    <string name="msg_deck_error">Cannot add this card to deck.</string>
     <string name="msg_no_select_deck">Select a deck first.</string>
     <string name="msg_select_too_many">Selected too many cards.</string>
     <string name="msg_deck_duplicated">Deck duplicated.</string>
     <string name="msg_add_to_deck">Added to deck. </string>
-    <string name="msg_add_to_deck_single">Added to deck. (%d)</string>
     <string name="msg_update_database">Database updated.</string>
     <string name="msg_update_image">Image updated.</string>
     <string name="msg_network_err">Network error. Please check your network and try again.</string>
@@ -189,12 +176,11 @@
         <item>@string/card_level</item>
         <item>Detail</item>
     </string-array>
-    <string name="about_text">This is an open source project hosted on <a href="https://github.com/joshuaavalon/WsDeckEditor">Github</a>. You are welcome to report any issues or give any suggestions.</string>
     <string name="download_img_notice">Download image downloads <b>ALL</b> images. It cost around 300MB.</string>
     <string name="update_img_notice">Update image downloads missing images.</string>
     <string name="update_db_notice">Update database downloads the latest card data from internet. It costs around 10MB.</string>
     <string name="placeholder_number">0</string>
-    <string name="rename">Rename</string>
+    <string name="dialog_rename_button">Rename</string>
     <string name="delete">Delete</string>
     <string name="card_power_1000">Power (1000)</string>
 
@@ -224,4 +210,6 @@
     <string name="menu_image">Image</string>
     <string name="menu_share_image">Share image</string>
     <string name="share_your_deck">Share you deck</string>
+    <string name="dialog_add_to_deck">Add to deck</string>
+    <string name="dialog_close_button">Close</string>
 </resources>

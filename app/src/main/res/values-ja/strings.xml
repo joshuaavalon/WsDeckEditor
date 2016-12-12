@@ -41,22 +41,14 @@
     <!--        Data Metadata End         -->
     <!--      Condition Related Start     -->
     <string name="filter_keyword">キーワード</string>
-    <string name="filter_level_max">最大レベル</string>
-    <string name="filter_level_min">最低レベル</string>
-    <string name="filter_cost_max">最大コスト</string>
-    <string name="filter_cost_min">最低コスト</string>
-    <string name="filter_power_max">最大パワー</string>
-    <string name="filter_power_min">最低パワー</string>
-    <string name="filter_soul_max">最大ソウル</string>
-    <string name="filter_soul_min">最低ソウル</string>
     <string name="filter_normal_only">ノーマル限定</string>
     <!--       Condition Related End      -->
     <!--            Menu Start            -->
     <string name="nav_search">検索</string>
-    <string name="nav_card_list">カードリスト</string>
+    <string name="nav_expansions">カードリスト</string>
     <string name="nav_update">更新</string>
     <string name="nav_setting">設定</string>
-    <string name="nav_about">お間い合わせ</string>　
+    　
     <string name="nav_deck_edit">デッキ編集</string>
     <string name="nav_drawer_open">メニューを開く</string>　
     <string name="nav_drawer_close">メニューを閉る</string>
@@ -67,7 +59,6 @@
     <string name="menu_delete_deck">デッキ削除</string>
     <string name="menu_duplicate_deck">デッキ複製</string>
     <string name="menu_deck_info">デッキ詳細</string>
-    <string name="menu_add_deck">デッキ作成</string>
     <string name="menu_add_to_deck">デッキに加えます</string>　　
     <!--             Menu End             -->
     <!--           Dialog Start           -->
@@ -91,13 +82,12 @@
     <string name="dialog_delete_button">削除</string>
     <string name="dialog_create_button">作成</string>
     <string name="dialog_change_button">変更</string>
-    <string name="dialog_select_button">選択</string>
+    <string name="dialog_choose_button">選択</string>
     <string name="dialog_update_db_button">データベース更新</string>
     <string name="dialog_update_images_button">画像更新</string>　
     <string name="dialog_download_all_images_button">全画像をダウンロード</string>
     <!--            Dialog End            -->
     <!--           Message Start          -->
-    <string name="msg_deck_error">このカードをデッキに入ってきません。</string>
     <string name="msg_no_select_deck">デッキを選択してください。</string>
     <string name="msg_select_too_many">カードを選択多すぎです。</string>
     <string name="msg_deck_duplicated">デッキをコピーされました。</string>
@@ -129,7 +119,6 @@
     <string name="search_result">捜索結果</string>
     <string name="latest_version">最新バージョン</string>
     <string name="current_version">バージョン</string>
-    <string name="about_text">こちらは <a href="https://github.com/joshuaavalon/WsDeckEditor">Github</a>が開発したオープンソースプロジェクトでごさいます。よくある質問、何かのアドバス、お問い合わせしてお願いいたします。</string>
     <string-array name="sort_type">
         <item>@string/card_serial</item>
         <item>@string/card_level</item>
@@ -140,7 +129,6 @@
     <string name="update_db_notice">データベースが最新のカードデータをダウンロードします、１０ＭＢぐらいの容量が必要です。</string>
     <string name="update_img_notice">画像を更新すると、欠落の画像が補充します。</string>
     <string name="download_img_notice"><b>全画像</b>をダウンロードすると、再ダウンロードを行われます。300ＭＢぐらいの容量が必要です。</string>
-    <string name="msg_add_to_deck_single">デッキに入れました。(%d)</string>
     <string name="msg_set_fav">お気入りのカードに登録しますた。</string>
     <string name="dialog_undo_button">復元</string>
     <string name="pref_swipe_remove_title">スワイプ削除</string>

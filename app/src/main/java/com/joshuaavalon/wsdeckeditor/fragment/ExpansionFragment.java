@@ -43,7 +43,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
     @NonNull
     @Override
     public String getTitle() {
-        return getString(R.string.card_expansion);
+        return getString(R.string.nav_expansions);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.graphics.Rect;
 
 /**
  * Thumbnail generation routines for media provider.
+ * Modified version of ThumbnailUtils.
  */
 public class ThumbnailUtils {
     /**

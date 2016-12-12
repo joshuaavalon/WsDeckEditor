@@ -5,10 +5,14 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 
 import com.google.common.collect.ComparisonChain;
 import com.joshuaavalon.wsdeckeditor.sdk.R;
 
+/**
+ * {@link Card} is a immutable data structure represents a card.
+ */
 public class Card implements Comparable<Card> {
     @NonNull
     private final String name, serial, rarity, expansion, attribute1, attribute2, text, flavor, image;
@@ -232,6 +236,9 @@ public class Card implements Comparable<Card> {
         }
     }
 
+    /**
+     * {@link Builder} is a builder for {@link Card}. Uses {@link Builder#build()} to construct a {@link Card}.
+     */
     public static class Builder {
         @NonNull
         private String name, serial, rarity, expansion, attribute1, attribute2, text, flavor, image;
@@ -266,102 +273,216 @@ public class Card implements Comparable<Card> {
             image = "";
         }
 
+        /**
+         * Set the name of the card.
+         *
+         * @param name Not null. Name of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setName(@NonNull final String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Set the serial of the card.
+         *
+         * @param serial Not null. Serial of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setSerial(@NonNull final String serial) {
             this.serial = serial;
             return this;
         }
 
+        /**
+         * Set the rarity of the card.
+         *
+         * @param rarity Not null. Rarity of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setRarity(@NonNull final String rarity) {
             this.rarity = rarity;
             return this;
         }
 
+        /**
+         * Set the expansion of the card.
+         *
+         * @param expansion Not null. Expansion of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setExpansion(@NonNull final String expansion) {
             this.expansion = expansion;
             return this;
         }
 
+        /**
+         * Set the side of the card.
+         *
+         * @param side Not null. Side of the card.
+         * @return Current builder.
+         */
         @NonNull
-        public Builder setSide(@NonNull Side side) {
+        public Builder setSide(@NonNull final Side side) {
             this.side = side;
             return this;
         }
 
+        /**
+         * Set the type of the card.
+         *
+         * @param type Not null. Type of the card.
+         * @return Current builder.
+         */
         @NonNull
-        public Builder setType(@NonNull Type type) {
+        public Builder setType(@NonNull final Type type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * Set the color of the card.
+         *
+         * @param color Not null. Color of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setColor(@NonNull final Color color) {
             this.color = color;
             return this;
         }
 
+        /**
+         * Set the level of the card.
+         *
+         * @param level Non-negative integer. Level of the card.
+         * @return Current builder.
+         * @throws IllegalArgumentException Negative {@code level}.
+         */
         @NonNull
-        public Builder setLevel(final int level) {
+        public Builder setLevel(@IntRange(from = 0) final int level) {
+            if (level < 0)
+                throw new IllegalArgumentException("level cannot smaller than 0.");
             this.level = level;
             return this;
         }
 
+        /**
+         * Set the cost of the card.
+         *
+         * @param cost Non-negative integer. Cost of the card.
+         * @return Current builder.
+         * @throws IllegalArgumentException Negative {@code cost}.
+         */
         @NonNull
-        public Builder setCost(final int cost) {
+        public Builder setCost(@IntRange(from = 0) final int cost) {
+            if (cost < 0)
+                throw new IllegalArgumentException("cost cannot smaller than 0.");
             this.cost = cost;
             return this;
         }
 
+        /**
+         * Set the power of the card.
+         *
+         * @param power Non-negative integer. Power of the card.
+         * @return Current builder.
+         * @throws IllegalArgumentException Negative {@code power}.
+         */
         @NonNull
-        public Builder setPower(final int power) {
+        public Builder setPower(@IntRange(from = 0) final int power) {
+            if (power < 0)
+                throw new IllegalArgumentException("power cannot smaller than 0.");
             this.power = power;
             return this;
         }
 
+        /**
+         * Set the soul of the card.
+         *
+         * @param soul Non-negative integer. Soul of the card.
+         * @return Current builder.
+         * @throws IllegalArgumentException Negative {@code soul}.
+         */
         @NonNull
-        public Builder setSoul(final int soul) {
+        public Builder setSoul(@IntRange(from = 0) final int soul) {
+            if (soul < 0)
+                throw new IllegalArgumentException("soul cannot smaller than 0.");
             this.soul = soul;
             return this;
         }
 
+        /**
+         * Set the trigger of the card.
+         *
+         * @param trigger Not null. Trigger of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setTrigger(@NonNull final Trigger trigger) {
             this.trigger = trigger;
             return this;
         }
 
+        /**
+         * Set the attribute of the card.
+         *
+         * @param attribute1 Not null. Attribute of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setAttribute1(@NonNull final String attribute1) {
             this.attribute1 = attribute1;
             return this;
         }
 
+        /**
+         * Set the attribute of the card.
+         *
+         * @param attribute2 Not null. Attribute of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setAttribute2(@NonNull final String attribute2) {
             this.attribute2 = attribute2;
             return this;
         }
 
+        /**
+         * Set the text of the card.
+         *
+         * @param text Not null. Test of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setText(@NonNull final String text) {
             this.text = text;
             return this;
         }
 
+        /**
+         * Set the flavor text of the card.
+         *
+         * @param flavor Not null. Flavor text of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setFlavor(@NonNull final String flavor) {
             this.flavor = flavor;
             return this;
         }
 
+        /**
+         * Set the image of the card. File name only.
+         *
+         * @param image Not null. Image of the card.
+         * @return Current builder.
+         */
         @NonNull
         public Builder setImage(@NonNull final String image) {
             this.image = image;
@@ -370,6 +491,10 @@ public class Card implements Comparable<Card> {
 
         @NonNull
         public Card build() {
+            if (TextUtils.isEmpty(attribute1) && !TextUtils.isEmpty(attribute2)) {
+                attribute1 = attribute2;
+                attribute2 = "";
+            }
             return new Card(this);
         }
     }
