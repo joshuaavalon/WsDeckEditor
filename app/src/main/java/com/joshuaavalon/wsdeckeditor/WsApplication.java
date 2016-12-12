@@ -28,21 +28,21 @@ public class WsApplication extends Application {
     }
 
     @NonNull
-    public ICardRepository getCardRepository() {
+    public synchronized ICardRepository getCardRepository() {
         if (cardRepository == null)
             cardRepository = CardFacade.Repository(this);
         return cardRepository;
     }
 
     @NonNull
-    public IDeckRepository getDeckRepository() {
+    public synchronized IDeckRepository getDeckRepository() {
         if (deckRepository == null)
             deckRepository = DeckFacade.Repository(this, getCardRepository());
         return deckRepository;
     }
 
     @NonNull
-    public PreferenceRepository getPreference() {
+    public synchronized PreferenceRepository getPreference() {
         if (preference == null)
             preference = PreferenceRepository.fromDefault(this);
         return preference;
