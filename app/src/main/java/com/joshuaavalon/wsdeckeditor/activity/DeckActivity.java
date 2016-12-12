@@ -122,7 +122,7 @@ public class DeckActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_deck_edit, menu);
+        inflater.inflate(R.menu.deck_edit, menu);
         return true;
     }
 

@@ -118,7 +118,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
     //region ActionMode.Callback
     @Override
     public boolean onCreateActionMode(final ActionMode actionMode, final Menu menu) {
-        actionMode.getMenuInflater().inflate(R.menu.action_mode_card_list, menu);
+        actionMode.getMenuInflater().inflate(R.menu.action_mode_result, menu);
         return true;
     }
 
@@ -293,7 +293,7 @@ public class ResultActivity extends BaseActivity implements ActionModeListener, 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_card_list, menu);
+        inflater.inflate(R.menu.result, menu);
         return true;
     }
 

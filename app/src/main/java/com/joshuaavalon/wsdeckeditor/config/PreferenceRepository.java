@@ -33,6 +33,7 @@ public class PreferenceRepository {
     private final SharedPreferences sharedPreferences;
     @NonNull
     private RequestQueue requestQueue;
+    private final String api;
 
     private PreferenceRepository(@NonNull final Context context,
                                  @NonNull final SharedPreferences sharedPreferences) {
@@ -47,6 +48,7 @@ public class PreferenceRepository {
         KEY_SORT_ORDER = context.getString(R.string.pref_sort_order);
         KEY_DECK_ID = context.getString(R.string.pref_deck_id);
         KEY_QUICK_HISTORY = context.getString(R.string.pref_quick_search_history);
+        api = context.getString(R.string.api_url);
     }
 
     public static PreferenceRepository fromDefault(@NonNull final Context context) {
@@ -113,7 +115,7 @@ public class PreferenceRepository {
     }
 
     public void networkVersion(@NonNull final Response.Listener<Version> listener, @Nullable final Response.ErrorListener errorListener) {
-        requestQueue.add(new StringRequest(Request.Method.GET, BuildConfig.versionUrl, new Response.Listener<String>() {
+        requestQueue.add(new StringRequest(Request.Method.GET, api, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Version version = null;

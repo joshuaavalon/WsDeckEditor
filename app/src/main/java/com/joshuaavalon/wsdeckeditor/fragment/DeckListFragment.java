@@ -166,7 +166,7 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_deck, menu);
+        inflater.inflate(R.menu.deck, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);

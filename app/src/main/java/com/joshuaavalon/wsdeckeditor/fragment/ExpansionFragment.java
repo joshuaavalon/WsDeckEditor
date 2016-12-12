@@ -49,7 +49,7 @@ public class ExpansionFragment extends BaseFragment implements SearchView.OnQuer
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_expansion, menu);
+        inflater.inflate(R.menu.expansion, menu);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);

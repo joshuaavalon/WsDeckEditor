@@ -5,5 +5,4 @@
     android:layout_height="match_parent"
     android:contentDescription="@string/acb_icon"
     android:orientation="vertical"
-    android:src="@drawable/ic_new_releases_black_24dp"
-    android:tint="#ee6e73" />
+    android:src="@drawable/ic_new_releases_red_24dp"/>

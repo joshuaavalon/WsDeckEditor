@@ -83,8 +83,8 @@
     <string name="dialog_create_button">作成</string>
     <string name="dialog_change_button">変更</string>
     <string name="dialog_choose_button">選択</string>
-    <string name="dialog_update_db_button">データベース更新</string>
-    <string name="dialog_update_images_button">画像更新</string>　
+    <string name="update_db_button">データベース更新</string>
+    <string name="update_images_button">画像更新</string>　
     <string name="dialog_download_all_images_button">全画像をダウンロード</string>
     <!--            Dialog End            -->
     <!--           Message Start          -->
@@ -134,4 +134,29 @@
     <string name="pref_swipe_remove_title">スワイプ削除</string>
     <string name="pref_swipe_remove_summary">左スワイプでカードとデッキを削除します。</string>
     <string name="msg_remove_card">カード消しました。</string>
+    <string name="card_power_1000">パワー (1000)</string>
+    <string name="application_version">アプリバージョン</string>
+    <string name="database_version">データベースバージョン</string>
+    <string name="delete">削除</string>
+    <string name="dialog_rename_button">名変更</string>
+    <string name="dialog_sort_button">並べ替え</string>
+    <string name="dialog_add_to_deck">デッキに入れます</string>
+    <string name="dialog_close_button">閉じる</string>
+    <string name="menu_image">画像</string>
+    <string name="menu_share">共有</string>
+    <string name="msg_clear_history">履歴はクリアされました。</string>
+    <string name="nav_home">ホーム</string>
+    <string name="search_hint">検索…</string>
+    <string name="pref_version_title">バージョン</string>
+    <string name="share_your_deck">デッキ共有</string>
+    <string name="update_application">アプリ更新</string>
+    <string name="pref_source_code_title">ソースコード</string>
+    <string name="pref_license_title">ライセンス</string>
+    <string name="pref_cat_privacy">プライバシー</string>
+    <string name="pref_cat_about">アプリについて</string>
+    <string name="pref_database_version_title">データベースバージョン</string>
+    <string name="pref_quick_search_history_title">検索履歴</string>
+    <string name="pref_quick_search_history_summary">検索履歴を保存する。</string>
+    <string name="pref_clear_quick_history_title">検索履歴をクリア</string>
+    <string name="pref_clear_quick_history_summary">すべての検索履歴をクリアする。</string>
 </resources>

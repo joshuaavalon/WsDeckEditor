@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:gravity="center"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
     <TextView
-        android:id="@+id/latest_text_view"
+        android:id="@+id/app_version_text_view"
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,9 +19,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:text="@string/latest_version" />
+        android:text="@string/application_version" />
     <TextView
-        android:id="@+id/current_text_view"
+        android:id="@+id/latest_app_version_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/ic_new_releases_red_24dp"
+        android:gravity="center_vertical"
+        android:text="@string/placeholder_text"
+        android:visibility="gone" />
+    <Button
+        android:id="@+id/update_app_button"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="200dp"
+        android:text="@string/update_application" />
+    <TextView
+        android:id="@+id/db_version_text_view"
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,23 +50,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:text="@string/current_version" />
+        android:text="@string/database_version" />
+    <TextView
+        android:id="@+id/latest_db_version_text_view"
+        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/ic_new_releases_red_24dp"
+        android:gravity="center_vertical"
+        android:text="@string/placeholder_text" />
     <Button
         android:id="@+id/update_database_button"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_update_db_button" />
+        android:minWidth="200dp"
+        android:text="@string/update_db_button" />
     <Button
         android:id="@+id/update_images_button"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_update_images_button" />
-    <Button
-        android:id="@+id/download_all_images_button"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_download_all_images_button" />
+        android:minWidth="200dp"
+        android:text="@string/update_images_button" />
 </LinearLayout>

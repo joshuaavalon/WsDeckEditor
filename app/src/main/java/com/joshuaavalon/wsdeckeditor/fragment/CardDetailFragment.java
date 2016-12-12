@@ -105,7 +105,7 @@ public class CardDetailFragment extends BaseFragment implements CardImageHolder 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_card_detail, menu);
+        inflater.inflate(R.menu.card_detail, menu);
     }
 
     @Override

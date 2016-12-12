@@ -84,14 +84,14 @@
     <string name="dialog_select_your_deck">Choose a deck</string>
     <string name="dialog_create_a_new_deck">Create a deck</string>
     <string name="dialog_rename_deck">Rename your deck</string>
-    <string name="dialog_change_card_count">Change Card Count</string>
+    <string name="dialog_change_card_count">Card count</string>
     <string name="dialog_deck_name">Name</string>
-    <string name="dialog_sort_by">Sort Order</string>
+    <string name="dialog_sort_by">Sort order</string>
     <string name="dialog_deck_info">Information</string>
     <string name="dialog_delete_deck">Delete this deck?</string>
-    <string name="dialog_update_database">Update Database</string>
-    <string name="dialog_update_images">Update Images</string>
-    <string name="dialog_download_all_images">Download All Images</string>
+    <string name="dialog_update_database">Update database</string>
+    <string name="dialog_update_images">Update images</string>
+    <string name="dialog_download_all_images">Download all images</string>
     <string name="dialog_count">Count</string>
     <string name="dialog_update_button">Update</string>
     <string name="dialog_download_button">Download</string>
@@ -101,8 +101,8 @@
     <string name="dialog_change_button">Change</string>
     <string name="dialog_choose_button">Choose</string>
     <string name="dialog_sort_button">Sort</string>
-    <string name="dialog_update_db_button">Update Database</string>
-    <string name="dialog_update_images_button">Update Images</string>
+    <string name="update_db_button">Update Database</string>
+    <string name="update_images_button">Update Images</string>
     <string name="dialog_download_all_images_button">Download All Images</string>
     <string name="dialog_undo_button">Undo</string>
     <!--            Dialog End            -->
@@ -179,7 +179,8 @@
     <string name="download_img_notice">Download image downloads <b>ALL</b> images. It cost around 300MB.</string>
     <string name="update_img_notice">Update image downloads missing images.</string>
     <string name="update_db_notice">Update database downloads the latest card data from internet. It costs around 10MB.</string>
-    <string name="placeholder_number">0</string>
+    <string name="placeholder_number"
+        translatable="false">0</string>
     <string name="dialog_rename_button">Rename</string>
     <string name="delete">Delete</string>
     <string name="card_power_1000">Power (1000)</string>
@@ -188,28 +189,38 @@
         translatable="false">https://github.com/joshuaavalon/WsDeckEditor/blob/master/LICENSE</string>
     <string name="source_url"
         translatable="false">https://github.com/joshuaavalon/WsDeckEditor/</string>
+    <string name="api_url"
+        translatable="false">https://api.github.com/repos/joshuaavalon/WsDeckEditor/releases/latest</string>
     <string name="web_url"
         translatable="false">http://ws-tcg.com/cardlist/?cardno=%s</string>
     <string name="google_play_url"
         translatable="false">https://play.google.com/store/apps/details?id=com.joshuaavalon.wsdeckeditor</string>
     <string name="pref_cat_about">About</string>
     <string name="pref_source_code_title">Source Code</string>
-    <string name="pref_source_code">sourceCode</string>
-    <string name="pref_version">version</string>
-    <string name="pref_database_version">databaseVersion</string>
+    <string name="pref_source_code"
+        translatable="false">sourceCode</string>
+    <string name="pref_version"
+        translatable="false">version</string>
+    <string name="pref_database_version"
+        translatable="false">databaseVersion</string>
     <string name="nav_home">Home</string>
     <string name="search_hint">Search…</string>
     <string name="pref_cat_privacy">Privacy</string>
     <string name="pref_clear_quick_history_title">Clear Quick Search History</string>
     <string name="pref_clear_quick_history_summary">Clear all the card quick search history.</string>
-    <string name="pref_clear_quick_history">clearQuickHistory</string>
-    <string name="pref_quick_search_history">quickSearchHistory</string>
+    <string name="pref_clear_quick_history"
+        translatable="false">clearQuickHistory</string>
+    <string name="pref_quick_search_history"
+        translatable="false">quickSearchHistory</string>
     <string name="pref_quick_search_history_summary">Record keywords used in card quick search.</string>
     <string name="pref_quick_search_history_title">Quick Search History</string>
     <string name="msg_clear_history">All history is cleared.</string>
     <string name="menu_image">Image</string>
-    <string name="menu_share_image">Share image</string>
+    <string name="menu_share">Share</string>
     <string name="share_your_deck">Share you deck</string>
     <string name="dialog_add_to_deck">Add to deck</string>
     <string name="dialog_close_button">Close</string>
+    <string name="application_version">Application Version</string>
+    <string name="database_version">Database Version</string>
+    <string name="update_application">Update Application</string>
 </resources>
