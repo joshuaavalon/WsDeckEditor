@@ -170,25 +170,6 @@ class DeckRepository implements IDeckRepository {
         return deckMeta;
     }
 
-    @NonNull
-    private List<DeckRecord> deckRecords(final long id) {
-        final SQLiteDatabase database = helper.getReadableDatabase();
-        final SQLiteQueryBuilder deckRecordQueryBuilder = new SQLiteQueryBuilder();
-        deckRecordQueryBuilder.setTables(DeckScheme.Table.DeckRecord);
-        deckRecordQueryBuilder.appendWhere(DeckScheme.Field.DeckId + "=" + id);
-        final Cursor deckRecordCursor = deckRecordQueryBuilder.query(database, null, null, null, null, null, null);
-        final List<DeckRecord> deckRecords = new ArrayList<>();
-        if (deckRecordCursor.moveToFirst())
-            do {
-                deckRecords.add(new DeckRecord(
-                        deckRecordCursor.getString(deckRecordCursor.getColumnIndexOrThrow(DeckScheme.Field.Serial)),
-                        deckRecordCursor.getInt(deckRecordCursor.getColumnIndexOrThrow(DeckScheme.Field.Count))));
-            } while (deckRecordCursor.moveToNext());
-        deckRecordCursor.close();
-        database.close();
-        return deckRecords;
-    }
-
     @Nullable
     @Override
     public Deck deck(final long id) {
@@ -231,5 +212,24 @@ class DeckRepository implements IDeckRepository {
         cursor.close();
         database.close();
         return count;
+    }
+
+    @NonNull
+    private List<DeckRecord> deckRecords(final long id) {
+        final SQLiteDatabase database = helper.getReadableDatabase();
+        final SQLiteQueryBuilder deckRecordQueryBuilder = new SQLiteQueryBuilder();
+        deckRecordQueryBuilder.setTables(DeckScheme.Table.DeckRecord);
+        deckRecordQueryBuilder.appendWhere(DeckScheme.Field.DeckId + "=" + id);
+        final Cursor deckRecordCursor = deckRecordQueryBuilder.query(database, null, null, null, null, null, null);
+        final List<DeckRecord> deckRecords = new ArrayList<>();
+        if (deckRecordCursor.moveToFirst())
+            do {
+                deckRecords.add(new DeckRecord(
+                        deckRecordCursor.getString(deckRecordCursor.getColumnIndexOrThrow(DeckScheme.Field.Serial)),
+                        deckRecordCursor.getInt(deckRecordCursor.getColumnIndexOrThrow(DeckScheme.Field.Count))));
+            } while (deckRecordCursor.moveToNext());
+        deckRecordCursor.close();
+        database.close();
+        return deckRecords;
     }
 }

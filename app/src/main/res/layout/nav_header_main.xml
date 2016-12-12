@@ -10,7 +10,6 @@
     android:paddingLeft="@dimen/nav_horizontal_margin"
     android:paddingRight="@dimen/nav_horizontal_margin"
     android:paddingTop="@dimen/nav_vertical_margin">
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

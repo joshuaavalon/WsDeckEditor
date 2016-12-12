@@ -56,15 +56,15 @@ public class KeywordSuggestion extends AbstractSuggestion {
     }
 
     @Override
+    public int hashCode() {
+        return keywords.hashCode();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof KeywordSuggestion)) return false;
         KeywordSuggestion that = (KeywordSuggestion) o;
         return keywords.equals(that.keywords);
-    }
-
-    @Override
-    public int hashCode() {
-        return keywords.hashCode();
     }
 }

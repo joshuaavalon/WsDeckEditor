@@ -64,38 +64,6 @@ public class DeckActivity extends BaseActivity {
     private Comparator<Multiset.Entry<Card>> comparator;
     private AnimatedRecyclerAdapter<Multiset.Entry<Card>> adapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        long id = getIntent().getLongExtra(ARG_ID, -1);
-        if (id < 0) {
-            Timber.w("DeckActivity: Empty Argument");
-            finish();
-            return;
-        }
-        deck = getDeckRepository().deck(id);
-        setTitle();
-        drawableLruCache = new LruCache<>(Constant.DrawableCache);
-        comparator = getPreference().getSortOrder().getComparator();
-        final List<Multiset.Entry<Card>> cardEntries = Lists.newArrayList(deck.getCardList().entrySet());
-        Collections.sort(cardEntries, comparator);
-        adapter = new AnimatedRecyclerAdapter<>(cardEntries,
-                new ViewHolderFactory<Multiset.Entry<Card>>() {
-                    @Override
-                    protected BindingViewHolder<Multiset.Entry<Card>> createViewHolder(View view, int viewType) {
-                        return new CardViewHolder(view);
-                    }
-
-                    @Override
-                    protected int getLayoutId(int viewType) {
-                        return R.layout.list_item_deck_edit;
-                    }
-                });
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        initializeSwipeRemove();
-    }
-
     private void initializeSwipeRemove() {
         if (!getPreference().getSwipeRemove()) return;
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
@@ -126,13 +94,6 @@ public class DeckActivity extends BaseActivity {
                     }
                 });
         itemTouchHelper.attachToRecyclerView(recyclerView);
-    }
-
-    @Override
-    protected void initializeActionBar(@NonNull ActionBar actionBar) {
-        super.initializeActionBar(actionBar);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void showSortDialog() {
@@ -198,6 +159,45 @@ public class DeckActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        long id = getIntent().getLongExtra(ARG_ID, -1);
+        if (id < 0) {
+            Timber.w("DeckActivity: Empty Argument");
+            finish();
+            return;
+        }
+        deck = getDeckRepository().deck(id);
+        setTitle();
+        drawableLruCache = new LruCache<>(Constant.DrawableCache);
+        comparator = getPreference().getSortOrder().getComparator();
+        final List<Multiset.Entry<Card>> cardEntries = Lists.newArrayList(deck.getCardList().entrySet());
+        Collections.sort(cardEntries, comparator);
+        adapter = new AnimatedRecyclerAdapter<>(cardEntries,
+                new ViewHolderFactory<Multiset.Entry<Card>>() {
+                    @Override
+                    protected BindingViewHolder<Multiset.Entry<Card>> createViewHolder(View view, int viewType) {
+                        return new CardViewHolder(view);
+                    }
+
+                    @Override
+                    protected int getLayoutId(int viewType) {
+                        return R.layout.list_item_deck_edit;
+                    }
+                });
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        initializeSwipeRemove();
+    }
+
+    @Override
+    protected void initializeActionBar(@NonNull ActionBar actionBar) {
+        super.initializeActionBar(actionBar);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void removeDeck() {

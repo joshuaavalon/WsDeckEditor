@@ -19,8 +19,10 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 WebUtils.launchUrlFromPreference(getContext(), getString(R.string.license_url)));
         findPreference(getString(R.string.pref_source_code)).setOnPreferenceClickListener(
                 WebUtils.launchUrlFromPreference(getContext(), getString(R.string.source_url)));
-        findPreference(getString(R.string.pref_version)).setOnPreferenceClickListener(
-                WebUtils.launchUrlFromPreference(getContext(), getString(R.string.google_play_url)));
+        final Preference version = findPreference(getString(R.string.pref_version));
+        version.setOnPreferenceClickListener(WebUtils.launchUrlFromPreference(getContext(),
+                getString(R.string.google_play_url)));
+        version.setSummary(BuildConfig.VERSION_NAME);
         findPreference(getString(R.string.pref_clear_quick_history))
                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
@@ -30,8 +32,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
                         return true;
                     }
                 });
-        findPreference(getString(R.string.pref_version))
-                .setSummary(BuildConfig.VERSION_NAME);
         findPreference(getString(R.string.pref_database_version))
                 .setSummary(String.valueOf(activity.getCardRepository().version()));
     }

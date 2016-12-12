@@ -25,6 +25,10 @@ public class CacheDeckRepository implements IDeckRepository {
         meta = null;
     }
 
+    public static Builder builder(@NonNull final IDeckRepository deckRepository) {
+        return new Builder(deckRepository);
+    }
+
     @Override
     public void save(@NonNull Deck deck) {
         deckRepository.save(deck);
@@ -109,10 +113,6 @@ public class CacheDeckRepository implements IDeckRepository {
             countLruCache.put(id, count);
         }
         return count;
-    }
-
-    public static Builder builder(@NonNull final IDeckRepository deckRepository) {
-        return new Builder(deckRepository);
     }
 
     public static class Builder {

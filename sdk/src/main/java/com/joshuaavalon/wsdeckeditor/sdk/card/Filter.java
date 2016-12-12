@@ -13,6 +13,17 @@ import java.util.List;
 import java.util.Set;
 
 public class Filter implements Parcelable {
+    public static final Parcelable.Creator<Filter> CREATOR = new Parcelable.Creator<Filter>() {
+        @Override
+        public Filter createFromParcel(Parcel source) {
+            return new Filter(source);
+        }
+
+        @Override
+        public Filter[] newArray(int size) {
+            return new Filter[size];
+        }
+    };
     @NonNull
     private Set<String> keyword;
     private boolean hasName, hasChara, hasText, hasSerial, normalOnly;
@@ -29,6 +40,29 @@ public class Filter implements Parcelable {
 
     public Filter() {
         keyword = new HashSet<>();
+    }
+
+    protected Filter(Parcel in) {
+        keyword = new HashSet<>();
+        final List<String> keywords = new ArrayList<>();
+        in.readStringList(keywords);
+        keyword.addAll(keywords);
+        hasName = in.readByte() != 0;
+        hasChara = in.readByte() != 0;
+        hasText = in.readByte() != 0;
+        hasSerial = in.readByte() != 0;
+        normalOnly = in.readByte() != 0;
+        int tmpType = in.readInt();
+        type = tmpType == -1 ? null : Card.Type.values()[tmpType];
+        int tmpTrigger = in.readInt();
+        trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
+        int tmpColor = in.readInt();
+        color = tmpColor == -1 ? null : Card.Color.values()[tmpColor];
+        level = in.readParcelable(Range.class.getClassLoader());
+        cost = in.readParcelable(Range.class.getClassLoader());
+        power = in.readParcelable(Range.class.getClassLoader());
+        soul = in.readParcelable(Range.class.getClassLoader());
+        expansion = in.readString();
     }
 
     @NonNull
@@ -146,13 +180,7 @@ public class Filter implements Parcelable {
     @Nullable
     public String getExpansion() {
         return expansion;
-    }
-
-    public void setExpansion(@Nullable final String expansion) {
-        this.expansion = expansion;
-    }
-
-    @Override
+    }    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Filter)) return false;
@@ -173,6 +201,10 @@ public class Filter implements Parcelable {
                 Objects.equal(expansion, filter.expansion);
     }
 
+    public void setExpansion(@Nullable final String expansion) {
+        this.expansion = expansion;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(keyword, hasName, hasChara, hasText, hasSerial, normalOnly,
@@ -180,12 +212,28 @@ public class Filter implements Parcelable {
     }
 
     public static class Range implements Parcelable {
+        public static final Creator<Range> CREATOR = new Creator<Range>() {
+            @Override
+            public Range createFromParcel(Parcel source) {
+                return new Range(source);
+            }
+
+            @Override
+            public Range[] newArray(int size) {
+                return new Range[size];
+            }
+        };
         private int max;
         private int min;
 
         public Range() {
             max = -1;
             min = -1;
+        }
+
+        protected Range(Parcel in) {
+            this.max = in.readInt();
+            this.min = in.readInt();
         }
 
         public int getMax() {
@@ -198,13 +246,7 @@ public class Filter implements Parcelable {
 
         public int getMin() {
             return min;
-        }
-
-        public void setMin(int min) {
-            this.min = min;
-        }
-
-        @Override
+        }        @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (!(obj instanceof Range)) return false;
@@ -212,7 +254,9 @@ public class Filter implements Parcelable {
             return Objects.equal(max, range.max) && Objects.equal(min, range.min);
         }
 
-        @Override
+        public void setMin(int min) {
+            this.min = min;
+        }        @Override
         public int hashCode() {
             return Objects.hashCode(max, min);
         }
@@ -228,25 +272,10 @@ public class Filter implements Parcelable {
             dest.writeInt(this.min);
         }
 
-        protected Range(Parcel in) {
-            this.max = in.readInt();
-            this.min = in.readInt();
-        }
 
-        public static final Creator<Range> CREATOR = new Creator<Range>() {
-            @Override
-            public Range createFromParcel(Parcel source) {
-                return new Range(source);
-            }
 
-            @Override
-            public Range[] newArray(int size) {
-                return new Range[size];
-            }
-        };
-    }
 
-    @Override
+    }    @Override
     public int describeContents() {
         return 0;
     }
@@ -269,38 +298,7 @@ public class Filter implements Parcelable {
         dest.writeString(expansion);
     }
 
-    protected Filter(Parcel in) {
-        keyword = new HashSet<>();
-        final List<String> keywords = new ArrayList<>();
-        in.readStringList(keywords);
-        keyword.addAll(keywords);
-        hasName = in.readByte() != 0;
-        hasChara = in.readByte() != 0;
-        hasText = in.readByte() != 0;
-        hasSerial = in.readByte() != 0;
-        normalOnly = in.readByte() != 0;
-        int tmpType = in.readInt();
-        type = tmpType == -1 ? null : Card.Type.values()[tmpType];
-        int tmpTrigger = in.readInt();
-        trigger = tmpTrigger == -1 ? null : Card.Trigger.values()[tmpTrigger];
-        int tmpColor = in.readInt();
-        color = tmpColor == -1 ? null : Card.Color.values()[tmpColor];
-        level = in.readParcelable(Range.class.getClassLoader());
-        cost = in.readParcelable(Range.class.getClassLoader());
-        power = in.readParcelable(Range.class.getClassLoader());
-        soul = in.readParcelable(Range.class.getClassLoader());
-        expansion = in.readString();
-    }
 
-    public static final Parcelable.Creator<Filter> CREATOR = new Parcelable.Creator<Filter>() {
-        @Override
-        public Filter createFromParcel(Parcel source) {
-            return new Filter(source);
-        }
 
-        @Override
-        public Filter[] newArray(int size) {
-            return new Filter[size];
-        }
-    };
+
 }

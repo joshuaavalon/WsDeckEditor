@@ -25,16 +25,16 @@ class CacheCardRepository implements ICardRepository {
     private final LruCache<Integer, Bitmap> thumbnailLruCache;
     @NonNull
     private final LruCache<String, Card> cardLruCache;
+    @NonNull
+    private final LruCache<Integer, List<String>> filterLruCache;
+    @IntRange(from = 0)
+    private final int cacheTime; // In minutes
     private int version;
     private int networkVersion;
     @Nullable
     private List<String> expansions;
-    @NonNull
-    private final LruCache<Integer, List<String>> filterLruCache;
     @Nullable
     private Calendar lastUpdated;
-    @IntRange(from = 0)
-    private final int cacheTime; // In minutes
 
     public CacheCardRepository(@NonNull final ICardRepository cardRepository,
                                @NonNull final Builder builder) {
@@ -47,6 +47,10 @@ class CacheCardRepository implements ICardRepository {
         filterLruCache = new LruCache<>(builder.filterCacheSize);
         cacheTime = builder.cacheTime;
         lastUpdated = null;
+    }
+
+    public static Builder builder(@NonNull final ICardRepository cardRepository) {
+        return new Builder(cardRepository);
     }
 
     @Override
@@ -118,16 +122,6 @@ class CacheCardRepository implements ICardRepository {
     public void updateDatabase(@NonNull final InputStream in) {
         invalidate();
         cardRepository.updateDatabase(in);
-    }
-
-    private void invalidate() {
-        version = -1;
-        networkVersion = -1;
-        bitmapLruCache.evictAll();
-        cardLruCache.evictAll();
-        filterLruCache.evictAll();
-        expansions = null;
-        lastUpdated = null;
     }
 
     @NonNull
@@ -202,8 +196,14 @@ class CacheCardRepository implements ICardRepository {
         }, errorListener);
     }
 
-    public static Builder builder(@NonNull final ICardRepository cardRepository) {
-        return new Builder(cardRepository);
+    private void invalidate() {
+        version = -1;
+        networkVersion = -1;
+        bitmapLruCache.evictAll();
+        cardLruCache.evictAll();
+        filterLruCache.evictAll();
+        expansions = null;
+        lastUpdated = null;
     }
 
     public static class Builder {

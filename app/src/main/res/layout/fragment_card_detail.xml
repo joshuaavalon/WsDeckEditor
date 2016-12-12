@@ -5,13 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:scrollbars="none">
-
     <LinearLayout
         style="@style/Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <ImageView
             android:id="@+id/card_detail_image"
             android:layout_width="match_parent"
@@ -19,7 +17,6 @@
             android:layout_marginBottom="@dimen/divider_margin"
             android:contentDescription="@string/acb_card_image"
             android:src="@drawable/dc_w00_00" />
-
         <LinearLayout
             style="@style/IconItem"
             android:layout_width="match_parent"
@@ -27,7 +24,6 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="@dimen/detail_item_icon_size"
                 android:layout_height="wrap_content"
@@ -35,13 +31,11 @@
                 android:contentDescription="@string/acb_icon"
                 android:scaleType="fitStart"
                 android:src="@drawable/ic_text_format_black_24dp" />
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_serial"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -49,20 +43,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_serial" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_side"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -70,7 +61,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -78,14 +68,12 @@
                     android:text="@string/card_side" />
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             style="@style/NoIconItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/card_detail_name"
                 style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -93,21 +81,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_text"
                 android:textIsSelectable="true" />
-
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/card_name" />
         </LinearLayout>
-
         <LinearLayout
             style="@style/NoIconItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/card_detail_expansion"
                 style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -115,16 +100,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_text"
                 android:textIsSelectable="true" />
-
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/card_expansion" />
         </LinearLayout>
-
         <include layout="@layout/divider_detail" />
-
         <LinearLayout
             style="@style/IconItem"
             android:layout_width="match_parent"
@@ -132,7 +114,6 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="@dimen/detail_item_icon_size"
                 android:layout_height="wrap_content"
@@ -140,13 +121,11 @@
                 android:contentDescription="@string/acb_icon"
                 android:scaleType="fitStart"
                 android:src="@drawable/ic_subject_black_24dp" />
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_type"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -154,20 +133,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_type" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_rarity"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -175,7 +151,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -183,7 +158,6 @@
                     android:text="@string/card_rarity" />
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             style="@style/NoIconItem"
             android:layout_width="match_parent"
@@ -191,13 +165,11 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_color"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -205,20 +177,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_color" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_trigger"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -226,7 +195,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -234,14 +202,12 @@
                     android:text="@string/card_trigger" />
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             style="@style/NoIconItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/card_detail_attribute"
                 style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -249,16 +215,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_text"
                 android:textIsSelectable="true" />
-
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/card_attribute" />
         </LinearLayout>
-
         <include layout="@layout/divider_detail" />
-
         <LinearLayout
             style="@style/IconItem"
             android:layout_width="match_parent"
@@ -266,7 +229,6 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="@dimen/detail_item_icon_size"
                 android:layout_height="wrap_content"
@@ -274,13 +236,11 @@
                 android:contentDescription="@string/acb_icon"
                 android:scaleType="fitStart"
                 android:src="@drawable/ic_equalizer_black_24dp" />
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_level"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -288,20 +248,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_level" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_cost"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -309,7 +266,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -317,7 +273,6 @@
                     android:text="@string/card_cost" />
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             style="@style/NoIconItem"
             android:layout_width="match_parent"
@@ -325,13 +280,11 @@
             android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_power"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -339,20 +292,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_power" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_soul"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -360,7 +310,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -368,9 +317,7 @@
                     android:text="@string/card_soul" />
             </LinearLayout>
         </LinearLayout>
-
         <include layout="@layout/divider_detail" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -378,7 +325,6 @@
             android:orientation="horizontal"
             android:paddingBottom="@dimen/detail_item_padding"
             android:paddingTop="@dimen/detail_item_padding">
-
             <ImageView
                 android:layout_width="@dimen/detail_item_icon_size"
                 android:layout_height="wrap_content"
@@ -387,13 +333,11 @@
                 android:contentDescription="@string/acb_icon"
                 android:scaleType="fitStart"
                 android:src="@drawable/ic_code_black_24dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/card_detail_text"
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -401,7 +345,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/placeholder_text"
                     android:textIsSelectable="true" />
-
                 <TextView
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="match_parent"
@@ -409,7 +352,6 @@
                     android:text="@string/card_text" />
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -419,7 +361,6 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/detail_item_padding"
             android:paddingTop="@dimen/detail_item_padding">
-
             <TextView
                 android:id="@+id/card_detail_flavor_text"
                 style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -427,7 +368,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_text"
                 android:textIsSelectable="true" />
-
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"

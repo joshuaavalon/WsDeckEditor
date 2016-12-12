@@ -65,6 +65,12 @@ public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQ
         return view;
     }
 
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.nav_home);
+    }
+
     private void initializeSearchView() {
         floatingSearchView.setOnQueryChangeListener(this);
         floatingSearchView.setOnSearchListener(this);
@@ -88,12 +94,6 @@ public class HomeFragment extends BaseFragment implements FloatingSearchView.OnQ
             }
         });
         flavorTextView.setText(card.getFlavor());
-    }
-
-    @NonNull
-    @Override
-    public String getTitle() {
-        return getString(R.string.nav_home);
     }
 
     @Override

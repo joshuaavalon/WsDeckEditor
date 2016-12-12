@@ -196,18 +196,6 @@ class CardRepository implements ICardRepository {
         return ThumbnailUtils.extractThumbnail(bitmap, dimension, dimension);
     }
 
-    @Nullable
-    private Bitmap getImage(@NonNull final String imageName) {
-        Bitmap bitmap = null;
-        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageName);
-        if (image.exists()) {
-            final BitmapFactory.Options option = new BitmapFactory.Options();
-            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
-            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
-        }
-        return bitmap;
-    }
-
     @Override
     public void updateDatabase(@NonNull InputStream in) {
         database.copyDatabase(in);
@@ -284,22 +272,6 @@ class CardRepository implements ICardRepository {
         return Lists.newArrayList(Iterables.limit(result, limit));
     }
 
-    private List<String> keywordsByField(@NonNull final String query, @NonNull final String field,
-                                         final int limit) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
-                new String[]{field}, String.format("%s LIKE ?", field), new String[]{query},
-                null, null, "_id DESC", String.valueOf(limit));
-        final List<String> result = new ArrayList<>();
-        if (cursor.moveToFirst())
-            do {
-                result.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-        cursor.close();
-        sqLiteDatabase.close();
-        return result;
-    }
-
     @Override
     public void networkVersion(@NonNull final Response.Listener<Integer> listener, @Nullable final Response.ErrorListener errorListener) {
         getRequestQueue().add(new StringRequest(Request.Method.GET, BuildConfig.versionUrl, new Response.Listener<String>() {
@@ -318,6 +290,34 @@ class CardRepository implements ICardRepository {
                 listener.onResponse(response > version());
             }
         }, errorListener);
+    }
+
+    @Nullable
+    private Bitmap getImage(@NonNull final String imageName) {
+        Bitmap bitmap = null;
+        final File image = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), imageName);
+        if (image.exists()) {
+            final BitmapFactory.Options option = new BitmapFactory.Options();
+            option.inDensity = DisplayMetrics.DENSITY_DEFAULT;
+            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), option);
+        }
+        return bitmap;
+    }
+
+    private List<String> keywordsByField(@NonNull final String query, @NonNull final String field,
+                                         final int limit) {
+        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
+        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
+                new String[]{field}, String.format("%s LIKE ?", field), new String[]{query},
+                null, null, "_id DESC", String.valueOf(limit));
+        final List<String> result = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        cursor.close();
+        sqLiteDatabase.close();
+        return result;
     }
 
     private void prepareArgument(@NonNull final Filter filter, @NonNull final List<String> selects,

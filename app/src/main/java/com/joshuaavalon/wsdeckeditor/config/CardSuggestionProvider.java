@@ -63,21 +63,6 @@ public class CardSuggestionProvider implements ISuggestionProvider {
         return toSuggestion(result, true);
     }
 
-    private List<String> findHistory(@NonNull final String query, final int limit) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, AppScheme.Table.Search,
-                new String[]{AppScheme.Field.Keyword}, String.format("%s LIKE ?", AppScheme.Field.Keyword),
-                new String[]{query}, null, null, AppScheme.Field.LastAccess + " DESC", String.valueOf(limit));
-        final List<String> result = new ArrayList<>();
-        if (cursor.moveToFirst())
-            do {
-                result.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-        cursor.close();
-        sqLiteDatabase.close();
-        return result;
-    }
-
     @NonNull
     @Override
     public List<SearchSuggestion> suggestion(@NonNull final String query, final int limit) {
@@ -99,6 +84,21 @@ public class CardSuggestionProvider implements ISuggestionProvider {
             sqLiteDatabase.execSQL(String.format("UPDATE %s SET %s=datetime('now') WHERE %s = '%s'",
                     AppScheme.Table.Search, AppScheme.Field.LastAccess, AppScheme.Field.Keyword, history.getBody()));
         sqLiteDatabase.close();
+    }
+
+    private List<String> findHistory(@NonNull final String query, final int limit) {
+        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
+        final Cursor cursor = database.getReadableDatabase().query(true, AppScheme.Table.Search,
+                new String[]{AppScheme.Field.Keyword}, String.format("%s LIKE ?", AppScheme.Field.Keyword),
+                new String[]{query}, null, null, AppScheme.Field.LastAccess + " DESC", String.valueOf(limit));
+        final List<String> result = new ArrayList<>();
+        if (cursor.moveToFirst())
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        cursor.close();
+        sqLiteDatabase.close();
+        return result;
     }
 
     private List<SearchSuggestion> toSuggestion(@NonNull final List<String> result, final boolean isHistory) {

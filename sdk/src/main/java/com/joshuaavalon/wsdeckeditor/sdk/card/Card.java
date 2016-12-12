@@ -130,16 +130,16 @@ public class Card implements Comparable<Card> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Card && (obj == this || compareTo((Card) obj) == 0);
+    }
+
+    @Override
     public int compareTo(@NonNull final Card other) {
         return ComparisonChain.start()
                 .compare(serial, other.serial)
                 .compare(name, other.name)
                 .result();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Card && (obj == this || compareTo((Card) obj) == 0);
     }
 
     public enum Type {

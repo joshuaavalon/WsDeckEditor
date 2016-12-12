@@ -53,22 +53,6 @@ public class DeckImageActivity extends BaseActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final long id = getIntent().getLongExtra(ARG_ID, 0);
-        if (id <= 0) {
-            Timber.w("DeckImageActivity: Empty argument");
-            return;
-        }
-        deck = getDeckRepository().deck(id);
-        if (deck == null || deck.getCardList().size() > Constant.DeckSize)
-            return;
-        setTitle(deck.getName());
-        surfaceView = new DeckSurfaceView(this);
-        frameLayout.addView(surfaceView);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.deck_image, menu);
@@ -91,6 +75,22 @@ public class DeckImageActivity extends BaseActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final long id = getIntent().getLongExtra(ARG_ID, 0);
+        if (id <= 0) {
+            Timber.w("DeckImageActivity: Empty argument");
+            return;
+        }
+        deck = getDeckRepository().deck(id);
+        if (deck == null || deck.getCardList().size() > Constant.DeckSize)
+            return;
+        setTitle(deck.getName());
+        surfaceView = new DeckSurfaceView(this);
+        frameLayout.addView(surfaceView);
+    }
+
+    @Override
     protected void initializeActionBar(@NonNull ActionBar actionBar) {
         super.initializeActionBar(actionBar);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -109,6 +109,14 @@ public class DeckImageActivity extends BaseActivity {
         @Override
         public void surfaceCreated(SurfaceHolder surfaceHolder) {
             setWillNotDraw(false);
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         }
 
         @Override
@@ -174,14 +182,6 @@ public class DeckImageActivity extends BaseActivity {
             if (card.getType() == Card.Type.Climax)
                 bitmap = BitmapUtils.rotate(bitmap, 90);
             return bitmap;
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         }
     }
 }

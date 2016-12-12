@@ -93,6 +93,12 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         return view;
     }
 
+    @NonNull
+    @Override
+    public String getTitle() {
+        return getString(R.string.nav_deck_edit);
+    }
+
     private void initializeFab() {
         final FloatingActionButton fab = ButterKnife.findById(getActivity(), R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -124,15 +130,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_deck, menu);
-        final MenuItem item = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(this);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
@@ -157,12 +154,6 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
         return filteredModelList;
     }
 
-    @NonNull
-    @Override
-    public String getTitle() {
-        return getString(R.string.nav_deck_edit);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != REQ_DECK) {
@@ -170,6 +161,15 @@ public class DeckListFragment extends BaseFragment implements SearchView.OnQuery
             return;
         }
         refreshDecks();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_deck, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
     }
 
     class DeckListViewHolder extends BindingViewHolder<DeckMeta> implements CardImageHolder {

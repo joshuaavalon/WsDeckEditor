@@ -6,7 +6,6 @@
     android:layout_height="@dimen/single_line_list_item_height"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical">
-
     <TextView
         android:id="@+id/text_view"
         style="@style/TextAppearance.AppCompat.Subhead"
