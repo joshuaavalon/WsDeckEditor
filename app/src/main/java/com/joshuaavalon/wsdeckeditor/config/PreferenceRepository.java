@@ -29,6 +29,7 @@ public class PreferenceRepository {
     private final String KEY_SORT_ORDER;
     private final String KEY_DECK_ID;
     private final String KEY_QUICK_HISTORY;
+    private static final String KEY_APP_VERSION = "AppVersion";
     @NonNull
     private final SharedPreferences sharedPreferences;
     @NonNull
@@ -111,6 +112,16 @@ public class PreferenceRepository {
     public void setSelectedDeck(final long id) {
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong(KEY_DECK_ID, id);
+        editor.apply();
+    }
+
+    public int getAppVerion() {
+        return sharedPreferences.getInt(KEY_APP_VERSION, 0);
+    }
+
+    public void setAppVerion(final int version) {
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(KEY_APP_VERSION, version);
         editor.apply();
     }
 

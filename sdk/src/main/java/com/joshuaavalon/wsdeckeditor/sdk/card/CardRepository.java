@@ -292,6 +292,11 @@ class CardRepository implements ICardRepository {
         }, errorListener);
     }
 
+    @Override
+    public void reset() {
+        database.copyDatabase();
+    }
+
     @Nullable
     private Bitmap getImage(@NonNull final String imageName) {
         Bitmap bitmap = null;

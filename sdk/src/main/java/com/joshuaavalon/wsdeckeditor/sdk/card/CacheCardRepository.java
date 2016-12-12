@@ -196,6 +196,11 @@ class CacheCardRepository implements ICardRepository {
         }, errorListener);
     }
 
+    @Override
+    public void reset() {
+        cardRepository.reset();
+    }
+
     private void invalidate() {
         version = -1;
         networkVersion = -1;

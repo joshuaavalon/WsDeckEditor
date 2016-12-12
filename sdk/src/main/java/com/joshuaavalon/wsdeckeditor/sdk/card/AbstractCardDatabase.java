@@ -16,4 +16,6 @@ abstract class AbstractCardDatabase extends SQLiteOpenHelper {
     }
 
     abstract void copyDatabase(@NonNull InputStream in);
+
+    abstract void copyDatabase();
 }

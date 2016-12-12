@@ -29,3 +29,11 @@
 -keep interface android.support.** { *; }
 -keep class com.google.errorprone.annotations.** { *; }
 -dontwarn   com.google.errorprone.annotations.**
+-keep class com.joshuaavalon.android.** { *; }
+-dontwarn   com.joshuaavalon.android.**
+# For reflection
+-keep public class * extends com.joshuaavalon.android.view.recyclerview.BindingViewHolder
+-keepclassmembers public class * extends com.joshuaavalon.android.view.recyclerview.BindingViewHolder {
+ public <init>(android.view.View);
+}
+

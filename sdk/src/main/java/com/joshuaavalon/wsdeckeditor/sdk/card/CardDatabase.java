@@ -25,7 +25,8 @@ class CardDatabase extends AbstractCardDatabase {
         dbFile = new File(path);
     }
 
-    private void copyDatabase() {
+    @Override
+    void copyDatabase() {
         copyDatabase(context.getResources().openRawResource(R.raw.wsdb));
     }
 

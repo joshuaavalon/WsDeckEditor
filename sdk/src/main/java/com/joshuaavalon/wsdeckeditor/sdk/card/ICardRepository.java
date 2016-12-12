@@ -45,4 +45,6 @@ public interface ICardRepository {
 
     void needUpdated(@NonNull Response.Listener<Boolean> listener,
                      @Nullable Response.ErrorListener errorListener);
+
+    void reset();
 }
