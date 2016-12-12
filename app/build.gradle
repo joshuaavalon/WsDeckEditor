@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+def readSetting() {
+    def propsFile = rootProject.file('settings.properties');
+    def props = new Properties();
+    props.load(new FileInputStream(propsFile));
+    return props;
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
@@ -12,9 +19,26 @@ android {
         versionName "2.0.0"
     }
     buildTypes {
-        release {
+        debug {
+            resValue "string", "banner_ad_unit_id", "ca-app-pub-3940256099942544/6300978111"
+            buildConfigField "String", "banner_ad_pub_id", "\"ca-app-pub-3940256099942544~3347511713\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            def setting = readSetting();
+            resValue "string", "banner_ad_unit_id", setting["banner_ad_unit_id"]
+            buildConfigField "String", "banner_ad_pub_id", setting["banner_ad_pub_id"]
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        develop {
+            return void
+        }
+        publish {
+            return void
         }
     }
     return void
@@ -24,6 +48,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':sdk')
     compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:support-v4:25.0.1'
     compile 'com.android.support:support-annotations:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:customtabs:25.0.1'
@@ -36,8 +61,10 @@ dependencies {
     compile 'com.joshuaavalon.android:common:1.0.5'
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'com.jakewharton.timber:timber:4.3.1'
-    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.jakewharton.timber:timber:4.4.0'
     compile 'com.appyvet:materialrangebar:1.3'
     compile 'com.github.arimorty:floatingsearchview:2.0.3'
+    publishCompile 'com.google.firebase:firebase-ads:10.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

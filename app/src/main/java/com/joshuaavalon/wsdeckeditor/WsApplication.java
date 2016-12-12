@@ -4,6 +4,7 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.joshuaavalon.wsdeckeditor.config.PreferenceRepository;
+import com.joshuaavalon.wsdeckeditor.log.FirebaseTree;
 import com.joshuaavalon.wsdeckeditor.sdk.card.CardFacade;
 import com.joshuaavalon.wsdeckeditor.sdk.card.ICardRepository;
 import com.joshuaavalon.wsdeckeditor.sdk.deck.DeckFacade;
@@ -24,6 +25,8 @@ public class WsApplication extends Application {
         preference = PreferenceRepository.fromDefault(this);
         if (BuildConfig.DEBUG)
             Timber.plant(new Timber.DebugTree());
+        else
+            Timber.plant(new FirebaseTree());
     }
 
     @NonNull
