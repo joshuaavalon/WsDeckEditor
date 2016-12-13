@@ -42,8 +42,8 @@ public enum CardOrder {
             final Card left = o1.getElement();
             final Card right = o2.getElement();
             return ComparisonChain.start()
-                    .compare(left.getColor().ordinal(), right.getColor().ordinal())
                     .compare(left.getType().ordinal(), right.getType().ordinal())
+                    .compare(left.getColor().ordinal(), right.getColor().ordinal())
                     .compare(left.getLevel(), right.getLevel())
                     .compare(left.getSerial(), right.getSerial())
                     .result();
