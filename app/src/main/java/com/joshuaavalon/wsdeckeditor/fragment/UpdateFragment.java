@@ -117,7 +117,7 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
     @OnClick(R.id.update_images_button)
     void updateImagesDialog() {
         new MaterialDialog.Builder(getContext())
-                .title(R.string.dialog_update_database)
+                .title(R.string.dialog_update_images)
                 .content(R.string.update_img_notice)
                 .positiveText(R.string.dialog_update_button)
                 .negativeText(R.string.dialog_cancel_button)
