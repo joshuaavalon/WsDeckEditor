@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -12,6 +13,10 @@ import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.joshuaavalon.wsdeckeditor.sdk.card.CardFacade;
 import com.joshuaavalon.wsdeckeditor.sdk.card.ICardRepository;
 
@@ -58,8 +63,25 @@ public class DownloadService extends IntentService {
         intent.setAction(ACTION_DOWNLOAD_DB);
         intent.putExtra(EXTRA_RECEIVER, receiver);
         intent.putExtra(EXTRA_REQUEST_CODE, requestCode);
-        intent.putExtra(EXTRA_URLS, BuildConfig.databaseUrl);
-        context.startService(intent);
+        final StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReferenceFromUrl(BuildConfig.databaseUrl);
+        storageReference.child("wsdb.db").getDownloadUrl()
+                .addOnSuccessListener(
+                        new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                intent.putExtra(EXTRA_URLS, uri.toString());
+                                context.startService(intent);
+                            }
+                        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        final Bundle resultData = new Bundle();
+                        resultData.putInt(ARG_RESULT, Activity.RESULT_CANCELED);
+                        receiver.send(requestCode, resultData);
+                    }
+                });
     }
 
     @Override
