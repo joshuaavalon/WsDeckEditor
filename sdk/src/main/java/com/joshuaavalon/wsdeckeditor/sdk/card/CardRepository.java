@@ -380,6 +380,8 @@ class CardRepository implements ICardRepository {
             selectArgs.add("SP");
             selectArgs.add("RRR");
             selectArgs.add("XR");
+            // Because bushiroad website's error for incorrect rarity
+            selects.add(String.format("%s NOT REGEXP '.*([SsRr]|SP|sp)$'", CardScheme.Field.Serial));
         }
     }
 
