@@ -140,4 +140,5 @@
     <string name="pref_quick_search_history_summary">保存搜尋紀錄。</string>
     <string name="pref_clear_quick_history_summary">刪除所有搜尋紀錄。</string>
     <string name="pref_clear_quick_history_title">刪除搜尋紀錄</string>
+    <string name="pref_cat_system">系統</string>
 </resources>

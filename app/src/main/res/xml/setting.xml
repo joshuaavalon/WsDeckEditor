@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/pref_hide_normal"
-        android:summary="@string/pref_hide_normal_summary"
-        android:title="@string/pref_hide_normal_title" />
-    <EditTextPreference
-        android:defaultValue="@string/default_show_limit"
-        android:inputType="number"
-        android:key="@string/pref_show_limit"
-        android:summary="@string/pref_show_limit_summary"
-        android:title="@string/pref_show_limit_title" />
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/pref_auto_close"
-        android:summary="@string/pref_auto_close_summary"
-        android:title="@string/pref_auto_close_title" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pref_add_if_not_exist"
-        android:summary="@string/pref_add_if_not_exist_summary"
-        android:title="@string/pref_add_if_not_exist_title" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/pref_swipe_remove"
-        android:summary="@string/pref_swipe_remove_summary"
-        android:title="@string/pref_swipe_remove_title" />
+    <PreferenceCategory android:title="@string/pref_cat_system">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_hide_normal"
+            android:summary="@string/pref_hide_normal_summary"
+            android:title="@string/pref_hide_normal_title" />
+        <EditTextPreference
+            android:defaultValue="@string/default_show_limit"
+            android:inputType="number"
+            android:key="@string/pref_show_limit"
+            android:summary="@string/pref_show_limit_summary"
+            android:title="@string/pref_show_limit_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_auto_close"
+            android:summary="@string/pref_auto_close_summary"
+            android:title="@string/pref_auto_close_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_add_if_not_exist"
+            android:summary="@string/pref_add_if_not_exist_summary"
+            android:title="@string/pref_add_if_not_exist_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_swipe_remove"
+            android:summary="@string/pref_swipe_remove_summary"
+            android:title="@string/pref_swipe_remove_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cat_privacy">
         <SwitchPreference
             android:defaultValue="true"

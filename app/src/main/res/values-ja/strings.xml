@@ -159,4 +159,5 @@
     <string name="pref_quick_search_history_summary">検索履歴を保存する。</string>
     <string name="pref_clear_quick_history_title">検索履歴をクリア</string>
     <string name="pref_clear_quick_history_summary">すべての検索履歴をクリアする。</string>
+    <string name="pref_cat_system">システム</string>
 </resources>
