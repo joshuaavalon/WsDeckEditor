@@ -76,40 +76,40 @@ public class Deck {
     @NonNull
     public Multiset<Card.Color> getColor() {
         final Multiset<Card.Color> colors = HashMultiset.create();
-        for (Card card : cardList.elementSet())
-            colors.add(card.getColor());
+        for (Multiset.Entry<Card> entry : cardList.entrySet())
+            colors.add(entry.getElement().getColor(), entry.getCount());
         return colors;
     }
 
     @NonNull
     public Multiset<Card.Trigger> getTrigger() {
         final Multiset<Card.Trigger> triggers = HashMultiset.create();
-        for (Card card : cardList.elementSet())
-            triggers.add(card.getTrigger());
+        for (Multiset.Entry<Card> entry : cardList.entrySet())
+            triggers.add(entry.getElement().getTrigger(), entry.getCount());
         return triggers;
     }
 
     @NonNull
     public Multiset<Card.Type> getType() {
         final Multiset<Card.Type> types = HashMultiset.create();
-        for (Card card : cardList.elementSet())
-            types.add(card.getType());
+        for (Multiset.Entry<Card> entry : cardList.entrySet())
+            types.add(entry.getElement().getType(), entry.getCount());
         return types;
     }
 
     @NonNull
     public Multiset<Integer> getLevel() {
         final Multiset<Integer> levels = HashMultiset.create();
-        for (Card card : cardList.elementSet())
-            levels.add(card.getLevel());
+        for (Multiset.Entry<Card> entry : cardList.entrySet())
+            levels.add(entry.getElement().getLevel(), entry.getCount());
         return levels;
     }
 
     @NonNull
     public Multiset<Integer> getCost() {
         final Multiset<Integer> costs = HashMultiset.create();
-        for (Card card : cardList.elementSet())
-            costs.add(card.getCost());
+        for (Multiset.Entry<Card> entry : cardList.entrySet())
+            costs.add(entry.getElement().getCost(), entry.getCount());
         return costs;
     }
 
