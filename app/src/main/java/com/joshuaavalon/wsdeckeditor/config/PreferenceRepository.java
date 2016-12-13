@@ -115,11 +115,11 @@ public class PreferenceRepository {
         editor.apply();
     }
 
-    public int getAppVerion() {
+    public int getAppVersion() {
         return sharedPreferences.getInt(KEY_APP_VERSION, 0);
     }
 
-    public void setAppVerion(final int version) {
+    public void setAppVersion(final int version) {
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(KEY_APP_VERSION, version);
         editor.apply();

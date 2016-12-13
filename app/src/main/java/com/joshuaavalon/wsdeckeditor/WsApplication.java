@@ -27,9 +27,9 @@ public class WsApplication extends Application {
             Timber.plant(new Timber.DebugTree());
         else
             Timber.plant(new FirebaseTree());
-        if(preference.getAppVerion() >= BuildConfig.VERSION_CODE) return;
+        if(preference.getAppVersion() >= BuildConfig.VERSION_CODE) return;
         cardRepository.reset();
-        preference.setAppVerion(BuildConfig.VERSION_CODE);
+        preference.setAppVersion(BuildConfig.VERSION_CODE);
     }
 
     @NonNull
