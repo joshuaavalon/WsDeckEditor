@@ -12,7 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.joshuaavalon.wsdeckeditor.R;
-import com.joshuaavalon.wsdeckeditor.sdk.BuildConfig;
+import com.joshuaavalon.wsdeckeditor.BuildConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
