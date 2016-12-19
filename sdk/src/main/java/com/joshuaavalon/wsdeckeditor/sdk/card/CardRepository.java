@@ -35,6 +35,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class CardRepository implements ICardRepository {
     @NonNull
+    private final SQLiteDatabase sqLiteDatabase;
+    @NonNull
     private final AbstractCardDatabase database;
     @NonNull
     private final Context context;
@@ -46,6 +48,7 @@ class CardRepository implements ICardRepository {
         this.context = context.getApplicationContext();
         this.database = database;
         requestQueue = null;
+        sqLiteDatabase = database.getWritableDatabase();
     }
 
     @NonNull
@@ -90,7 +93,6 @@ class CardRepository implements ICardRepository {
 
     @Override
     public int version() {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         final Cursor cursor = sqLiteDatabase.query(CardScheme.Table.Version,
                 new String[]{CardScheme.Field.Version},
                 null, null, null, null, null);
@@ -98,14 +100,12 @@ class CardRepository implements ICardRepository {
         if (cursor.moveToFirst())
             result = cursor.getInt(0);
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 
     @Nullable
     @Override
     public Card random() {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         Cursor cursor;
         if (recordCount < 0) {
             cursor = sqLiteDatabase.query(CardScheme.Table.Card, new String[]{"COUNT(*)"},
@@ -135,13 +135,11 @@ class CardRepository implements ICardRepository {
                 card = buildCard(cursor);
             cursor.close();
         }
-        sqLiteDatabase.close();
         return card;
     }
 
     @Nullable
     public Card find(@NonNull final String serial) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         final Cursor cursor = sqLiteDatabase.query(CardScheme.Table.Card, null,
                 String.format("%s = ?", CardScheme.Field.Serial),
                 new String[]{serial}, null, null, null);
@@ -149,14 +147,12 @@ class CardRepository implements ICardRepository {
         if (cursor.moveToFirst())
             card = buildCard(cursor);
         cursor.close();
-        sqLiteDatabase.close();
         return card;
     }
 
     @NonNull
     @Override
     public List<Card> findAll(@NonNull final List<String> serials) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         final String[] selectArgs = Iterables.toArray(serials, String.class);
         final String[] argsPlaceHolder = new String[selectArgs.length];
         Arrays.fill(argsPlaceHolder, "?");
@@ -170,7 +166,6 @@ class CardRepository implements ICardRepository {
                 result.add(buildCard(cursor));
             } while (cursor.moveToNext());
         cursor.close();
-        database.close();
         return result;
     }
 
@@ -209,7 +204,6 @@ class CardRepository implements ICardRepository {
         final List<String> selects = new ArrayList<>();
         final List<String> selectArgs = new ArrayList<>();
         prepareArgument(filter, selects, selectArgs);
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
         String limitArg = null;
         if (limit >= 0 && offset >= 0)
             limitArg = offset + "," + limit;
@@ -221,15 +215,13 @@ class CardRepository implements ICardRepository {
                 result.add(buildCard(cursor));
             } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 
     @NonNull
     @Override
     public List<String> imageUrls() {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
+        final Cursor cursor = sqLiteDatabase.query(true, CardScheme.Table.Card,
                 new String[]{CardScheme.Field.Image},
                 null, null, null, null, null, null);
         final List<String> result = new ArrayList<>();
@@ -238,15 +230,13 @@ class CardRepository implements ICardRepository {
             result.add(cursor.getString(0));
         } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 
     @NonNull
     @Override
     public List<String> expansions() {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
+        final Cursor cursor = sqLiteDatabase.query(true, CardScheme.Table.Card,
                 new String[]{CardScheme.Field.Expansion},
                 null, null, null, null, null, null);
         final List<String> result = new ArrayList<>();
@@ -255,7 +245,6 @@ class CardRepository implements ICardRepository {
                 result.add(cursor.getString(0));
             } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 
@@ -311,8 +300,7 @@ class CardRepository implements ICardRepository {
 
     private List<String> keywordsByField(@NonNull final String query, @NonNull final String field,
                                          final int limit) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, CardScheme.Table.Card,
+        final Cursor cursor = sqLiteDatabase.query(true, CardScheme.Table.Card,
                 new String[]{field}, String.format("%s LIKE ?", field), new String[]{query},
                 null, null, "_id DESC", String.valueOf(limit));
         final List<String> result = new ArrayList<>();
@@ -321,7 +309,6 @@ class CardRepository implements ICardRepository {
                 result.add(cursor.getString(0));
             } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 
