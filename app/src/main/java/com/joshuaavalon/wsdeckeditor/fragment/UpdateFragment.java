@@ -95,8 +95,9 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
     private void checkUpdate() {
         getCardRepository().networkVersion(this, this);
         databaseTextView.setText(String.valueOf(getCardRepository().version()));
-        if (activity() instanceof MainActivity)
-            ((MainActivity) activity()).checkUpdate();
+        final Activity activity = activity();
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).checkUpdate();
     }
 
     @OnClick(R.id.update_database_button)
