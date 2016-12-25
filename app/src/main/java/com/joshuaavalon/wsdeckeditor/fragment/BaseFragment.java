@@ -1,5 +1,6 @@
 package com.joshuaavalon.wsdeckeditor.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,14 @@ import butterknife.Unbinder;
 
 public class BaseFragment extends AbstractFragment {
     private Unbinder unbinder;
+    private WsApplication application;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof BaseActivity)
+            application = ((BaseActivity) context).application();
+    }
 
     @NonNull
     @Override
@@ -37,33 +46,37 @@ public class BaseFragment extends AbstractFragment {
         return null;
     }
 
-    @NonNull
+    @Nullable
     public BaseActivity activity() {
         return (BaseActivity) getActivity();
     }
 
     public WsApplication application() {
-        return activity().application();
+        return application;
     }
 
     public ICardRepository getCardRepository() {
-        return activity().getCardRepository();
+        return application().getCardRepository();
     }
 
     public IDeckRepository getDeckRepository() {
-        return activity().getDeckRepository();
+        return application().getDeckRepository();
     }
 
     public PreferenceRepository getPreference() {
-        return activity().getPreference();
+        return application().getPreference();
     }
 
     protected void showMessage(@StringRes final int resId) {
-        activity().showMessage(resId);
+        final BaseActivity activity = activity();
+        if (activity != null)
+            activity.showMessage(resId);
     }
 
     protected void showMessage(@NonNull final String message) {
-        activity().showMessage(message);
+        final BaseActivity activity = activity();
+        if (activity != null)
+            activity.showMessage(message);
     }
 
     @Override

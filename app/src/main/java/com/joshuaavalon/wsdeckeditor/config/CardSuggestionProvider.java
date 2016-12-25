@@ -20,19 +20,18 @@ import java.util.Set;
 
 public class CardSuggestionProvider implements ISuggestionProvider {
     @NonNull
-    private final AppDatabase database;
-    @NonNull
     private final ICardRepository cardRepository;
+    @NonNull
+    private final SQLiteDatabase sqLiteDatabase;
 
     public CardSuggestionProvider(@NonNull final Context context,
                                   @NonNull final ICardRepository cardRepository) {
-        database = new AppDatabase(context);
         this.cardRepository = cardRepository;
+        sqLiteDatabase = new AppDatabase(context).getWritableDatabase();
     }
 
     @Override
     public void clearHistory() {
-        final SQLiteDatabase sqLiteDatabase = database.getWritableDatabase();
         sqLiteDatabase.delete(AppScheme.Table.Search, null, null);
     }
 
@@ -49,8 +48,7 @@ public class CardSuggestionProvider implements ISuggestionProvider {
     @NonNull
     @Override
     public List<SearchSuggestion> history(int limit) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, AppScheme.Table.Search,
+        final Cursor cursor = sqLiteDatabase.query(true, AppScheme.Table.Search,
                 new String[]{AppScheme.Field.Keyword}, null, null, null, null,
                 AppScheme.Field.LastAccess + " DESC", String.valueOf(limit));
         final List<String> result = new ArrayList<>();
@@ -59,7 +57,6 @@ public class CardSuggestionProvider implements ISuggestionProvider {
                 result.add(cursor.getString(0));
             } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return toSuggestion(result, true);
     }
 
@@ -75,7 +72,6 @@ public class CardSuggestionProvider implements ISuggestionProvider {
 
     @Override
     public void record(@NonNull SearchSuggestion history) {
-        final SQLiteDatabase sqLiteDatabase = database.getWritableDatabase();
         final ContentValues contentValues = new ContentValues();
         contentValues.put(AppScheme.Field.Keyword, history.getBody());
         final long result = sqLiteDatabase.insertWithOnConflict(AppScheme.Table.Search, null, contentValues,
@@ -83,12 +79,10 @@ public class CardSuggestionProvider implements ISuggestionProvider {
         if (result < 0)
             sqLiteDatabase.execSQL(String.format("UPDATE %s SET %s=datetime('now') WHERE %s = '%s'",
                     AppScheme.Table.Search, AppScheme.Field.LastAccess, AppScheme.Field.Keyword, history.getBody()));
-        sqLiteDatabase.close();
     }
 
     private List<String> findHistory(@NonNull final String query, final int limit) {
-        final SQLiteDatabase sqLiteDatabase = database.getReadableDatabase();
-        final Cursor cursor = database.getReadableDatabase().query(true, AppScheme.Table.Search,
+        final Cursor cursor = sqLiteDatabase.query(true, AppScheme.Table.Search,
                 new String[]{AppScheme.Field.Keyword}, String.format("%s LIKE ?", AppScheme.Field.Keyword),
                 new String[]{query}, null, null, AppScheme.Field.LastAccess + " DESC", String.valueOf(limit));
         final List<String> result = new ArrayList<>();
@@ -97,7 +91,6 @@ public class CardSuggestionProvider implements ISuggestionProvider {
                 result.add(cursor.getString(0));
             } while (cursor.moveToNext());
         cursor.close();
-        sqLiteDatabase.close();
         return result;
     }
 

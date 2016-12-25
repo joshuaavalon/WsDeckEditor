@@ -21,13 +21,13 @@ import java.util.Objects;
 
 class DeckRepository implements IDeckRepository {
     @NonNull
-    private final SQLiteOpenHelper helper;
-    @NonNull
     private final ICardRepository cardRepository;
+    @NonNull
+    private final SQLiteDatabase database;
 
     DeckRepository(@NonNull final SQLiteOpenHelper helper, @NonNull ICardRepository cardRepository) {
-        this.helper = helper;
         this.cardRepository = cardRepository;
+        database = helper.getWritableDatabase();
     }
 
     @NonNull
@@ -42,7 +42,6 @@ class DeckRepository implements IDeckRepository {
     @Override
     public void save(@NonNull final Deck deck) {
         final boolean isUpdate = deck.getId() != Deck.NO_ID;
-        final SQLiteDatabase database = helper.getWritableDatabase();
         final ContentValues deckValues = new ContentValues();
         deckValues.put(DeckScheme.Field.Name, deck.getName());
         deckValues.put(DeckScheme.Field.Cover, deck.getCover());
@@ -64,47 +63,39 @@ class DeckRepository implements IDeckRepository {
         }
         database.setTransactionSuccessful();
         database.endTransaction();
-        database.close();
     }
 
     @Override
     public void save(@NonNull final DeckMeta meta) {
         if (meta.getId() == Deck.NO_ID) return;
-        final SQLiteDatabase database = helper.getWritableDatabase();
         final ContentValues deckValues = new ContentValues();
         deckValues.put(DeckScheme.Field.Name, meta.getName());
         deckValues.put(DeckScheme.Field.Cover, meta.getCover());
         database.update(DeckScheme.Table.Deck, deckValues, DeckScheme.Field.Id + "=?",
                 new String[]{String.valueOf(meta.getId())});
-        database.close();
     }
 
     @Override
     public void remove(@NonNull final Deck deck) {
         if (deck.getId() == Deck.NO_ID) return;
-        final SQLiteDatabase database = helper.getWritableDatabase();
         database.delete(DeckScheme.Table.Deck, DeckScheme.Field.Id + "=?",
                 new String[]{String.valueOf(deck.getId())});
         database.delete(DeckScheme.Table.DeckRecord, DeckScheme.Field.DeckId + "=?",
                 new String[]{String.valueOf(deck.getId())});
         deck.setId(Deck.NO_ID);
-        database.close();
     }
 
     @Override
     public void remove(final long id) {
         if (id == Deck.NO_ID) return;
-        final SQLiteDatabase database = helper.getWritableDatabase();
         database.delete(DeckScheme.Table.Deck, DeckScheme.Field.Id + "=?",
                 new String[]{String.valueOf(id)});
         database.delete(DeckScheme.Table.DeckRecord, DeckScheme.Field.DeckId + "=?",
                 new String[]{String.valueOf(id)});
-        database.close();
     }
 
     @Override
     public void add(final long id, @NonNull final String serial, final boolean requireNone) {
-        final SQLiteDatabase database = helper.getReadableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.DeckRecord,
                 new String[]{DeckScheme.Field.Count},
                 String.format("%s = ? AND %s = ?", DeckScheme.Field.DeckId, DeckScheme.Field.Serial),
@@ -112,14 +103,12 @@ class DeckRepository implements IDeckRepository {
         final int count = cursor.moveToFirst() ?
                 cursor.getInt(cursor.getColumnIndexOrThrow(DeckScheme.Field.Count)) : 0;
         cursor.close();
-        database.close();
         if (requireNone && count > 0) return;
         update(id, serial, count + 1);
     }
 
     @Override
     public void update(final long id, @NonNull final String serial, final int count) {
-        final SQLiteDatabase database = helper.getWritableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.DeckRecord,
                 new String[]{DeckScheme.Field.Id},
                 String.format("%s = ? AND %s = ?", DeckScheme.Field.DeckId, DeckScheme.Field.Serial),
@@ -136,13 +125,11 @@ class DeckRepository implements IDeckRepository {
         else
             database.update(DeckScheme.Table.DeckRecord, cardValues, DeckScheme.Field.Id + "=?",
                     new String[]{String.valueOf(recordId)});
-        database.close();
     }
 
     @NonNull
     @Override
     public List<DeckMeta> meta() {
-        final SQLiteDatabase database = helper.getReadableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.Deck, null, null, null, null, null, DeckScheme.Field.Id);
         final List<DeckMeta> deckMetaList = new ArrayList<>();
         if (cursor.moveToFirst())
@@ -150,14 +137,12 @@ class DeckRepository implements IDeckRepository {
                 deckMetaList.add(buildDeck(cursor));
             } while (cursor.moveToNext());
         cursor.close();
-        database.close();
         return deckMetaList;
     }
 
     @Nullable
     @Override
     public DeckMeta metaOf(final long id) {
-        final SQLiteDatabase database = helper.getReadableDatabase();
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(DeckScheme.Table.Deck);
         queryBuilder.appendWhere(DeckScheme.Field.Id + "=" + id);
@@ -166,7 +151,6 @@ class DeckRepository implements IDeckRepository {
         if (cursor.moveToFirst())
             deckMeta = buildDeck(cursor);
         cursor.close();
-        database.close();
         return deckMeta;
     }
 
@@ -200,7 +184,6 @@ class DeckRepository implements IDeckRepository {
 
     @Override
     public int cardCount(long id) {
-        final SQLiteDatabase database = helper.getReadableDatabase();
         final Cursor cursor = database.query(DeckScheme.Table.DeckRecord,
                 new String[]{String.format("SUM(%s)", DeckScheme.Field.Count)},
                 DeckScheme.Field.DeckId + "=?",
@@ -210,13 +193,11 @@ class DeckRepository implements IDeckRepository {
         if (cursor.moveToFirst())
             count = cursor.getInt(0);
         cursor.close();
-        database.close();
         return count;
     }
 
     @NonNull
     private List<DeckRecord> deckRecords(final long id) {
-        final SQLiteDatabase database = helper.getReadableDatabase();
         final SQLiteQueryBuilder deckRecordQueryBuilder = new SQLiteQueryBuilder();
         deckRecordQueryBuilder.setTables(DeckScheme.Table.DeckRecord);
         deckRecordQueryBuilder.appendWhere(DeckScheme.Field.DeckId + "=" + id);
@@ -229,7 +210,6 @@ class DeckRepository implements IDeckRepository {
                         deckRecordCursor.getInt(deckRecordCursor.getColumnIndexOrThrow(DeckScheme.Field.Count))));
             } while (deckRecordCursor.moveToNext());
         deckRecordCursor.close();
-        database.close();
         return deckRecords;
     }
 }

@@ -65,8 +65,10 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
                 new Response.Listener<Version>() {
                     @Override
                     public void onResponse(Version response) {
+                        if (latestApplicationTextView == null)
+                            return;
                         final Version version = new Version(BuildConfig.VERSION_NAME);
-                        if(response == null || response.compareTo(version) <= 0){
+                        if (response == null || response.compareTo(version) <= 0) {
                             latestApplicationTextView.setVisibility(View.GONE);
                             return;
                         }
@@ -77,7 +79,8 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        latestApplicationTextView.setVisibility(View.GONE);
+                        if (latestApplicationTextView != null)
+                            latestApplicationTextView.setVisibility(View.GONE);
                     }
                 });
         return view;
@@ -92,8 +95,9 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
     private void checkUpdate() {
         getCardRepository().networkVersion(this, this);
         databaseTextView.setText(String.valueOf(getCardRepository().version()));
-        if (activity() instanceof MainActivity)
-            ((MainActivity) activity()).checkUpdate();
+        final Activity activity = activity();
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).checkUpdate();
     }
 
     @OnClick(R.id.update_database_button)
@@ -148,10 +152,14 @@ public class UpdateFragment extends BaseFragment implements Response.Listener<In
         Timber.tag("UpdateFragment");
         Timber.w("VolleyError: " + error.getMessage());
         showMessage(R.string.msg_network_err);
+        if (latestDatabaseTextView != null)
+            latestDatabaseTextView.setVisibility(View.GONE);
     }
 
     @Override
     public void onResponse(Integer response) {
+        if (latestDatabaseTextView == null)
+            return;
         if (response > getCardRepository().version()) {
             latestDatabaseTextView.setVisibility(View.VISIBLE);
             latestDatabaseTextView.setText(String.valueOf(response));
